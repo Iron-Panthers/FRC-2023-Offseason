@@ -17,16 +17,23 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
+import frc.robot.commands.ScoreCommand.ScoreStep;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeDetails;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
+import frc.robot.subsystems.OuttakeSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem.OuttakeDetails;
 import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
 import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
+import frc.util.NodeSelectorUtility.Height;
+import frc.util.NodeSelectorUtility.NodeType;
+import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -182,6 +189,69 @@ public final class Constants {
             IS_COMP_BOT
                 ? -Math.toRadians(335.124 + 180) // comp bot offset
                 : -Math.toRadians(60.908203); // practice bot offset
+      }
+    }
+  }
+
+  public static final class Arm {
+    public static final class Ports {
+      public static final int ARM_MOTOR_PORT = CAN.at(16, "arm motor");
+      public static final int TELESCOPING_MOTOR_PORT = CAN.at(17, "telescoping motor");
+      public static final int ENCODER_PORT = CAN.at(28, "arm encoder");
+    }
+
+    public static final class ExtensionGains {
+      public static final double BASE_P = .15;
+      public static final double MAX_ADDITIONAL_P = .05;
+    }
+
+    public static final double GRAVITY_CONTROL_PERCENT = 0.07;
+
+    public static final double ANGULAR_OFFSET = -4.835;
+
+    public static final class Setpoints {
+      public static final ArmState SHELF_INTAKE = new ArmState(85, 0);
+
+      public static final ArmState STOWED = new ArmState(0, Arm.Setpoints.Extensions.MIN_EXTENSION);
+
+      public static final ArmState HANDOFF =
+          new ArmState(Thresholds.Angles.BACKWARD_ANGLE_LIMIT, 0);
+
+      public static final class Extensions {
+        public static final double MAX_EXTENSION = 20.3;
+        public static final double MIN_EXTENSION = 0.0;
+      }
+    }
+
+    public static final double EXTENSION_STATOR_LIMIT = 35;
+
+    public static final double ZERO_RETRACTION_PERCENT = -0.14;
+    public static final int TICKS = 2048;
+    public static final int TELESCOPING_ARM_GEAR_RATIO = 3;
+    public static final double SPOOL_CIRCUMFERENCE = 1.5 * Math.PI;
+
+    public static final class Thresholds {
+      /**
+       * These thresholds, unless otherwise specified in a doc comment, apply to the positive and
+       * negative sign of their angle in degrees
+       */
+      public static final class Angles {
+        public static final double BACKWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD = -30;
+        public static final double FORWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD =
+            20; // FIXME: real value needed
+        public static final double FORWARD_ANGLE_LIMIT = 120;
+        public static final double BACKWARD_ANGLE_LIMIT = BACKWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD;
+        public static final double EPSILON = 5;
+      }
+
+      public static final class Extensions {
+        /**
+         * The amount of additional extension from min extension to treat as fully retracted for
+         * safety purposes
+         */
+        public static final double FULLY_RETRACTED_INCHES_THRESHOLD = 1;
+
+        public static final double EPSILON = .5;
       }
     }
   }

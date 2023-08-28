@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Arm;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
 import frc.robot.autonomous.commands.MobilityAuto;
@@ -38,6 +39,8 @@ import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.AlignGamepieceCommand;
+import frc.robot.commands.ArmManualCommand;
+import frc.robot.commands.ArmPositionCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
@@ -49,9 +52,14 @@ import frc.robot.commands.HashMapCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
+import frc.robot.commands.ScoreCommand;
+import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetOuttakeModeCommand;
+import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.ZeroIntakeCommand;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -98,6 +106,8 @@ public class RobotContainer {
 
   private final RubenManueverGenerator manueverGenerator = new RubenManueverGenerator();
 
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
+
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   private final OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem(Optional.of(rgbSubsystem));
@@ -139,6 +149,12 @@ public class RobotContainer {
             translationYSupplier,
             will.rightBumper(),
             will.leftBumper()));
+
+    armSubsystem.setDefaultCommand(
+        new ArmManualCommand(
+            armSubsystem,
+            () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
+            () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -327,6 +343,26 @@ public class RobotContainer {
                     jason.getHID().getPOV() == 180
                         ? IntakeSubsystem.Modes.INTAKE_LOW
                         : IntakeSubsystem.Modes.INTAKE));
+
+    jason
+        .povUp()
+        .onTrue(
+            new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)
+                .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF)));
+
+    jason.start().onTrue(new ZeroIntakeCommand(intakeSubsystem));
+
+    jason
+        .back()
+        .whileTrue(
+            new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)
+                .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
+                .alongWith(
+                    new ForceOuttakeSubsystemModeCommand(
+                        outtakeSubsystem, OuttakeSubsystem.Modes.OFF)))
+        .onFalse(
+            new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
+                .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED)));
 
     // scoring
     // jasonLayer
