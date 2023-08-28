@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ArmSubsystem.Modes;
 
 public class SetZeroModeCommand extends CommandBase {
   ArmSubsystem armSubsystem;
@@ -18,9 +17,7 @@ public class SetZeroModeCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    armSubsystem.setZeroMode();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -33,6 +30,6 @@ public class SetZeroModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return armSubsystem.getMode() != Modes.ZERO;
+    return false;
   }
 }
