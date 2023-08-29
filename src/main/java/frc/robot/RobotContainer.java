@@ -150,6 +150,7 @@ public class RobotContainer {
             will.rightBumper(),
             will.leftBumper()));
 
+    // FIXME: This error is here to kind of guide you...
     armSubsystem.setDefaultCommand(
         new ArmManualCommand(
             armSubsystem,
@@ -321,13 +322,15 @@ public class RobotContainer {
 
     jasonLayer
         .off(jason.b())
+        // FIXME: This error is here to kind of guide you...
         .onTrue(new ArmPositionCommand(armSubsystem, Arm.Setpoints.SHELF_INTAKE))
         .whileTrue(
             new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
 
-    // reset
+    // Reset arm position
     jasonLayer
         .off(jason.y())
+        // FIXME: This error is here to kind of guide you...
         .onTrue(new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED))
         .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
     jason.start().onTrue(new SetZeroModeCommand(armSubsystem));
@@ -344,23 +347,19 @@ public class RobotContainer {
                         ? IntakeSubsystem.Modes.INTAKE_LOW
                         : IntakeSubsystem.Modes.INTAKE));
 
-    jason
-        .povUp()
-        .onTrue(
-            new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE)
-                .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF)));
-
     jason.start().onTrue(new ZeroIntakeCommand(intakeSubsystem));
 
     jason
         .back()
         .whileTrue(
             new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)
+                // FIXME: This error is here to kind of guide you...
                 .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
                 .alongWith(
                     new ForceOuttakeSubsystemModeCommand(
                         outtakeSubsystem, OuttakeSubsystem.Modes.OFF)))
         .onFalse(
+            // FIXME: This error is here to kind of guide you...
             new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
                 .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED)));
 
@@ -448,7 +447,6 @@ public class RobotContainer {
     final Map<String, Command> eventMap =
         Map.of(
             "stow arm",
-            new ArmPositionCommand(armSubsystem, Constants.Arm.Setpoints.STOWED),
             "zero everything",
             (new SetZeroModeCommand(armSubsystem))
                 .alongWith(new ZeroIntakeCommand(intakeSubsystem)),
@@ -491,6 +489,8 @@ public class RobotContainer {
                 outtakeSubsystem,
                 armSubsystem,
                 Constants.SCORE_STEP_MAP.get(NodeType.CUBE.atHeight(Height.MID)).subList(0, 1)),
+
+            // FIXME: How can we get this working again?
             "outtake",
             new ScoreCommand(outtakeSubsystem, armSubsystem, drivingCubeOuttake.subList(1, 2), 1)
                 .andThen(

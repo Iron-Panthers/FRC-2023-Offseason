@@ -70,10 +70,13 @@ public class ScoreCommand extends SequentialCommandGroup {
     var armState = scoreStep.armState();
     var outtakeState = scoreStep.outtakeState();
     if (armState.isPresent() && outtakeState.isPresent()) {
-      return new ArmPositionCommand(armSubsystem, armState.get())
+      // FIXME: we need a working armposition command here
+      return new ArmPositionCommand(armSubsystem)
           .deadlineWith(new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get()));
     } else if (armState.isPresent()) {
-      return new ArmPositionCommand(armSubsystem, armState.get());
+
+      // FIXME: we need a working armposition command here
+      return new ArmPositionCommand(armSubsystem);
     } else if (outtakeState.isPresent()) {
       return new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get());
     } else {
