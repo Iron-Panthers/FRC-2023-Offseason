@@ -6,19 +6,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
-import java.util.function.DoubleSupplier;
 
 public class ArmManualCommand extends CommandBase {
   ArmSubsystem armSubsystem;
-  DoubleSupplier angleSupplier;
-  DoubleSupplier extensionSupplier;
   /** Creates a new AngleArmCommand. */
-  public ArmManualCommand(
-      ArmSubsystem armSubsystem, DoubleSupplier angleSupplier, DoubleSupplier extensionSupplier) {
+  public ArmManualCommand(ArmSubsystem armSubsystem) {
     this.armSubsystem = armSubsystem;
 
-    this.angleSupplier = angleSupplier;
-    this.extensionSupplier = extensionSupplier;
     addRequirements(armSubsystem);
   }
 
@@ -28,15 +22,7 @@ public class ArmManualCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-    double angleOutput = angleSupplier.getAsDouble();
-    double extensionOutput = extensionSupplier.getAsDouble();
-
-    armSubsystem.setTargetPosition(
-        armSubsystem.getTargetAngleDegrees() + angleOutput,
-        armSubsystem.getTargetExtensionInches() + extensionOutput);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
