@@ -18,7 +18,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX intakeMotor;
   private TalonFX wristMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
-  private double currentAngle;
   private PIDController pidController;
   private double desiredAngle;
   private CANCoder canCoder;
@@ -29,13 +28,14 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(0);
     wristMotor = new TalonFX(1);
     shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
-    shuffleboard.addDouble("Wrist Motor", () -> wristMotor.getSelectedSensorPosition());
+    shuffleboard.addDouble("Wrist Motor Angle", () -> canCoder.getAbsolutePosition());
     pidController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
     currentIntakeMode = IntakeMode.Off;
-
     intakeMotor.setNeutralMode(NeutralMode.Brake);
   }
+
+  public static record intakeState(IntakeMode mode, double angle) {}
 
   public enum IntakeMode {
     Intake,
@@ -58,9 +58,12 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  // Read cancoder to get angle
   public void setAngle(double desiredAngle) {
     this.desiredAngle = desiredAngle;
+  }
+
+  public double getWristAngle() {
+    return canCoder.getAbsolutePosition();
   }
 
   @Override
