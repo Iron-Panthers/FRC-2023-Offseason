@@ -195,9 +195,12 @@ public final class Constants {
 
   public static final class Arm {
     public static final class Ports {
-      public static final int ARM_MOTOR_PORT = CAN.at(16, "arm motor");
-      public static final int TELESCOPING_MOTOR_PORT = CAN.at(17, "telescoping motor");
-      public static final int ENCODER_PORT = CAN.at(28, "arm encoder");
+      public static final int WRIST_MOTOR_PORT =
+          CAN.at(16, "wrist motor"); // FIXME motor port not known
+      public static final int ITAKE_MOTOR_PORT =
+          CAN.at(17, "intake motor"); // FIXME motor port not known
+      public static final int ENCODER_PORT =
+          CAN.at(28, "wrist encoder"); // FIXME motor port not known
     }
 
     public static final class ExtensionGains {

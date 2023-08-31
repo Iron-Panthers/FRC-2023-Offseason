@@ -44,6 +44,10 @@ public class IntakeSubsystem extends SubsystemBase {
     Off;
   }
 
+  public void setMode(IntakeMode mode) {
+    currentIntakeMode = mode;
+  }
+
   public void intakePeriodic(IntakeMode mode) {
 
     switch (mode) {
@@ -64,6 +68,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double getWristAngle() {
     return canCoder.getAbsolutePosition();
+  }
+
+  public IntakeMode getMode() {
+    return currentIntakeMode;
   }
 
   @Override

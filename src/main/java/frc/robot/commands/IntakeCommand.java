@@ -6,21 +6,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
-import java.util.function.Supplier;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 
 public class IntakeCommand extends CommandBase {
   private IntakeSubsystem intakeSubsystem;
-  private Supplier<Modes> modeSupplier;
+  private IntakeMode mode;
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, Modes mode) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this(intakeSubsystem, () -> mode);
-  }
-
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, Supplier<Modes> modeSupplier) {
+  public IntakeCommand(IntakeSubsystem intakeSubsystem, IntakeMode mode) {
     this.intakeSubsystem = intakeSubsystem;
-    this.modeSupplier = modeSupplier;
+    this.mode = mode;
 
     addRequirements(intakeSubsystem);
   }
@@ -28,13 +22,13 @@ public class IntakeCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.setMode(modeSupplier.get());
+    intakeSubsystem.setMode(mode);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setMode(modeSupplier.get());
+    intakeSubsystem.setMode(mode);
   }
 
   // Called once the command ends or is interrupted.
