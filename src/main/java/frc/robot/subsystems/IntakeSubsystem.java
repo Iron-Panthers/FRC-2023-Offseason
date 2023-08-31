@@ -31,32 +31,28 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addDouble("Wrist Motor Angle", () -> canCoder.getAbsolutePosition());
     pidController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
-    currentIntakeMode = IntakeMode.Off;
+    currentIntakeMode = IntakeMode.OFF;
     intakeMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   public static record intakeState(IntakeMode mode, double angle) {}
 
   public enum IntakeMode {
-    Intake,
-    IntakeOut,
-    Hold,
-    Off;
-  }
-
-  public void setMode(IntakeMode mode) {
-    currentIntakeMode = mode;
+    INTAKE,
+    OUTTAKE,
+    HOLD,
+    OFF;
   }
 
   public void intakePeriodic(IntakeMode mode) {
 
     switch (mode) {
-      case Intake:
+      case INTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
-      case IntakeOut:
+      case OUTTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, -1);
-      case Hold:
-      case Off:
+      case HOLD:
+      case OFF:
       default:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
@@ -72,6 +68,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeMode getMode() {
     return currentIntakeMode;
+  }
+
+  public void setMode(IntakeMode mode) {
+    currentIntakeMode = mode;
   }
 
   @Override

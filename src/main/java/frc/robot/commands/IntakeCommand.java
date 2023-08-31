@@ -22,13 +22,13 @@ public class IntakeCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.setMode(mode);
+    intakeSubsystem.setMode(intakeSubsystem.getMode());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setMode(mode);
+    intakeSubsystem.setMode(intakeSubsystem.getMode());
   }
 
   // Called once the command ends or is interrupted.
