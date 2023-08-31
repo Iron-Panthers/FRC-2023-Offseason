@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveToPlaceCommand;
 import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
@@ -23,7 +23,7 @@ public class MobilityAuto extends SequentialCommandGroup {
       RubenManueverGenerator manueverGenerator,
       DrivebaseSubsystem drivebaseSubsystem,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       RGBSubsystem rgbSubsystem,
       AlliancePose2d finalPose) {
     // Add your commands in the addCommands() call, e.g.

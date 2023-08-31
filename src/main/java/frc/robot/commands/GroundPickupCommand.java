@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
 import java.util.function.Supplier;
@@ -18,7 +18,7 @@ public class GroundPickupCommand extends SequentialCommandGroup {
   public GroundPickupCommand(
       IntakeSubsystem intakeSubsystem,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       Supplier<IntakeSubsystem.Modes> modeSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());

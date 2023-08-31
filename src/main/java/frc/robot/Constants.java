@@ -18,7 +18,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
 import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.ElevatorSubsystem.ArmState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeDetails;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
 import frc.robot.subsystems.OuttakeSubsystem;
@@ -191,6 +191,18 @@ public final class Constants {
                 : -Math.toRadians(60.908203); // practice bot offset
       }
     }
+  }
+//FIX ME fix all these numbers, don't know any of them
+  public static final class Elevator {
+    public static final class Ports {
+    
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
+    }
+ 
+    public static final int TICKS = 2048;
+    public static final double GEAR_RATIO = 1.0;
+    public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
   }
 
   public static final class Arm {

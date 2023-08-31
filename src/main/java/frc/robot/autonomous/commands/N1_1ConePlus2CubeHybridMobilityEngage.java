@@ -12,7 +12,7 @@ import frc.robot.commands.EngageCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
@@ -28,7 +28,7 @@ public class N1_1ConePlus2CubeHybridMobilityEngage extends SequentialCommandGrou
       Map<String, Command> eventMap,
       IntakeSubsystem intakeSubsystem,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       DrivebaseSubsystem drivebaseSubsystem) {
 
     Supplier<PathPlannerTrajectory> path =

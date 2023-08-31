@@ -58,8 +58,8 @@ import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.ZeroIntakeCommand;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ArmState;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -106,7 +106,7 @@ public class RobotContainer {
 
   private final RubenManueverGenerator manueverGenerator = new RubenManueverGenerator();
 
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ElevatorSubsystem armSubsystem = new ElevatorSubsystem();
 
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 

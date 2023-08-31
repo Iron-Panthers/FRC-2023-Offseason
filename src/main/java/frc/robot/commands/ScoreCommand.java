@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ArmState;
 import frc.robot.subsystems.OuttakeSubsystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,25 +84,25 @@ public class ScoreCommand extends SequentialCommandGroup {
     }
   }
 
-  private final ArmSubsystem armSubsystem;
+  private final ElevatorSubsystem armSubsystem;
   private final OuttakeSubsystem outtakeSubsystem;
 
   public ScoreCommand(
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       Trigger trigger) {
     this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.of(trigger), Optional.empty());
   }
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem, ArmSubsystem armSubsystem, List<ScoreStep> scoreSteps) {
+      OuttakeSubsystem outtakeSubsystem, ElevatorSubsystem armSubsystem, List<ScoreStep> scoreSteps) {
     this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.empty());
   }
 
   public ScoreCommand(
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
     this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.of(stepDeadline));
@@ -111,7 +111,7 @@ public class ScoreCommand extends SequentialCommandGroup {
   /** Creates a new ScoreCommand. */
   private ScoreCommand(
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       Optional<Trigger> trigger,
       Optional<Double> stepDeadline) {
@@ -137,7 +137,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
   public static List<ScoreCommand> splitAlongPausePoints(
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
     var scoreCommands = new ArrayList<ScoreCommand>();

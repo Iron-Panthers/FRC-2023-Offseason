@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem.Modes;
@@ -25,7 +25,7 @@ public class N1_1ConePlus2CubeHybridMobility extends SequentialCommandGroup {
       double maxAccelerationMetersPerSecondSq,
       Map<String, Command> eventMap,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       DrivebaseSubsystem drivebaseSubsystem) {
 
     Supplier<PathPlannerTrajectory> path =

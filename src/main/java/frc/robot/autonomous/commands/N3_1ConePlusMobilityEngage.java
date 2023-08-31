@@ -15,7 +15,7 @@ import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
 import frc.util.NodeSelectorUtility.Height;
@@ -29,7 +29,7 @@ public class N3_1ConePlusMobilityEngage extends SequentialCommandGroup {
       double maxVelocityMetersPerSecond,
       double maxAccelerationMetersPerSecondSq,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       DrivebaseSubsystem drivebaseSubsystem) {
 
     Supplier<PathPlannerTrajectory> path =

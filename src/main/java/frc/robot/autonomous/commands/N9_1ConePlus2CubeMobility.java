@@ -14,7 +14,7 @@ import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.ZeroIntakeCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
@@ -32,7 +32,7 @@ public class N9_1ConePlus2CubeMobility extends SequentialCommandGroup {
       Map<String, Command> eventMap,
       IntakeSubsystem intakeSubsystem,
       OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      ElevatorSubsystem armSubsystem,
       DrivebaseSubsystem drivebaseSubsystem) {
 
     List<Supplier<PathPlannerTrajectory>> paths =
