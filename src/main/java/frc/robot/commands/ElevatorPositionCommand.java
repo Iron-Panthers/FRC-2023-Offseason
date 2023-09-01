@@ -5,20 +5,24 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-public class ArmPositionCommand extends CommandBase {
-  private ArmSubsystem subsystem;
+public class ElevatorPositionCommand extends CommandBase {
+  private final ElevatorSubsystem ElevatorSubsystem;
+  private final double targetHeight;
   /** Creates a new ArmPositionCommand. */
-  public ArmPositionCommand(ArmSubsystem subsystem) {
-    this.subsystem = subsystem;
+  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, double targetHeight) {
+    this.ElevatorSubsystem = elevatorSubsystem;
+    this.targetHeight = targetHeight;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    ElevatorSubsystem.setTargetHeight(targetHeight);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

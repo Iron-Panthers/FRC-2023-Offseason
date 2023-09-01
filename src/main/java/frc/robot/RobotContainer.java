@@ -39,8 +39,7 @@ import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.AlignGamepieceCommand;
-import frc.robot.commands.ArmManualCommand;
-import frc.robot.commands.ArmPositionCommand;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
@@ -59,7 +58,6 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.ZeroIntakeCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ArmState;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -323,7 +321,7 @@ public class RobotContainer {
     jasonLayer
         .off(jason.b())
         // FIXME: This error is here to kind of guide you...
-        .onTrue(new ArmPositionCommand(armSubsystem, Arm.Setpoints.SHELF_INTAKE))
+        .onTrue(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.SHELF_INTAKE))
         .whileTrue(
             new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
 
@@ -331,7 +329,7 @@ public class RobotContainer {
     jasonLayer
         .off(jason.y())
         // FIXME: This error is here to kind of guide you...
-        .onTrue(new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED))
+        .onTrue(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED))
         .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
     jason.start().onTrue(new SetZeroModeCommand(armSubsystem));
 
@@ -354,13 +352,13 @@ public class RobotContainer {
         .whileTrue(
             new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)
                 // FIXME: This error is here to kind of guide you...
-                .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
+                .alongWith(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
                 .alongWith(
                     new ForceOuttakeSubsystemModeCommand(
                         outtakeSubsystem, OuttakeSubsystem.Modes.OFF)))
         .onFalse(
             // FIXME: This error is here to kind of guide you...
-            new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
+            new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
                 .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED)));
 
     // scoring
@@ -494,13 +492,13 @@ public class RobotContainer {
             "outtake",
             new ScoreCommand(outtakeSubsystem, armSubsystem, drivingCubeOuttake.subList(1, 2), 1)
                 .andThen(
-                    new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
+                    new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
                         .andThen(
                             new SetOuttakeModeCommand(
                                 outtakeSubsystem, OuttakeSubsystem.Modes.OFF))),
             "armbat preload",
-            new ArmPositionCommand(armSubsystem, new ArmState(30, 0))
-                .andThen(new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)));
+            new ElevatorPositionCommand(armSubsystem, new ArmState(30, 0))
+                .andThen(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)));
 
     autoSelector.setDefaultOption(
         "N1 1Cone + 2Cube Low Mobility Engage",

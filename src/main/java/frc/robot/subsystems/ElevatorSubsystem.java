@@ -79,6 +79,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       this.targetHeight = targetHeight;
     }
 
+    public double getTargetHeight(){
+      return targetHeight;
+    }
+
     public double getHeight() {
       return ticksToHeight(right_motor.getSelectedSensorPosition());
     } 
