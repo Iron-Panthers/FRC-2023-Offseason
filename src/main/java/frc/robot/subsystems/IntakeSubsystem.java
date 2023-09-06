@@ -41,6 +41,8 @@ public class IntakeSubsystem extends SubsystemBase {
     INTAKE,
     OUTTAKE,
     HOLD,
+    WRISTUP,
+    WRISTDOWN,
     OFF;
   }
 
@@ -51,6 +53,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
       case OUTTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, -1);
+      case WRISTDOWN:
+        desiredAngle = 0;
+      case WRISTUP:
+        desiredAngle = 20;
       case HOLD:
       case OFF:
       default:

@@ -39,7 +39,6 @@ import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.AlignGamepieceCommand;
-import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPositionCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -63,6 +62,7 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
@@ -115,6 +115,8 @@ public class RobotContainer {
   private final SharedReference<NodeSelection> currentNodeSelection =
       new SharedReference<>(new NodeSelection(NodeSelectorUtility.defaultNodeStack, Height.HIGH));
 
+  /** controller 2 */
+  private final CommandXboxController controller = new CommandXboxController(2);
   /** controller 1 */
   private final CommandXboxController jason = new CommandXboxController(1);
   /** controller 1 layer */
@@ -151,11 +153,14 @@ public class RobotContainer {
             will.leftBumper()));
 
     // FIXME: This error is here to kind of guide you...
+    /*
     armSubsystem.setDefaultCommand(
         new ArmManualCommand(
             armSubsystem,
             () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
             () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+    */
+    intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem, IntakeMode.OFF));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -202,6 +207,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    controller.a().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.INTAKE));
+    controller.b().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
+    controller.x().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.OFF));
+    controller.rightBumper().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.WRISTUP));
+    controller.leftBumper().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.WRISTDOWN));
 
     // vibrate jason controller when in layer
     jasonLayer.whenChanged(
@@ -307,11 +318,12 @@ public class RobotContainer {
     jasonLayer
         .off(jason.rightTrigger())
         .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OUTTAKE));
+    /*
     jasonLayer
         .off(jason.x())
         .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OFF))
         .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
-
+    */
     // intake presets
     // jasonLayer
     //     .off(jason.a())
@@ -319,7 +331,7 @@ public class RobotContainer {
     //     .whileTrue(
     //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem,
     // OuttakeSubsystem.Modes.INTAKE));
-
+    /*
     jasonLayer
         .off(jason.b())
         // FIXME: This error is here to kind of guide you...
@@ -346,13 +358,14 @@ public class RobotContainer {
                     jason.getHID().getPOV() == 180
                         ? IntakeSubsystem.Modes.INTAKE_LOW
                         : IntakeSubsystem.Modes.INTAKE));
+    */
 
     jason.start().onTrue(new ZeroIntakeCommand(intakeSubsystem));
-
+    /*
     jason
         .back()
         .whileTrue(
-            new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)
+            new IntakeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE)
                 // FIXME: This error is here to kind of guide you...
                 .alongWith(new ArmPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
                 .alongWith(
@@ -361,8 +374,8 @@ public class RobotContainer {
         .onFalse(
             // FIXME: This error is here to kind of guide you...
             new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
-                .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED)));
-
+                .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.STOWED)));
+    */
     // scoring
     // jasonLayer
     //     .on(jason.a())
@@ -444,6 +457,7 @@ public class RobotContainer {
             new ScoreStep(new ArmState(35, Arm.Setpoints.Extensions.MIN_EXTENSION)).canWaitHere(),
             new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE));
     final boolean[] intakeLow = {false};
+
     final Map<String, Command> eventMap =
         Map.of(
             "stow arm",

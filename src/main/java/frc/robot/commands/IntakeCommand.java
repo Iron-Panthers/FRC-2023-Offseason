@@ -20,9 +20,13 @@ public class IntakeCommand extends CommandBase {
   }
 
   // Called when the command is initially scheduled.
+  public void setDesiredAngle(double angle) {
+    intakeSubsystem.setAngle(angle);
+  }
+
   @Override
   public void initialize() {
-    intakeSubsystem.setMode(intakeSubsystem.getMode());
+    intakeSubsystem.setMode(mode);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
