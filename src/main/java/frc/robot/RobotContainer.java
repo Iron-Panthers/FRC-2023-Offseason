@@ -4,9 +4,14 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.Drive;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -17,7 +22,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -39,10 +43,11 @@ import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.AlignGamepieceCommand;
-import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
+import frc.robot.commands.ElevatorManualCommand;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
 import frc.robot.commands.ForceOuttakeSubsystemModeCommand;
 import frc.robot.commands.GroundPickupCommand;
@@ -57,9 +62,9 @@ import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.ZeroIntakeCommand;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
 import frc.robot.subsystems.OuttakeSubsystem;
@@ -67,7 +72,6 @@ import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
-import frc.util.MacUtil;
 import frc.util.NodeSelectorUtility;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeSelection;
@@ -76,11 +80,6 @@ import frc.util.SharedReference;
 import frc.util.Util;
 import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -104,7 +103,7 @@ public class RobotContainer {
 
   private final RubenManueverGenerator manueverGenerator = new RubenManueverGenerator();
 
-  private final ElevatorSubsystem armSubsystem = new ElevatorSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
@@ -119,6 +118,8 @@ public class RobotContainer {
   private final Layer jasonLayer = new Layer(jason.rightBumper());
   /** controller 0 */
   private final CommandXboxController will = new CommandXboxController(0);
+
+  private final CommandXboxController controller = new CommandXboxController(2);
 
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
@@ -148,12 +149,16 @@ public class RobotContainer {
             will.rightBumper(),
             will.leftBumper()));
 
-    // FIXME: This error is here to kind of guide you...
-    armSubsystem.setDefaultCommand(
-        new ArmManualCommand(
-            armSubsystem,
-            () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
-            () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+    // // FIXME: This error is here to kind of guide you...
+    // armSubsystem.setDefaultCommand(
+    //     new ArmManualCommand(
+    //         armSubsystem,
+    //         () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
+    //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+
+    elevatorSubsystem.setDefaultCommand(
+        new ElevatorManualCommand(elevatorSubsystem, controller.getLeftY()));
+    
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -200,6 +205,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    controller.y().onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT));
+    controller.a().onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MIN_HEIGHT));
 
     // vibrate jason controller when in layer
     jasonLayer.whenChanged(

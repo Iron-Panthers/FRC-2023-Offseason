@@ -9,11 +9,17 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorManualCommand extends CommandBase {
   ElevatorSubsystem elevatorSubsystem;
+  double rate;
+  
   /** Creates a new AngleArmCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem) {
+  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, double rate) {
     this.elevatorSubsystem = elevatorSubsystem;
+    this.rate = rate;
 
     addRequirements(elevatorSubsystem);
+  }
+
+  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem2, Object rate2) {
   }
 
   // Called when the command is initially scheduled.
@@ -23,7 +29,7 @@ public class ElevatorManualCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight());
+    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate);
   }
 
   // Called once the command ends or is interrupted.
