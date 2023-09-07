@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
-import frc.robot.subsystems.OuttakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,22 +21,22 @@ import java.util.Optional;
 public class ScoreCommand extends SequentialCommandGroup {
   public static record ScoreStep(
       Optional<ArmState> armState,
-      Optional<OuttakeSubsystem.Modes> outtakeState,
+      Optional<IntakeSubsystem.IntakeMode> intakeState,
       boolean isPausePoint) {
-    public ScoreStep(ArmState armState, OuttakeSubsystem.Modes outtakeState) {
-      this(Optional.of(armState), Optional.of(outtakeState), false);
+    public ScoreStep(ArmState armState, IntakeSubsystem.IntakeMode intakeState) {
+      this(Optional.of(armState), Optional.of(intakeState), false);
     }
 
     public ScoreStep(ArmState armState) {
       this(Optional.of(armState), Optional.empty(), false);
     }
 
-    public ScoreStep(OuttakeSubsystem.Modes outtakeState) {
-      this(Optional.empty(), Optional.of(outtakeState), false);
+    public ScoreStep(IntakeSubsystem.IntakeMode intakeState) {
+      this(Optional.empty(), Optional.of(intakeState), false);
     }
 
     public ScoreStep canWaitHere() {
-      return new ScoreStep(armState, outtakeState, true);
+      return new ScoreStep(armState, intakeState, true);
     }
   }
 
@@ -68,49 +68,49 @@ public class ScoreCommand extends SequentialCommandGroup {
 
   private Command createStep(ScoreStep scoreStep) {
     var armState = scoreStep.armState();
-    var outtakeState = scoreStep.outtakeState();
-    if (armState.isPresent() && outtakeState.isPresent()) {
+    var intakeState = scoreStep.intakeState();
+    if (armState.isPresent() && intakeState.isPresent()) {
       // FIXME: we need a working armposition command here
       return new ArmPositionCommand(armSubsystem)
-          .deadlineWith(new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get()));
+          .deadlineWith(new IntakeCommand(intakeSubsystem, intakeState.get()));
     } else if (armState.isPresent()) {
 
       // FIXME: we need a working armposition command here
       return new ArmPositionCommand(armSubsystem);
-    } else if (outtakeState.isPresent()) {
-      return new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get());
+    } else if (intakeState.isPresent()) {
+      return new IntakeCommand(intakeSubsystem, intakeState.get());
     } else {
       throw new IllegalArgumentException("ScoreStep must have at least one state");
     }
   }
 
   private final ArmSubsystem armSubsystem;
-  private final OuttakeSubsystem outtakeSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
+      IntakeSubsystem intakeSubsystem,
       ArmSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       Trigger trigger) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.of(trigger), Optional.empty());
+    this(intakeSubsystem, armSubsystem, scoreSteps, Optional.of(trigger), Optional.empty());
   }
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem, ArmSubsystem armSubsystem, List<ScoreStep> scoreSteps) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.empty());
+      IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, List<ScoreStep> scoreSteps) {
+    this(intakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.empty());
   }
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
+      IntakeSubsystem intakeSubsystem,
       ArmSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.of(stepDeadline));
+    this(intakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.of(stepDeadline));
   }
 
   /** Creates a new ScoreCommand. */
   private ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
+      IntakeSubsystem intakeSubsystem,
       ArmSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       Optional<Trigger> trigger,
@@ -118,7 +118,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
-    this.outtakeSubsystem = outtakeSubsystem;
+    this.intakeSubsystem = intakeSubsystem;
     this.armSubsystem = armSubsystem;
 
     for (ScoreStep scoreStep : scoreSteps) {
@@ -136,7 +136,7 @@ public class ScoreCommand extends SequentialCommandGroup {
   }
 
   public static List<ScoreCommand> splitAlongPausePoints(
-      OuttakeSubsystem outtakeSubsystem,
+      IntakeSubsystem intakeSubsystem,
       ArmSubsystem armSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
@@ -150,7 +150,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         // System.out.println(scoreSteps.subList(start, end + 1));
         scoreCommands.add(
             new ScoreCommand(
-                outtakeSubsystem, armSubsystem, scoreSteps.subList(start, end + 1), stepDeadline));
+                intakeSubsystem, armSubsystem, scoreSteps.subList(start, end + 1), stepDeadline));
         start = end + 1;
       }
       end++;
@@ -160,7 +160,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     // System.out.println(scoreSteps.subList(start, end));
     scoreCommands.add(
         new ScoreCommand(
-            outtakeSubsystem, armSubsystem, scoreSteps.subList(start, end), stepDeadline));
+            intakeSubsystem, armSubsystem, scoreSteps.subList(start, end), stepDeadline));
 
     return scoreCommands;
   }
