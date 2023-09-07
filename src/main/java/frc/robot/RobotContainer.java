@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -72,6 +73,7 @@ import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
+import frc.util.MacUtil;
 import frc.util.NodeSelectorUtility;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeSelection;
@@ -157,7 +159,7 @@ public class RobotContainer {
     //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
 
     elevatorSubsystem.setDefaultCommand(
-        new ElevatorManualCommand(elevatorSubsystem, controller.getLeftY()));
+        new ElevatorManualCommand(elevatorSubsystem, () -> ControllerUtil.deadband(controller.getLeftY(), 0.2)));
     
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);

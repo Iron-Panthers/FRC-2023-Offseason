@@ -18,7 +18,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
 import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.subsystems.ElevatorSubsystem.ArmState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeDetails;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
 import frc.robot.subsystems.OuttakeSubsystem;
@@ -199,6 +198,9 @@ public final class Constants {
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
     }
+
+    public static final double MAX_HEIGHT = 20;
+    public static final double MIN_HEIGHT = 0;
  
     public static final int TICKS = 2048;
     public static final double GEAR_RATIO = 1.0;

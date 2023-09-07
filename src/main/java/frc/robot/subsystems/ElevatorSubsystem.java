@@ -27,6 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double currentHeight;
   private double targetHeight;
 
+
   private final PIDController heightController;
 
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
@@ -85,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getHeight() {
       return ticksToHeight(right_motor.getSelectedSensorPosition());
-    } 
+    }
 
     // Add debug table
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {}
@@ -97,4 +98,5 @@ public class ElevatorSubsystem extends SubsystemBase {
       right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
     }
   }
+
 

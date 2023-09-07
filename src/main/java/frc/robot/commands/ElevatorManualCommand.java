@@ -4,22 +4,21 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorManualCommand extends CommandBase {
   ElevatorSubsystem elevatorSubsystem;
-  double rate;
+  DoubleSupplier rate;
   
   /** Creates a new AngleArmCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, double rate) {
+  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
     this.elevatorSubsystem = elevatorSubsystem;
     this.rate = rate;
 
     addRequirements(elevatorSubsystem);
-  }
-
-  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem2, Object rate2) {
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +28,7 @@ public class ElevatorManualCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate);
+    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getTargetHeight() + rate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
