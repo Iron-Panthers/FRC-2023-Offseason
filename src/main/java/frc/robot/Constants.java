@@ -191,17 +191,17 @@ public final class Constants {
       }
     }
   }
-//FIX ME fix all these numbers, don't know any of them
+  // FIX ME fix all these numbers, don't know any of them
   public static final class Elevator {
     public static final class Ports {
-    
+
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
     }
 
     public static final double MAX_HEIGHT = 20;
     public static final double MIN_HEIGHT = 0;
- 
+
     public static final int TICKS = 2048;
     public static final double GEAR_RATIO = 1.0;
     public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;

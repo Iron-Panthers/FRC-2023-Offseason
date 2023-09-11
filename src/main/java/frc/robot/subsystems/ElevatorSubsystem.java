@@ -8,7 +8,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -23,12 +25,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   
   private TalonFX left_motor;
   private TalonFX right_motor;
-
+  private TalonFX wristMotor;
   private double currentHeight;
   private double targetHeight;
-
+  private CANCoder canCoder;
+  private double desiredAngle;
 
   private final PIDController heightController;
+  private PIDController wristController;
 
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
@@ -46,9 +50,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     left_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     right_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
-    
+    wristMotor = new TalonFX(Constants.Wrist.Ports.WRIST_MOTOR_PORT);
 
     left_motor.follow(right_motor);
+
+    wristController = new PIDController(0, 0, 0);
+    heightController = new PIDController(0, 0, 0);
+    canCoder = new CANCoder(0);
 
     currentHeight = 0.0;
     targetHeight = 0.0;
@@ -65,6 +73,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.setNeutralMode(NeutralMode.Brake);
 
     filter = LinearFilter.movingAverage(35);
+
+    tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
   }
 
     //FIX ME: all the numbers wrong 
@@ -96,7 +106,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       currentHeight = getHeight();
       double motorPower = heightController.calculate(getHeight(), targetHeight);
       right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
-    }
-  }
-
+      wristMotor.set(
+        TalonFXControlMode.PercentOutput,
+        MathUtil.clamp(
+            wristController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
+          }
+}
 
