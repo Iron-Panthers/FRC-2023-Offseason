@@ -4,14 +4,7 @@
 
 package frc.robot;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-
 import com.pathplanner.lib.server.PathPlannerServer;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -50,25 +43,18 @@ import frc.robot.commands.DriveToPlaceCommand;
 import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
-import frc.robot.commands.ForceOuttakeSubsystemModeCommand;
-import frc.robot.commands.GroundPickupCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HashMapCommand;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.commands.SetOuttakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
-import frc.robot.commands.ZeroIntakeCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.util.ControllerUtil;
@@ -82,6 +68,11 @@ import frc.util.SharedReference;
 import frc.util.Util;
 import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -106,10 +97,6 @@ public class RobotContainer {
   private final RubenManueverGenerator manueverGenerator = new RubenManueverGenerator();
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-
-  private final OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem(Optional.of(rgbSubsystem));
 
   private final SharedReference<NodeSelection> currentNodeSelection =
       new SharedReference<>(new NodeSelection(NodeSelectorUtility.defaultNodeStack, Height.HIGH));
@@ -159,8 +146,8 @@ public class RobotContainer {
     //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
 
     elevatorSubsystem.setDefaultCommand(
-        new ElevatorManualCommand(elevatorSubsystem, () -> ControllerUtil.deadband(controller.getLeftY(), 0.2)));
-    
+        new ElevatorManualCommand(
+            elevatorSubsystem, () -> ControllerUtil.deadband(controller.getLeftY(), 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -208,8 +195,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller.y().onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT));
-    controller.a().onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MIN_HEIGHT));
+    controller
+        .y()
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
+    controller
+        .a()
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MIN_HEIGHT, 20));
 
     // vibrate jason controller when in layer
     jasonLayer.whenChanged(

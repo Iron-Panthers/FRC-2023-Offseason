@@ -22,14 +22,17 @@ public class WristManualCommand extends CommandBase {
   private PIDController pidController;
   private TalonFX wristMotor;
   private CANCoder canCoder;
-  private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Wrist test");
+  private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Wrist Manual Command");
 
   public WristManualCommand(ElevatorSubsystem subsystem, double desiredAngle) {
+    this.desiredAngle = desiredAngle;
     pidController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
-    shuffleboard.addDouble("PID p value", () -> kp);
-    shuffleboard.addDouble("PID i value", () -> ki);
-    shuffleboard.addDouble("PID d value", () -> kd);
+    shuffleboard.addDouble("PID P value", () -> kp);
+    shuffleboard.addDouble("PID I value", () -> ki);
+    shuffleboard.addDouble("PID D value", () -> kd);
+    shuffleboard.addDouble("Current Angle", () -> canCoder.getAbsolutePosition());
+    shuffleboard.addDouble("Desired Angle", () -> desiredAngle);
     addRequirements(subsystem);
   }
 
