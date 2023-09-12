@@ -44,6 +44,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   // stator limits
   private LinearFilter filter;
 
+  public static record ElevatorState(double height, double angle) {}
+
   public ElevatorSubsystem() {
 
     heightController = new PIDController(0.0001, 0, 0);
@@ -58,6 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     currentHeight = 0.0;
     targetHeight = 0.0;
+    desiredAngle = 0.0;
 
     right_motor.configFactoryDefault();
     left_motor.configFactoryDefault();
@@ -115,10 +118,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getHeight() {
       return ticksToHeight(right_motor.getSelectedSensorPosition());
-    }
-
-    public double getAngle() {
-      return ticksToAngleDegree(canCoder.getAbsolutePosition());
     }
 
     // Add debug table
