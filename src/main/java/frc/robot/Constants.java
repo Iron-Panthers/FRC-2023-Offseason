@@ -205,9 +205,13 @@ public final class Constants {
     public static final double MAX_HEIGHT = 20;
     public static final double MIN_HEIGHT = 0;
 
-    public static final int TICKS = 2048;
-    public static final double GEAR_RATIO = 1.0;
-    public static final double GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
+    public static final int ELEVATOR_TICKS = 2048;
+    public static final double ELEVATOR_GEAR_RATIO = 1.0;
+    public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
+
+    public static final double WRIST_TICKS = 2048;
+    public static final double WRIST_DEGREES = 360;
+    public static final double WRIST_GEAR_RATIO = 0.061;
   }
 
   public static final class Arm {

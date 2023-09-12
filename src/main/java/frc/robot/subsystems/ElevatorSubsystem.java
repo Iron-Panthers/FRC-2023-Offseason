@@ -78,11 +78,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     //FIX ME: all the numbers wrong 
     public static double heightToTicks(double height) {
-      return height * ((Elevator.GEAR_RATIO * Elevator.TICKS) / (Elevator.GEAR_CIRCUMFERENCE));
+      return height * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS) / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
     }
   
     public static double ticksToHeight(double ticks) {
-      return (ticks * Elevator.GEAR_CIRCUMFERENCE) / (Elevator.TICKS * Elevator.GEAR_RATIO);
+      return (ticks * Elevator.ELEVATOR_GEAR_CIRCUMFERENCE) / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
+    }
+
+    private double getCurrentTicks(){
+      return wristMotor.getSelectedSensorPosition();
+    }
+
+    public double getCurrentRotation() {
+      return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
+    }
+
+    public double getCurrentAngleDegrees() {
+      return getCurrentRotation() * Elevator.WRIST_DEGREES;
+    }
+
+    public static double ticksToAngleDegree(double ticks) {
+      return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
     }
 
     public void setTargetHeight(double targetHeight) {
@@ -99,6 +115,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getHeight() {
       return ticksToHeight(right_motor.getSelectedSensorPosition());
+    }
+
+    public double getAngle() {
+      return ticksToAngleDegree(canCoder.getAbsolutePosition());
     }
 
     // Add debug table
