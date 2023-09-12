@@ -197,6 +197,8 @@ public final class Constants {
 
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
+      public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor");
+      
     }
 
     public static final double MAX_HEIGHT = 20;

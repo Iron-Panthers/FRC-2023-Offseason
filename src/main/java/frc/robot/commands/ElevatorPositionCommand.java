@@ -10,10 +10,13 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem ElevatorSubsystem;
   private final double targetHeight;
+  private final double desiredAngle;
+
   /** Creates a new ArmPositionCommand. */
-  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, double targetHeight) {
+  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, double targetHeight, double desiredAngle) {
     this.ElevatorSubsystem = elevatorSubsystem;
     this.targetHeight = targetHeight;
+    this.desiredAngle = desiredAngle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
   }
@@ -22,6 +25,7 @@ public class ElevatorPositionCommand extends CommandBase {
   @Override
   public void initialize() {
     ElevatorSubsystem.setTargetHeight(targetHeight);
+    ElevatorSubsystem.setDesiredAngle(desiredAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -50,7 +50,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     left_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     right_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
-    wristMotor = new TalonFX(Constants.Wrist.Ports.WRIST_MOTOR_PORT);
+    wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
 
     left_motor.follow(right_motor);
 
@@ -88,6 +88,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public void setTargetHeight(double targetHeight) {
       this.targetHeight = targetHeight;
+    }
+
+    public void setDesiredAngle(double desiredAngle) {
+      this.desiredAngle = desiredAngle;
     }
 
     public double getTargetHeight(){
