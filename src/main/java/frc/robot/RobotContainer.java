@@ -51,6 +51,7 @@ import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
+import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -195,6 +196,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    controller.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
+    controller.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
     controller
         .y()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));

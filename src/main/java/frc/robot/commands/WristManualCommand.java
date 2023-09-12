@@ -9,8 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -22,17 +20,11 @@ public class WristManualCommand extends CommandBase {
   private PIDController pidController;
   private TalonFX wristMotor;
   private CANCoder canCoder;
-  private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Wrist Manual Command");
 
   public WristManualCommand(ElevatorSubsystem subsystem, double desiredAngle) {
     this.desiredAngle = desiredAngle;
     pidController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
-    shuffleboard.addDouble("PID P value", () -> kp);
-    shuffleboard.addDouble("PID I value", () -> ki);
-    shuffleboard.addDouble("PID D value", () -> kd);
-    shuffleboard.addDouble("Current Angle", () -> canCoder.getAbsolutePosition());
-    shuffleboard.addDouble("Desired Angle", () -> desiredAngle);
     addRequirements(subsystem);
   }
 

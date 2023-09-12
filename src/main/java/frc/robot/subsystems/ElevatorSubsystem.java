@@ -2,14 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-//need: have a way for elevator to go up, take in double and goes up
+// need: have a way for elevator to go up, take in double and goes up
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -17,12 +16,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Config;
 import frc.robot.Constants.Elevator;
 
 /** Add your docs here. */
 public class ElevatorSubsystem extends SubsystemBase {
-  
+
   private TalonFX left_motor;
   private TalonFX right_motor;
   private TalonFX wristMotor;
@@ -79,59 +77,62 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
   }
 
-    //FIX ME: all the numbers wrong 
-    public static double heightToTicks(double height) {
-      return height * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS) / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
-    }
-  
-    public static double ticksToHeight(double ticks) {
-      return (ticks * Elevator.ELEVATOR_GEAR_CIRCUMFERENCE) / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
-    }
+  // FIX ME: all the numbers wrong
+  public static double heightToTicks(double height) {
+    return height
+        * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
+            / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
+  }
 
-    private double getCurrentTicks(){
-      return wristMotor.getSelectedSensorPosition();
-    }
+  public static double ticksToHeight(double ticks) {
+    return (ticks * Elevator.ELEVATOR_GEAR_CIRCUMFERENCE)
+        / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
+  }
 
-    public double getCurrentRotation() {
-      return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
-    }
+  private double getCurrentTicks() {
+    return wristMotor.getSelectedSensorPosition();
+  }
 
-    public double getCurrentAngleDegrees() {
-      return getCurrentRotation() * Elevator.WRIST_DEGREES;
-    }
+  public double getCurrentRotation() {
+    return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
+  }
 
-    public static double ticksToAngleDegree(double ticks) {
-      return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
-    }
+  public double getCurrentAngleDegrees() {
+    return getCurrentRotation() * Elevator.WRIST_DEGREES;
+  }
 
-    public void setTargetHeight(double targetHeight) {
-      this.targetHeight = targetHeight;
-    }
+  public static double ticksToAngleDegree(double ticks) {
+    return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
+  }
 
-    public void setDesiredAngle(double desiredAngle) {
-      this.desiredAngle = desiredAngle;
-    }
+  public void setTargetHeight(double targetHeight) {
+    this.targetHeight = targetHeight;
+  }
 
-    public double getTargetHeight(){
-      return targetHeight;
-    }
+  public void setTargetHeight(double targetHeight) {
+    this.targetHeight = targetHeight;
+  }
 
-    public double getHeight() {
-      return ticksToHeight(right_motor.getSelectedSensorPosition());
-    }
+  public void setDesiredAngle(double desiredAngle) {
+    this.desiredAngle = desiredAngle;
+  }
 
-    // Add debug table
-    if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {}
-    
-    @Override
-    public void periodic() {
-      currentHeight = getHeight();
-      double motorPower = heightController.calculate(getHeight(), targetHeight);
-      right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
-      wristMotor.set(
+  public double getTargetHeight() {
+    return targetHeight;
+  }
+
+  public double getHeight() {
+    return ticksToHeight(right_motor.getSelectedSensorPosition());
+  }
+
+  @Override
+  public void periodic() {
+    currentHeight = getHeight();
+    double motorPower = heightController.calculate(getHeight(), targetHeight);
+    right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
+    wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
             wristController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
-      }
-
+  }
 }

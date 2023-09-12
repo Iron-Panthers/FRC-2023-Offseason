@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +20,15 @@ import java.util.Optional;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCommand extends SequentialCommandGroup {
   public static record ScoreStep(
-      Optional<Double> elevatorHeight,
+      Optional<ElevatorState> elevatorState,
       Optional<IntakeSubsystem.Modes> intakeState,
       boolean isPausePoint) {
-    public ScoreStep(double elevatorHeight, IntakeSubsystem.Modes intakeState) {
-      this(Optional.of(elevatorHeight), Optional.of(intakeState), false);
+    public ScoreStep(double elevatorState, IntakeSubsystem.Modes intakeState) {
+      this(Optional.of(elevatorState), Optional.of(intakeState), false);
     }
 
-    public ScoreStep(double elevatorHeight) {
-      this(Optional.of(elevatorHeight), Optional.empty(), false);
+    public ScoreStep(double elevatorState) {
+      this(Optional.of(elevatorState), Optional.empty(), false);
     }
 
     public ScoreStep(IntakeSubsystem.Modes intakeState) {
@@ -35,7 +36,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     }
 
     public ScoreStep canWaitHere() {
-      return new ScoreStep(elevatorHeight, intakeState, true);
+      return new ScoreStep(elevatorState, intakeState, true);
     }
   }
 
@@ -66,16 +67,16 @@ public class ScoreCommand extends SequentialCommandGroup {
   }
 
   private Command createStep(ScoreStep scoreStep) {
-    var elevatorHeight = scoreStep.elevatorHeight();
+    var elevatorState = scoreStep.elevatorState();
     var intakeState = scoreStep.intakeState();
-    if (elevatorHeight.isPresent() && intakeState.isPresent()) {
+    if (elevatorState.isPresent() && intakeState.isPresent()) {
       // FIXME: we need a working armposition command here
-      return new ElevatorPositionCommand(elevatorSubsystem)
+      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle)
           .deadlineWith(new IntakeCommand(intakeSubsystem, intakeState.get()));
-    } else if (elevatorHeight.isPresent()) {
+    } else if (elevatorState.isPresent()) {
 
       // FIXME: we need a working armposition command here
-      return new ElevatorPositionCommand(elevatorSubsystem);
+      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle);
     } else if (intakeState.isPresent()) {
       return new IntakeCommand(intakeSubsystem, intakeState.get());
     } else {
@@ -95,7 +96,9 @@ public class ScoreCommand extends SequentialCommandGroup {
   }
 
   public ScoreCommand(
-      IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, List<ScoreStep> scoreSteps) {
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
+      List<ScoreStep> scoreSteps) {
     this(intakeSubsystem, elevatorSubsystem, scoreSteps, Optional.empty(), Optional.empty());
   }
 
@@ -104,7 +107,12 @@ public class ScoreCommand extends SequentialCommandGroup {
       ElevatorSubsystem elevatorSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
-    this(intakeSubsystem, elevatorSubsystem, scoreSteps, Optional.empty(), Optional.of(stepDeadline));
+    this(
+        intakeSubsystem,
+        elevatorSubsystem,
+        scoreSteps,
+        Optional.empty(),
+        Optional.of(stepDeadline));
   }
 
   /** Creates a new ScoreCommand. */
@@ -149,7 +157,10 @@ public class ScoreCommand extends SequentialCommandGroup {
         // System.out.println(scoreSteps.subList(start, end + 1));
         scoreCommands.add(
             new ScoreCommand(
-                intakeSubsystem, elevatorSubsystem, scoreSteps.subList(start, end + 1), stepDeadline));
+                intakeSubsystem,
+                elevatorSubsystem,
+                scoreSteps.subList(start, end + 1),
+                stepDeadline));
         start = end + 1;
       }
       end++;

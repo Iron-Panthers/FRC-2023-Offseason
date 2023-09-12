@@ -13,7 +13,8 @@ public class ElevatorPositionCommand extends CommandBase {
   private final double desiredAngle;
 
   /** Creates a new ArmPositionCommand. */
-  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, double targetHeight, double desiredAngle) {
+  public ElevatorPositionCommand(
+      ElevatorSubsystem elevatorSubsystem, double targetHeight, double desiredAngle) {
     this.ElevatorSubsystem = elevatorSubsystem;
     this.targetHeight = targetHeight;
     this.desiredAngle = desiredAngle;
