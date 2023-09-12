@@ -17,24 +17,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
-import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
-import frc.robot.subsystems.IntakeSubsystem.IntakeDetails;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
-import frc.robot.subsystems.OuttakeSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem.OuttakeDetails;
 import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
 import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
-import frc.util.NodeSelectorUtility.Height;
-import frc.util.NodeSelectorUtility.NodeType;
-import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("java:S1118")
@@ -193,83 +183,7 @@ public final class Constants {
     }
   }
 
-  public static final class Arm {
-    public static final class Ports {
-      public static final int WRIST_MOTOR_PORT =
-          CAN.at(16, "wrist motor"); // FIXME motor port not known
-      public static final int ITAKE_MOTOR_PORT =
-          CAN.at(17, "intake motor"); // FIXME motor port not known
-      public static final int ENCODER_PORT =
-          CAN.at(28, "wrist encoder"); // FIXME motor port not known
-    }
-
-    public static final class ExtensionGains {
-      public static final double BASE_P = .15;
-      public static final double MAX_ADDITIONAL_P = .05;
-    }
-
-    public static final double GRAVITY_CONTROL_PERCENT = 0.07;
-
-    public static final double ANGULAR_OFFSET = -4.835;
-
-    public static final class Setpoints {
-      public static final ArmState SHELF_INTAKE = new ArmState(85, 0);
-
-      public static final ArmState STOWED = new ArmState(0, Arm.Setpoints.Extensions.MIN_EXTENSION);
-
-      public static final ArmState HANDOFF =
-          new ArmState(Thresholds.Angles.BACKWARD_ANGLE_LIMIT, 0);
-
-      public static final class Extensions {
-        public static final double MAX_EXTENSION = 20.3;
-        public static final double MIN_EXTENSION = 0.0;
-      }
-    }
-
-    public static final double EXTENSION_STATOR_LIMIT = 35;
-
-    public static final double ZERO_RETRACTION_PERCENT = -0.14;
-    public static final int TICKS = 2048;
-    public static final int TELESCOPING_ARM_GEAR_RATIO = 3;
-    public static final double SPOOL_CIRCUMFERENCE = 1.5 * Math.PI;
-
-    public static final class Thresholds {
-      /**
-       * These thresholds, unless otherwise specified in a doc comment, apply to the positive and
-       * negative sign of their angle in degrees
-       */
-      public static final class Angles {
-        public static final double BACKWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD = -30;
-        public static final double FORWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD =
-            20; // FIXME: real value needed
-        public static final double FORWARD_ANGLE_LIMIT = 120;
-        public static final double BACKWARD_ANGLE_LIMIT = BACKWARD_UNSAFE_EXTENSION_ANGLE_THRESHOLD;
-        public static final double EPSILON = 5;
-      }
-
-      public static final class Extensions {
-        /**
-         * The amount of additional extension from min extension to treat as fully retracted for
-         * safety purposes
-         */
-        public static final double FULLY_RETRACTED_INCHES_THRESHOLD = 1;
-
-        public static final double EPSILON = .5;
-      }
-    }
-  }
-
   public static final class Intake {
-
-    public static final double EPSILON = 5.0;
-
-    public static final double TICKS = 2048;
-    public static final double DEGREES = 360;
-    public static final double GEAR_RATIO = 0.061;
-
-    public static final double GRAVITY_CONTROL_PERCENT = .04;
-
-    public static final double GRAVITY_ANGLE_OFFSET = 41;
 
     public static final double ZERO_PERCENT = .3;
 
@@ -277,67 +191,53 @@ public final class Constants {
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
-      public static final int ANGLE_MOTOR_PORT = CAN.at(19, "intake angle motor");
-    }
-
-    public static final class Setpoints {
-      public static final double MIN_ANGLE = -8;
-      public static final double MAX_ANGLE = -200;
-    }
-
-    public static final class IntakeModes {
-      public static final IntakeDetails INTAKE = IntakeDetails.simple(-158, .3);
-      public static final IntakeDetails INTAKE_LOW = IntakeDetails.simple(-175, .3);
-      public static final IntakeDetails OUTTAKE = IntakeDetails.simple(-30, -0.5);
-      public static final IntakeDetails DOWN = IntakeDetails.simple(-200, 0);
-      public static final IntakeDetails STOWED = IntakeDetails.simple(Setpoints.MIN_ANGLE, 0);
-      public static final IntakeDetails CLIMB = IntakeDetails.simple(-158, 0);
     }
   }
 
-  public static final Map<ScoreTypeIdentifier, List<ScoreStep>> SCORE_STEP_MAP =
-      Map.of(
-          NodeType.CONE.atHeight(Height.HIGH),
-          List.of(
-              new ScoreStep(new ArmState(102.5, Arm.Setpoints.Extensions.MIN_EXTENSION)),
-              new ScoreStep(new ArmState(102.5, Arm.Setpoints.Extensions.MAX_EXTENSION))
-                  .canWaitHere(),
-              new ScoreStep(new ArmState(87, Arm.Setpoints.Extensions.MAX_EXTENSION)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(87, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE)),
-          NodeType.CONE.atHeight(Height.MID),
-          List.of(
-              new ScoreStep(new ArmState(90, Arm.Setpoints.Extensions.MIN_EXTENSION)),
-              new ScoreStep(new ArmState(90, 6)).canWaitHere(),
-              new ScoreStep(new ArmState(72, 6)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(72, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE)),
-          NodeType.CONE.atHeight(Height.LOW),
-          List.of(
-              new ScoreStep(new ArmState(27.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
-                  .canWaitHere(),
-              new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE)),
-          NodeType.CUBE.atHeight(Height.HIGH),
-          List.of(
-              new ScoreStep(new ArmState(95, Arm.Setpoints.Extensions.MIN_EXTENSION)),
-              new ScoreStep(new ArmState(95, 20)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(95, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
-          NodeType.CUBE.atHeight(Height.MID),
-          List.of(
-              new ScoreStep(new ArmState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION)),
-              new ScoreStep(new ArmState(67.32, 0.75)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
-          NodeType.CUBE.atHeight(Height.LOW),
-          List.of(
-              new ScoreStep(new ArmState(29.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
-                  .canWaitHere(),
-              new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)));
+  // public static final Map<ScoreTypeIdentifier, List<ScoreStep>> SCORE_STEP_MAP =
+  //     Map.of(
+  //         NodeType.CONE.atHeight(Height.HIGH),
+  //         List.of(
+  //             new ScoreStep(new ArmState(102.5, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+  //             new ScoreStep(new ArmState(102.5, Arm.Setpoints.Extensions.MAX_EXTENSION))
+  //                 .canWaitHere(),
+  //             new ScoreStep(new ArmState(87,
+  // Arm.Setpoints.Extensions.MAX_EXTENSION)).canWaitHere(),
+  //             new ScoreStep(
+  //                 new ArmState(87, Arm.Setpoints.Extensions.MIN_EXTENSION),
+  //                 OuttakeSubsystem.Modes.OUTTAKE)),
+  //         NodeType.CONE.atHeight(Height.MID),
+  //         List.of(
+  //             new ScoreStep(new ArmState(90, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+  //             new ScoreStep(new ArmState(90, 6)).canWaitHere(),
+  //             new ScoreStep(new ArmState(72, 6)).canWaitHere(),
+  //             new ScoreStep(
+  //                 new ArmState(72, Arm.Setpoints.Extensions.MIN_EXTENSION),
+  //                 OuttakeSubsystem.Modes.OUTTAKE)),
+  //         NodeType.CONE.atHeight(Height.LOW),
+  //         List.of(
+  //             new ScoreStep(new ArmState(27.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
+  //                 .canWaitHere(),
+  //             new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE)),
+  //         NodeType.CUBE.atHeight(Height.HIGH),
+  //         List.of(
+  //             new ScoreStep(new ArmState(95, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+  //             new ScoreStep(new ArmState(95, 20)).canWaitHere(),
+  //             new ScoreStep(
+  //                 new ArmState(95, Arm.Setpoints.Extensions.MIN_EXTENSION),
+  //                 OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
+  //         NodeType.CUBE.atHeight(Height.MID),
+  //         List.of(
+  //             new ScoreStep(new ArmState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+  //             new ScoreStep(new ArmState(67.32, 0.75)).canWaitHere(),
+  //             new ScoreStep(
+  //                 new ArmState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION),
+  //                 OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
+  //         NodeType.CUBE.atHeight(Height.LOW),
+  //         List.of(
+  //             new ScoreStep(new ArmState(29.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
+  //                 .canWaitHere(),
+  //             new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}
@@ -472,28 +372,29 @@ public final class Constants {
     }
   }
 
-  public static final class Outtake {
-    public static final class Ports {
-      public static final int OUTTAKE_MOTOR = CAN.at(8, "outtake motor");
-    }
+  // public static final class Outtake {
+  //   public static final class Ports {
+  //     public static final int OUTTAKE_MOTOR = CAN.at(8, "outtake motor");
+  //   }
 
-    public static final class OuttakeModes {
-      public static final OuttakeDetails HOLD =
-          new OuttakeDetails(0.11, Optional.empty(), Optional.empty());
+  //   public static final class OuttakeModes {
+  //     public static final OuttakeDetails HOLD =
+  //         new OuttakeDetails(0.11, Optional.empty(), Optional.empty());
 
-      public static final OuttakeDetails INTAKE =
-          new OuttakeDetails(.5, Optional.of(new OuttakeDetails.StatorLimit(80)), Optional.of(.5));
+  //     public static final OuttakeDetails INTAKE =
+  //         new OuttakeDetails(.5, Optional.of(new OuttakeDetails.StatorLimit(80)),
+  // Optional.of(.5));
 
-      public static final OuttakeDetails OUTTAKE =
-          new OuttakeDetails(-0.2, Optional.empty(), Optional.of(2d));
+  //     public static final OuttakeDetails OUTTAKE =
+  //         new OuttakeDetails(-0.2, Optional.empty(), Optional.of(2d));
 
-      public static final OuttakeDetails OUTTAKE_FAST_CUBE =
-          new OuttakeDetails(-0.4, Optional.empty(), Optional.of(2d));
+  //     public static final OuttakeDetails OUTTAKE_FAST_CUBE =
+  //         new OuttakeDetails(-0.4, Optional.empty(), Optional.of(2d));
 
-      public static final OuttakeDetails OFF =
-          new OuttakeDetails(0.0, Optional.empty(), Optional.empty());
-    }
-  }
+  //     public static final OuttakeDetails OFF =
+  //         new OuttakeDetails(0.0, Optional.empty(), Optional.empty());
+  //   }
+  // }
 
   public static final class NetworkWatchdog {
     /** The IP addresses to ping for testing bridging, on the second vlan. */

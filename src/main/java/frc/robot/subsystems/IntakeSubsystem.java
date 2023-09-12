@@ -7,42 +7,29 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   private TalonFX intakeMotor;
-  private TalonFX wristMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
-  private PIDController pidController;
-  private double desiredAngle;
-  private CANCoder canCoder;
   private IntakeMode currentIntakeMode;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(0);
-    wristMotor = new TalonFX(1);
     shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
-    shuffleboard.addDouble("Wrist Motor Angle", () -> canCoder.getAbsolutePosition());
-    pidController = new PIDController(0, 0, 0);
-    canCoder = new CANCoder(0);
     currentIntakeMode = IntakeMode.OFF;
     intakeMotor.setNeutralMode(NeutralMode.Brake);
   }
 
-  public static record intakeState(IntakeMode mode, double angle) {}
+  public static record intakeState(IntakeMode mode) {}
 
   public enum IntakeMode {
     INTAKE,
     OUTTAKE,
     HOLD,
-    WRISTUP,
-    WRISTDOWN,
     OFF;
   }
 
@@ -53,23 +40,11 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
       case OUTTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, -1);
-      case WRISTDOWN:
-        desiredAngle = 0;
-      case WRISTUP:
-        desiredAngle = 20;
       case HOLD:
       case OFF:
       default:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
-  }
-
-  public void setAngle(double desiredAngle) {
-    this.desiredAngle = desiredAngle;
-  }
-
-  public double getWristAngle() {
-    return canCoder.getAbsolutePosition();
   }
 
   public IntakeMode getMode() {
@@ -84,10 +59,5 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
 
     intakePeriodic(currentIntakeMode);
-
-    wristMotor.set(
-        TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(
-            pidController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
   }
 }
