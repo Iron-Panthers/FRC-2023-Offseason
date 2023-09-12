@@ -55,7 +55,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor.follow(right_motor);
 
     wristController = new PIDController(0, 0, 0);
-    heightController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
 
     currentHeight = 0.0;
@@ -114,6 +113,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
             wristController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
-          }
-}
+      }
 
+}
