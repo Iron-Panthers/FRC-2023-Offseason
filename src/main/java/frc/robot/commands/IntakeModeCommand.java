@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 
-public class IntakeCommand extends CommandBase {
+public class IntakeModeCommand extends CommandBase {
   private IntakeSubsystem intakeSubsystem;
   private IntakeMode mode;
 
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, IntakeMode mode) {
+  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, IntakeMode mode) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intakeSubsystem = intakeSubsystem;
     this.mode = mode;
