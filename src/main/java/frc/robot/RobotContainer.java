@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Arm;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
 import frc.robot.autonomous.commands.MobilityAuto;
@@ -51,10 +50,11 @@ import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
-import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -195,6 +195,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    Anthony.a().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.HOLD));
+    Anthony.b().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.INTAKE));
+    Anthony.x().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
 
     controller.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
     controller.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
