@@ -51,6 +51,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     right_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
+    
     left_motor.follow(right_motor);
 
     wristController = new PIDController(0, 0, 0);
@@ -103,10 +104,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public static double ticksToAngleDegree(double ticks) {
     return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
-  }
-
-  public void setTargetHeight(double targetHeight) {
-    this.targetHeight = targetHeight;
   }
 
   public void setTargetHeight(double targetHeight) {

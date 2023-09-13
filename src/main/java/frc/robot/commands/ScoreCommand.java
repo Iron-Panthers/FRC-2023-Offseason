@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.intakeState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +25,11 @@ public class ScoreCommand extends SequentialCommandGroup {
       Optional<ElevatorState> elevatorState,
       Optional<IntakeSubsystem.Modes> intakeState,
       boolean isPausePoint) {
-    public ScoreStep(double elevatorState, IntakeSubsystem.Modes intakeState) {
+    public ScoreStep(ElevatorState elevatorState, IntakeSubsystem.Modes intakeState) {
       this(Optional.of(elevatorState), Optional.of(intakeState), false);
     }
 
-    public ScoreStep(double elevatorState) {
+    public ScoreStep(ElevatorState elevatorState) {
       this(Optional.of(elevatorState), Optional.empty(), false);
     }
 
