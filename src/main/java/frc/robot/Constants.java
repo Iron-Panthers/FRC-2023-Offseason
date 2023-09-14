@@ -24,8 +24,10 @@ import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
 import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
+import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -221,46 +223,46 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(102.5, Arm.Setpoints.Extensions.MIN_EXTENSION)),
-              new ScoreStep(new ElevatorState(102.5, Arm.Setpoints.Extensions.MAX_EXTENSION))
+              new ScoreStep(new ElevatorState(102.5, Elevator.Setpoints.Extensions.MIN_EXTENSION)),
+              new ScoreStep(new ElevatorState(102.5, Elevator.Setpoints.Extensions.MAX_EXTENSION))
                   .canWaitHere(),
-              new ScoreStep(new ElevatorState(87, Arm.Setpoints.Extensions.MAX_EXTENSION))
+              new ScoreStep(new ElevatorState(87, Elevator.Setpoints.Extensions.MAX_EXTENSION))
                   .canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(87, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE)),
+                  new ElevatorState(87, Elevator.Setpoints.Extensions.MIN_EXTENSION),
+                  OuttakeSubsystem.Modes.Intake)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(new ElevatorState(90, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+              new ScoreStep(new ElevatorState(90, Elevator.Setpoints.Extensions.MIN_EXTENSION)),
               new ScoreStep(new ElevatorState(90, 6)).canWaitHere(),
               new ScoreStep(new ElevatorState(72, 6)).canWaitHere(),
               new ScoreStep(
-                  new ArmState(72, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE)),
+                  new ArmState(72, Elevator.Setpoints.Extensions.MIN_EXTENSION),
+                  OuttakeSubsystem.Modes.Intake)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(27.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
+              new ScoreStep(new ElevatorState(27.7, Elevator.Setpoints.Extensions.MIN_EXTENSION))
                   .canWaitHere(),
-              new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(OuttakeSubsystem.Modes.Intake)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(95, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+              new ScoreStep(new ElevatorState(95, Elevator.Setpoints.Extensions.MIN_EXTENSION)),
               new ScoreStep(new ElevatorState(95, 20)).canWaitHere(),
               new ScoreStep(
-                  new ArmState(95, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
+                  new ElevatorState(95, Elevator.Setpoints.Extensions.MIN_EXTENSION),
+                  IntakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(new ElevatorState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION)),
+              new ScoreStep(new ElevatorState(67.32, Elevator.Setpoints.Extensions.MIN_EXTENSION)),
               new ScoreStep(new ElevatorState(67.32, 0.75)).canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(67.32, Arm.Setpoints.Extensions.MIN_EXTENSION),
-                  OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
+                  new ElevatorState(67.32, Elevator.Setpoints.Extensions.MIN_EXTENSION),
+                  IntakeSubsystem.Modes.OUTTAKE_FAST_CUBE)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(29.7, Arm.Setpoints.Extensions.MIN_EXTENSION))
+              new ScoreStep(new ElevatorState(29.7, Elevator.Setpoints.Extensions.MIN_EXTENSION))
                   .canWaitHere(),
-              new ScoreStep(OuttakeSubsystem.Modes.OUTTAKE_FAST_CUBE)));
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE_FAST_CUBE)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}
@@ -408,7 +410,7 @@ public final class Constants {
   //         new OuttakeDetails(.5, Optional.of(new OuttakeDetails.StatorLimit(80)),
   // Optional.of(.5));
 
-  //     public static final OuttakeDetails OUTTAKE =
+  //     public static final OuttakeDetails Intake =
   //         new OuttakeDetails(-0.2, Optional.empty(), Optional.of(2d));
 
   //     public static final OuttakeDetails OUTTAKE_FAST_CUBE =

@@ -113,7 +113,7 @@ public class RobotContainer {
   /** controller 0 */
   private final CommandXboxController will = new CommandXboxController(0);
 
-  private final CommandXboxController controller = new CommandXboxController(2);
+  private final CommandXboxController Anthony = new CommandXboxController(2);
 
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
@@ -142,17 +142,8 @@ public class RobotContainer {
             translationYSupplier,
             will.rightBumper(),
             will.leftBumper()));
-
-    // // FIXME: This error is here to kind of guide you...
-    // elevatorSubsystem.setDefaultCommand(
-    //     new ArmManualCommand(
-    //         elevatorSubsystem,
-    //         () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
-    //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
-
-    elevatorSubsystem.setDefaultCommand(
-        new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(controller.getLeftY(), 0.2)));
+f
+    // FIXME: This error is here to kind of guide you...
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -199,13 +190,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
-    controller.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
-    controller.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
+    Anthony.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
+    Anthony.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+    Anthony.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
 
-    controller.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
-    controller.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
-    controller
+    Anthony.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
+    Anthony.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
+    Anthony
         .y()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
     controller
@@ -308,18 +299,18 @@ public class RobotContainer {
             new EngageCommand(
                 drivebaseSubsystem, intakeSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
 
-    // outtake states
-    jasonLayer
-        .off(jason.leftTrigger())
-        .whileTrue(
-            new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
-    jasonLayer
-        .off(jason.rightTrigger())
-        .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OUTTAKE));
-    jasonLayer
-        .off(jason.x())
-        .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OFF))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
+    // // outtake states
+    // jasonLayer
+    //     .off(jason.leftTrigger())
+    //     .whileTrue(
+    //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
+    // jasonLayer
+    //     .off(jason.rightTrigger())
+    //     .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OUTTAKE));
+    // jasonLayer
+    //     .off(jason.x())
+    //     .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OFF))
+    //     .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
 
     // intake presets
     // jasonLayer
@@ -329,36 +320,30 @@ public class RobotContainer {
     //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem,
     // OuttakeSubsystem.Modes.INTAKE));
 
-    jasonLayer
-        .off(jason.b())
-        // FIXME: This error is here to kind of guide you...
-        .onTrue(
-            new ElevatorPositionCommand(elevatorSubsystem, Constants.Arm.Setpoints.SHELF_INTAKE))
-        .whileTrue(
-            new ForceOuttakeSubsystemModeCommand(
-                intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
+    // jasonLayer
+    //     .off(jason.b())
+    //     // FIXME: This error is here to kind of guide you...
+    //     // .onTrue(new ArmPositionCommand(armSubsystem, Arm.Setpoints.SHELF_INTAKE))
+    //     .whileTrue(
+    //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
 
-    // Reset arm position
-    jasonLayer
-        .off(jason.y())
-        // FIXME: This error is here to kind of guide you...
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
-    jason.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
-    jasonLayer
-        .off(jason.a())
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                outtakeSubsystem,
-                elevatorSubsystem,
-                () ->
-                    jason.getHID().getPOV() == 180
-                        ? IntakeSubsystem.IntakeMode.INTAKE_LOW
-                        : IntakeSubsystem.IntakeMode.INTAKE));
 
-    jason.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
+
+
+    // jasonLayer
+    //     .off(jason.a())
+    //     .onTrue(
+    //         new GroundPickupCommand(
+    //             intakeSubsystem,
+    //             outtakeSubsystem,
+    //             armSubsystem,
+    //             () ->
+    //                 jason.getHID().getPOV() == 180
+    //                     ? IntakeSubsystem.Modes.INTAKE_LOW
+    //                     : IntakeSubsystem.Modes.INTAKE));
+
+    // jason.start().onTrue(new ZeroIntakeCommand(intakeSubsystem));
 
     jason
         .back()
@@ -534,7 +519,7 @@ public class RobotContainer {
     autoSelector.setDefaultOption(
         "N1 1Cone + 2Cube Low Mobility NO ENGAGE",
         new N1_1ConePlus2CubeHybridMobility(
-            4.95, 4, eventMap, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+            4.95, 4, eventMap, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N9 1Cone + 1Cube + Grab Cube Mobility",
