@@ -44,12 +44,14 @@ import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HashMapCommand;
+import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
+import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -99,6 +101,8 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+
   private final SharedReference<NodeSelection> currentNodeSelection =
       new SharedReference<>(new NodeSelection(NodeSelectorUtility.defaultNodeStack, Height.HIGH));
 
@@ -140,9 +144,9 @@ public class RobotContainer {
             will.leftBumper()));
 
     // // FIXME: This error is here to kind of guide you...
-    // armSubsystem.setDefaultCommand(
+    // elevatorSubsystem.setDefaultCommand(
     //     new ArmManualCommand(
-    //         armSubsystem,
+    //         elevatorSubsystem,
     //         () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
     //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
 
@@ -195,9 +199,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    Anthony.a().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.HOLD));
-    Anthony.b().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.INTAKE));
-    Anthony.x().onTrue(new IntakeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
+    controller.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
+    controller.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+    controller.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
 
     controller.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
     controller.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
@@ -225,7 +229,7 @@ public class RobotContainer {
     will.pov(-1).whileFalse(new DefenseModeCommand(drivebaseSubsystem));
 
     will.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
-    jason.leftStick().onTrue(new InstantCommand(() -> {}, armSubsystem));
+    jason.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     DoubleSupplier rotation =
         exponential(
@@ -315,12 +319,12 @@ public class RobotContainer {
     jasonLayer
         .off(jason.x())
         .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OFF))
-        .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
 
     // intake presets
     // jasonLayer
     //     .off(jason.a())
-    //     .onTrue(new ScoreCommand(outtakeSubsystem, armSubsystem, Setpoints.GROUND_INTAKE))
+    //     .onTrue(new ScoreCommand(outtakeSubsystem, elevatorSubsystem, Setpoints.GROUND_INTAKE))
     //     .whileTrue(
     //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem,
     // OuttakeSubsystem.Modes.INTAKE));
@@ -328,17 +332,19 @@ public class RobotContainer {
     jasonLayer
         .off(jason.b())
         // FIXME: This error is here to kind of guide you...
-        .onTrue(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.SHELF_INTAKE))
+        .onTrue(
+            new ElevatorPositionCommand(elevatorSubsystem, Constants.Arm.Setpoints.SHELF_INTAKE))
         .whileTrue(
-            new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
+            new ForceOuttakeSubsystemModeCommand(
+                intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
 
     // Reset arm position
     jasonLayer
         .off(jason.y())
         // FIXME: This error is here to kind of guide you...
-        .onTrue(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED))
-        .onTrue(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED));
-    jason.start().onTrue(new SetZeroModeCommand(armSubsystem));
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
+    jason.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
     jasonLayer
         .off(jason.a())
@@ -346,27 +352,30 @@ public class RobotContainer {
             new GroundPickupCommand(
                 intakeSubsystem,
                 outtakeSubsystem,
-                armSubsystem,
+                elevatorSubsystem,
                 () ->
                     jason.getHID().getPOV() == 180
-                        ? IntakeSubsystem.Modes.INTAKE_LOW
-                        : IntakeSubsystem.Modes.INTAKE));
+                        ? IntakeSubsystem.IntakeMode.INTAKE_LOW
+                        : IntakeSubsystem.IntakeMode.INTAKE));
 
-    jason.start().onTrue(new ZeroIntakeCommand(intakeSubsystem));
+    jason.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
     jason
         .back()
         .whileTrue(
-            new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)
+            new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE)
                 // FIXME: This error is here to kind of guide you...
-                .alongWith(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.HANDOFF))
+                .alongWith(
+                    new ElevatorPositionCommand(
+                        elevatorSubsystem, Constants.Elevator.Setpoints.HANDOFF))
                 .alongWith(
                     new ForceOuttakeSubsystemModeCommand(
-                        outtakeSubsystem, OuttakeSubsystem.Modes.OFF)))
+                        outtakeSubsystem, IntakeSubsystem.IntakeMode.OFF)))
         .onFalse(
             // FIXME: This error is here to kind of guide you...
-            new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
-                .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED)));
+            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
+                .alongWith(
+                    new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD)));
 
     // scoring
     // jasonLayer
@@ -385,7 +394,7 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () -> currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.MID)),
-                armSubsystem));
+                elevatorSubsystem));
 
     jasonLayer
         .on(jason.y())
@@ -393,7 +402,7 @@ public class RobotContainer {
             new InstantCommand(
                 () ->
                     currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.HIGH)),
-                armSubsystem));
+                elevatorSubsystem));
 
     var scoreCommandMap = new HashMap<NodeSelectorUtility.ScoreTypeIdentifier, Command>();
 
@@ -402,7 +411,7 @@ public class RobotContainer {
           scoreType,
           new ScoreCommand(
               outtakeSubsystem,
-              armSubsystem,
+              elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
               jason.leftBumper()));
 
@@ -453,15 +462,17 @@ public class RobotContainer {
         Map.of(
             "stow arm",
             "zero everything",
-            (new SetZeroModeCommand(armSubsystem))
-                .alongWith(new ZeroIntakeCommand(intakeSubsystem)),
+            (new SetZeroModeCommand(elevatorSubsystem))
+                .alongWith(new ZeroIntakeModeCommand(intakeSubsystem)),
             "intake",
             new GroundPickupCommand(
                 intakeSubsystem,
                 outtakeSubsystem,
-                armSubsystem,
+                elevatorSubsystem,
                 () ->
-                    intakeLow[0] ? IntakeSubsystem.Modes.INTAKE_LOW : IntakeSubsystem.Modes.INTAKE),
+                    intakeLow[0]
+                        ? IntakeSubsystem.IntakeMode.INTAKE_LOW
+                        : IntakeSubsystem.IntakeMode.INTAKE),
             "squeeze intake",
             new CommandBase() {
               private double lastTime = Timer.getFPGATimestamp();
@@ -483,29 +494,31 @@ public class RobotContainer {
               }
             },
             "stage outtake",
-            new ScoreCommand(outtakeSubsystem, armSubsystem, drivingCubeOuttake.subList(0, 1), 1),
+            new ScoreCommand(
+                outtakeSubsystem, elevatorSubsystem, drivingCubeOuttake.subList(0, 1), 1),
             "stage outtake high",
             new ScoreCommand(
                 outtakeSubsystem,
-                armSubsystem,
+                elevatorSubsystem,
                 Constants.SCORE_STEP_MAP.get(NodeType.CUBE.atHeight(Height.HIGH)).subList(0, 1)),
             "stage outtake mid",
             new ScoreCommand(
                 outtakeSubsystem,
-                armSubsystem,
+                elevatorSubsystem,
                 Constants.SCORE_STEP_MAP.get(NodeType.CUBE.atHeight(Height.MID)).subList(0, 1)),
 
             // FIXME: How can we get this working again?
             "outtake",
-            new ScoreCommand(outtakeSubsystem, armSubsystem, drivingCubeOuttake.subList(1, 2), 1)
+            new ScoreCommand(
+                    outtakeSubsystem, elevatorSubsystem, drivingCubeOuttake.subList(1, 2), 1)
                 .andThen(
-                    new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
+                    new ElevatorPositionCommand(elevatorSubsystem, Arm.Setpoints.STOWED)
                         .andThen(
                             new SetOuttakeModeCommand(
                                 outtakeSubsystem, OuttakeSubsystem.Modes.OFF))),
             "armbat preload",
-            new ElevatorPositionCommand(armSubsystem, new ArmState(30, 0))
-                .andThen(new ElevatorPositionCommand(armSubsystem, Arm.Setpoints.STOWED)));
+            new ElevatorPositionCommand(elevatorSubsystem, new ArmState(30, 0))
+                .andThen(new ElevatorPositionCommand(elevatorSubsystem, Arm.Setpoints.STOWED)));
 
     autoSelector.setDefaultOption(
         "N1 1Cone + 2Cube Low Mobility Engage",
@@ -515,13 +528,13 @@ public class RobotContainer {
             eventMap,
             intakeSubsystem,
             outtakeSubsystem,
-            armSubsystem,
+            elevatorSubsystem,
             drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N1 1Cone + 2Cube Low Mobility NO ENGAGE",
         new N1_1ConePlus2CubeHybridMobility(
-            4.95, 4, eventMap, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+            4.95, 4, eventMap, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N9 1Cone + 1Cube + Grab Cube Mobility",
@@ -531,11 +544,11 @@ public class RobotContainer {
             eventMap,
             intakeSubsystem,
             outtakeSubsystem,
-            armSubsystem,
+            elevatorSubsystem,
             drivebaseSubsystem));
 
     autoSelector.addOption(
-        "Just Zero Arm [DOES NOT CALIBRATE]", new SetZeroModeCommand(armSubsystem));
+        "Just Zero Arm [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
 
     autoSelector.addOption(
         "Near Substation Mobility [APRILTAG]",
@@ -543,7 +556,7 @@ public class RobotContainer {
             manueverGenerator,
             drivebaseSubsystem,
             outtakeSubsystem,
-            armSubsystem,
+            elevatorSubsystem,
             rgbSubsystem,
             new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
 
@@ -553,7 +566,7 @@ public class RobotContainer {
             manueverGenerator,
             drivebaseSubsystem,
             outtakeSubsystem,
-            armSubsystem,
+            elevatorSubsystem,
             rgbSubsystem,
             new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
 
@@ -561,32 +574,35 @@ public class RobotContainer {
 
     autoSelector.addOption(
         "N3 1Cone + Mobility Engage",
-        new N3_1ConePlusMobilityEngage(5, 3.5, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+        new N3_1ConePlusMobilityEngage(
+            5, 3.5, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N3 1Cone + Mobility",
-        new N3_1ConePlusMobility(4.95, 3.5, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+        new N3_1ConePlusMobility(
+            4.95, 3.5, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N6 1Cone + Engage",
-        new N6_1ConePlusEngage(5, 3.5, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+        new N6_1ConePlusEngage(5, 3.5, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.addOption(
         "N9 1Cone + Mobility Engage",
-        new N9_1ConePlusMobilityEngage(5, 3.5, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+        new N9_1ConePlusMobilityEngage(
+            5, 3.5, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.addOption(
         "N9 1Cone + Mobility",
-        new N9_1ConePlusMobility(4.95, 3, outtakeSubsystem, armSubsystem, drivebaseSubsystem));
+        new N9_1ConePlusMobility(4.95, 3, outtakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.addOption(
         "Score High Cone [DOES NOT CALIBRATE]",
-        new SetZeroModeCommand(armSubsystem)
+        new SetZeroModeCommand(elevatorSubsystem)
             .raceWith(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE))
             .andThen(
                 new ScoreCommand(
                     outtakeSubsystem,
-                    armSubsystem,
+                    elevatorSubsystem,
                     Constants.SCORE_STEP_MAP.get(
                         NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH)))));
 

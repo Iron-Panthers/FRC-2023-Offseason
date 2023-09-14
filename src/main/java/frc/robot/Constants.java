@@ -18,10 +18,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
 import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
-
-import frc.robot.subsystems.IntakeSubsystem.IntakeDetails;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
 import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
@@ -29,9 +26,7 @@ import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
 import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
-import java.util.Lists;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("java:S1118")
@@ -196,7 +191,6 @@ public final class Constants {
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
-      
     }
 
     public static final double MAX_HEIGHT = 10;
