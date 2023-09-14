@@ -78,7 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
   }
 
-  // FIX ME: all the numbers wrong
+  // FIX ME: all the numbers wrong in constants
   public static double heightToTicks(double height) {
     return height
         * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
@@ -125,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     currentHeight = getHeight();
-    double motorPower = heightController.calculate(getHeight(), targetHeight);
+    double motorPower = heightController.calculate(currentHeight, targetHeight);
     right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
