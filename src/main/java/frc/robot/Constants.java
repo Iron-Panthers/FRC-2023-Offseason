@@ -25,9 +25,11 @@ import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
 import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
 import frc.util.pathing.FieldObstructionMap;
+import java.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 @SuppressWarnings("java:S1118")
 /**
@@ -392,30 +394,6 @@ public final class Constants {
       public static final int DIAGONAL_BAD_FLOW_PENALTY = 4;
     }
   }
-
-  // public static final class Outtake {
-  //   public static final class Ports {
-  //     public static final int OUTTAKE_MOTOR = CAN.at(8, "outtake motor");
-  //   }
-
-  //   public static final class OuttakeModes {
-  //     public static final OuttakeDetails HOLD =
-  //         new OuttakeDetails(0.11, Optional.empty(), Optional.empty());
-
-  //     public static final OuttakeDetails INTAKE =
-  //         new OuttakeDetails(.5, Optional.of(new OuttakeDetails.StatorLimit(80)),
-  // Optional.of(.5));
-
-  //     public static final OuttakeDetails OUTTAKE =
-  //         new OuttakeDetails(-0.2, Optional.empty(), Optional.of(2d));
-
-  //     public static final OuttakeDetails OUTTAKE_FAST_CUBE =
-  //         new OuttakeDetails(-0.4, Optional.empty(), Optional.of(2d));
-
-  //     public static final OuttakeDetails OFF =
-  //         new OuttakeDetails(0.0, Optional.empty(), Optional.empty());
-  //   }
-  // }
 
   public static final class NetworkWatchdog {
     /** The IP addresses to ping for testing bridging, on the second vlan. */

@@ -113,8 +113,6 @@ public class RobotContainer {
   /** controller 0 */
   private final CommandXboxController will = new CommandXboxController(0);
 
-  private final CommandXboxController controller = new CommandXboxController(2);
-
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
 
@@ -152,7 +150,7 @@ public class RobotContainer {
 
     elevatorSubsystem.setDefaultCommand(
         new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(controller.getLeftY(), 0.2)));
+            elevatorSubsystem, () -> ControllerUtil.deadband(jason.getLeftY(), 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -199,16 +197,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
-    controller.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
-    controller.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
+    jason.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
+    jason.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+    jason.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
 
-    controller.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
-    controller.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
-    controller
+    jason.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
+    jason.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
+    jason
         .y()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
-    controller
+    jason
         .a()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MIN_HEIGHT, 20));
 
