@@ -12,7 +12,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.intakeState;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

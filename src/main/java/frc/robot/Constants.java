@@ -25,11 +25,11 @@ import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
 import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
 import frc.util.pathing.FieldObstructionMap;
-import java.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Set;
 import java.util.List;
+import java.util.Map;
+import java.util.NodeSelectorUtility.ScoreTypeIdentifier;
+import java.util.Set;
 
 @SuppressWarnings("java:S1118")
 /**
@@ -222,44 +222,35 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MAX_HEIGHT,102.5)),
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT,102.5))
-                  .canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.MAX_HEIGHT, 102.5)),
+              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 102.5)).canWaitHere(),
               new ScoreStep(new ElevatorState(Elevator.MAX_HEIGHT, 87)).canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(Elevator.MIN_HEIGHT, 97),
-                  IntakeSubsystem.Modes.OUTTAKE)),
+                  new ElevatorState(Elevator.MIN_HEIGHT, 97), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 90)),
               new ScoreStep(new ElevatorState(6, 90)).canWaitHere(),
               new ScoreStep(new ElevatorState(6, 72)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(Elevator.MIN_HEIGHT, 72),
-                  IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ArmState(Elevator.MIN_HEIGHT, 72), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 27.7))
-                  .canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 27.7)).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 95)),
               new ScoreStep(new ElevatorState(20, 95)).canWaitHere(),
-              new ScoreStep(
-                  new ArmState(Elevator.MIN_HEIGHT, 95),
-                  IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ArmState(Elevator.MIN_HEIGHT, 95), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
               new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 67.32)),
               new ScoreStep(new ElevatorState(0.75, 67.32)).canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(Elevator.MIN_HEIGHT, 67.32),
-                  IntakeSubsystem.Modes.OUTTAKE)),
+                  new ElevatorState(Elevator.MIN_HEIGHT, 67.32), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 29.7))
-                  .canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 29.7)).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
 
   public static final class Vision {
