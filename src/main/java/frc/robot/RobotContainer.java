@@ -197,10 +197,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    jason.a().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD));
-    jason.b().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
-    jason.x().onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
-
     jason.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
     jason.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
     jason
@@ -307,16 +303,16 @@ public class RobotContainer {
                 drivebaseSubsystem, intakeSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
 
     // outtake states
+    
     jasonLayer
         .off(jason.leftTrigger())
         .whileTrue(
-            new ForceOuttakeSubsystemModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE));
+            new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE));
     jasonLayer
         .off(jason.rightTrigger())
-        .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OUTTAKE));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
     jasonLayer
         .off(jason.x())
-        .onTrue(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.OFF))
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
 
     // intake presets
