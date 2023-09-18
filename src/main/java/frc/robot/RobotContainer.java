@@ -309,7 +309,7 @@ public class RobotContainer {
     //     .whileTrue(new ForceOuttakeSubsystemModeCommand(intakeSubsystem, IntakeMode.INTAKE));
     jasonLayer
         .off(jason.rightTrigger())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.OUTTAKE));
     jasonLayer
         .off(jason.x())
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))
