@@ -195,6 +195,12 @@ public final class Constants {
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
     }
 
+    public static final class Setpoints {
+      public static final double STOWED = 10.0;
+      public static final double HANDOFF = 5.0;
+      public static final double SHELF_INTAKE = 20.0;
+    }
+
     public static final double MAX_HEIGHT = 10;
     public static final double MIN_HEIGHT = 0;
 
