@@ -28,7 +28,6 @@ import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import java.util.Set;
 
 @SuppressWarnings("java:S1118")

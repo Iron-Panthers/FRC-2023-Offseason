@@ -26,9 +26,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX wristMotor;
   private double currentHeight;
   private double targetHeight;
-  private double desiredAngle;
-  // FIXME change "desiredAngle" to "targetAngle" - keep naming consistent!
-  // FIXME also add a currentAngle variable
+  private double currentAngle;
+  private double targetAngle;
 
   private PIDController heightController;
   private PIDController wristController;
@@ -58,7 +57,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     currentHeight = 0.0;
     targetHeight = 0.0;
-    desiredAngle = 0.0;
+    currentAngle = 0.0;
+    targetAngle = 0.0;
 
     right_motor.configFactoryDefault();
     left_motor.configFactoryDefault();
@@ -91,22 +91,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // FIXME getCurrentTicks is for the elevator, not the wrist
   private double getCurrentTicks() {
-    return wristMotor.getSelectedSensorPosition();
+    return rightMotor.getSelectedSensorPosition();
   }
 
   // FIXME you can just use the cancoder for this, that's what it's for
   public double getCurrentAngleDegrees() {
-    return getCurrentRotation() * Elevator.WRIST_DEGREES;
-  }
-
-  // FIXME unnecessary once you fix getCurrentAngle method
-  public double getCurrentRotation() {
-    return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
-  }
-
-  // FIXME unnecessary once you fix getCurrentAngle method
-  public static double ticksToAngleDegree(double ticks) {
-    return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
+    return canCoder.getAbsolutePosition();
   }
 
   public void setTargetHeight(double targetHeight) {
@@ -114,8 +104,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // FIXME rename with consistent naming
-  public void setDesiredAngle(double desiredAngle) {
-    this.desiredAngle = desiredAngle;
+  public void setTargetAngle(double targetAngle) {
+    this.targetAngle = targetAngle;
   }
 
   public double getTargetHeight() {
@@ -131,13 +121,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     currentHeight = getHeight();
+    currentAngle = getCurrentAngleDegrees();
     // FIXME update the current angle using the cancoder
     double motorPower = heightController.calculate(currentHeight, targetHeight);
     right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
-            wristController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
+            wristController.calculate(currentAngle, targetAngle), -0.25, 0.25));
     // FIXME replace all uses of "canCOder.getAbsolutePosition()" with currentAngle (variable)
   }
 }
