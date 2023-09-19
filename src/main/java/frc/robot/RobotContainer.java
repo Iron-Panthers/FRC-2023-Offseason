@@ -38,7 +38,6 @@ import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
-import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
@@ -188,8 +187,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // FIXME the left and right triggers are already in use, either change or delete these button
     // bindings
-    jason.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
-    jason.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
+    jason.leftBumper().onTrue(new WristManualCommand(elevatorSubsystem, 0));
+    jason.rightBumper().onTrue(new WristManualCommand(elevatorSubsystem, 20));
     jason
         .y()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
@@ -300,11 +299,7 @@ public class RobotContainer {
     jasonLayer
         .off(jason.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.OUTTAKE));
-    jasonLayer
-        .off(jason.x())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))
-        // FIXME delete this line, you can't be in both HOLD and OFF at the same time
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
+    jasonLayer.off(jason.x()).onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF));
 
     // intake presets
     // jasonLayer
@@ -325,7 +320,7 @@ public class RobotContainer {
     //     .whileTrue(
     //         new ForceOuttakeSubsystemModeCommand(
     //             intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
-            // FIXME delete or replace outtake stuff with new intake stuff
+    // FIXME delete or replace outtake stuff with new intake stuff
 
     // ground pickup
     jasonLayer
