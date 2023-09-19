@@ -40,7 +40,6 @@ import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.VibrateHIDCommand;
-import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -186,10 +185,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // FIXME the left and right triggers are already in use, either change or delete these button
-    // bindings
-    jason.leftBumper().onTrue(new WristManualCommand(elevatorSubsystem, 0));
-    jason.rightBumper().onTrue(new WristManualCommand(elevatorSubsystem, 20));
     jason
         .y()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
@@ -316,8 +311,7 @@ public class RobotContainer {
         // FIXME: This error is here to kind of guide you...
         .onTrue(
             new ElevatorPositionCommand(
-                // FIXME make elevator position setpoints in constants using an ElevatorState record
-                elevatorSubsystem, 0, Constants.Elevator.Setpoints.SHELF_INTAKE));
+                elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE));
     //     .whileTrue(
     //         new ForceOuttakeSubsystemModeCommand(
     //             intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
@@ -416,7 +410,7 @@ public class RobotContainer {
 
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
-            new ScoreStep(new ElevatorState(35, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
+            new ScoreStep(ElevatorState(35, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
             new ScoreStep(IntakeMode.OUTTAKE));
     final boolean[] intakeLow = {false};
     final Map<String, Command> eventMap =
@@ -463,13 +457,13 @@ public class RobotContainer {
                     intakeSubsystem, elevatorSubsystem, drivingCubeOuttake.subList(1, 2), 1)
                 .andThen(
                     new ElevatorPositionCommand(
-                            elevatorSubsystem, 0, Constants.Elevator.Setpoints.STOWED)
+                            elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
                         .andThen(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))),
             "armbat preload",
             new ElevatorPositionCommand(elevatorSubsystem, 30, 0)
                 .andThen(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, 0, Constants.Elevator.Setpoints.STOWED)));
+                        elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)));
   }
 
   /**

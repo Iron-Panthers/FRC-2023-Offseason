@@ -199,9 +199,9 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final double STOWED = 10.0;
-      public static final double HANDOFF = 5.0;
-      public static final double SHELF_INTAKE = 20.0;
+      public static final ElevatorState STOWED = ElevatorState(0, 0);
+      public static final ElevatorState HANDOFF = ElevatorState(10, 10);
+      public static final ElevatorState SHELF_INTAKE = ElevatorState(20, 20);
     }
 
     public static final double MAX_HEIGHT = 10;
