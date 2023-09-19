@@ -197,6 +197,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // FIXME the left and right triggers are already in use, either change or delete these button
+    // bindings
     jason.leftTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 0));
     jason.rightTrigger().onTrue(new WristManualCommand(elevatorSubsystem, 20));
     jason
@@ -303,16 +305,16 @@ public class RobotContainer {
                 drivebaseSubsystem, intakeSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
 
     // outtake states
-    
     jasonLayer
         .off(jason.leftTrigger())
-        .whileTrue(new ForceOuttakeSubsystemModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+        .whileTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
     jasonLayer
         .off(jason.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OUTTAKE));
     jasonLayer
         .off(jason.x())
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))
+        // FIXME delete this line, you can't be in both HOLD and OFF at the same time
         .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
 
     // intake presets
@@ -323,27 +325,24 @@ public class RobotContainer {
     //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem,
     // IntakeMode.INTAKE));
 
+    // shelf intake
     jasonLayer
         .off(jason.b())
         // FIXME: This error is here to kind of guide you...
         .onTrue(
             new ElevatorPositionCommand(
+                // FIXME make elevator position setpoints in constants using an ElevatorState record
                 elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
         .whileTrue(
+            // FIXME delete or replace outtake stuff with new intake stuff
             new ForceOuttakeSubsystemModeCommand(
                 intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
 
-    // Reset arm position
-    jasonLayer
-        .off(jason.y())
-        // FIXME: This error is here to kind of guide you...
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD));
-    jason.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
-
+    // ground pickup
     jasonLayer
         .off(jason.a())
         .onTrue(
+            // FIXME make a ground pickup command
             new GroundPickupCommand(
                 intakeSubsystem,
                 outtakeSubsystem,
@@ -352,25 +351,6 @@ public class RobotContainer {
                     jason.getHID().getPOV() == 180
                         ? IntakeSubsystem.IntakeMode.INTAKE_LOW
                         : IntakeSubsystem.IntakeMode.INTAKE));
-
-    jason.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
-
-    jason
-        .back()
-        .whileTrue(
-            new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE)
-                // FIXME: This error is here to kind of guide you...
-                .alongWith(
-                    new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.HANDOFF))
-                .alongWith(
-                    new ForceOuttakeSubsystemModeCommand(
-                        outtakeSubsystem, IntakeSubsystem.IntakeMode.OFF)))
-        .onFalse(
-            // FIXME: This error is here to kind of guide you...
-            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
-                .alongWith(
-                    new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD)));
 
     // scoring
     // jasonLayer
@@ -441,6 +421,7 @@ public class RobotContainer {
   /**
    * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
    */
+  // FIXME pretty much all the rest of this needs to be fixed for elevator and intake subsystems
   private void setupAutonomousCommands() {
     if (Config.RUN_PATHPLANNER_SERVER) {
       PathPlannerServer.startServer(5811);

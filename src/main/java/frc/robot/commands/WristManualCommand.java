@@ -22,6 +22,8 @@ public class WristManualCommand extends CommandBase {
   private CANCoder canCoder;
 
   public WristManualCommand(ElevatorSubsystem subsystem, double desiredAngle) {
+    // FIXME woahh there we cant be putting pid controllers in commands now
+    // all this logic belongs in the subsystem!!
     this.desiredAngle = desiredAngle;
     pidController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
@@ -34,11 +36,14 @@ public class WristManualCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    // FIXME you should set the desired angle in here
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // FIXME this logic is already in the subsystem you don't need it again here!
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(

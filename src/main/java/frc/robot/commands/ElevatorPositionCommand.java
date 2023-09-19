@@ -10,11 +10,13 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem ElevatorSubsystem;
   private final double targetHeight;
-  private final double desiredAngle;
+  private final double desiredAngle; // FIXME rename to "targetAngle"
 
   /** Creates a new ArmPositionCommand. */
   public ElevatorPositionCommand(
       ElevatorSubsystem elevatorSubsystem, double targetHeight, double desiredAngle) {
+    // FIXME make a second constructor that requires an ElevatorState instead of two doubles for
+    // height and angle
     this.ElevatorSubsystem = elevatorSubsystem;
     this.targetHeight = targetHeight;
     this.desiredAngle = desiredAngle;

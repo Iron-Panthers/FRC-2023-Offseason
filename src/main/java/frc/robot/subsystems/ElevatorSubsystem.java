@@ -27,6 +27,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double currentHeight;
   private double targetHeight;
   private double desiredAngle;
+  // FIXME change "desiredAngle" to "targetAngle" - keep naming consistent!
+  // FIXME also add a currentAngle variable
 
   private PIDController heightController;
   private PIDController wristController;
@@ -35,9 +37,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
   private double filterOutput;
-
-  // // FIXME: Is that what you need/want??
-  // public static record ArmState(double angle, double extension) {}
 
   // stator limits
   private LinearFilter filter;
@@ -51,7 +50,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     left_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     right_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
-    
+
     left_motor.follow(right_motor);
 
     wristController = new PIDController(0, 0, 0);
@@ -78,7 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
   }
 
-  // FIX ME: all the numbers wrong in constants
+  // FIXME: all the numbers wrong in constants
   public static double heightToTicks(double height) {
     return height
         * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
@@ -90,18 +89,22 @@ public class ElevatorSubsystem extends SubsystemBase {
         / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
+  // FIXME getCurrentTicks is for the elevator, not the wrist
   private double getCurrentTicks() {
     return wristMotor.getSelectedSensorPosition();
   }
 
-  public double getCurrentRotation() {
-    return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
-  }
-
+  // FIXME you can just use the cancoder for this, that's what it's for
   public double getCurrentAngleDegrees() {
     return getCurrentRotation() * Elevator.WRIST_DEGREES;
   }
 
+  // FIXME unnecessary once you fix getCurrentAngle method
+  public double getCurrentRotation() {
+    return (getCurrentTicks() / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO;
+  }
+
+  // FIXME unnecessary once you fix getCurrentAngle method
   public static double ticksToAngleDegree(double ticks) {
     return (ticks / Elevator.WRIST_TICKS) * Elevator.WRIST_GEAR_RATIO * Elevator.WRIST_DEGREES;
   }
@@ -110,6 +113,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetHeight = targetHeight;
   }
 
+  // FIXME rename with consistent naming
   public void setDesiredAngle(double desiredAngle) {
     this.desiredAngle = desiredAngle;
   }
@@ -122,14 +126,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     return ticksToHeight(right_motor.getSelectedSensorPosition());
   }
 
+  // FIXME organize the elevator methods together and the wrist methods together
+
   @Override
   public void periodic() {
     currentHeight = getHeight();
+    // FIXME update the current angle using the cancoder
     double motorPower = heightController.calculate(currentHeight, targetHeight);
     right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
             wristController.calculate(canCoder.getAbsolutePosition(), desiredAngle), -0.25, 0.25));
+    // FIXME replace all uses of "canCOder.getAbsolutePosition()" with currentAngle (variable)
   }
 }
