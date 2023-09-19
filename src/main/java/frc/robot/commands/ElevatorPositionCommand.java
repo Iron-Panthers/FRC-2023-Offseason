@@ -6,20 +6,28 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 
 public class ElevatorPositionCommand extends CommandBase {
-  private final ElevatorSubsystem ElevatorSubsystem;
-  private final double targetHeight;
-  private final double targetAngle; // FIXME rename to "targetAngle"
+  private final ElevatorSubsystem elevatorSubsystem;
+  private double targetHeight;
+  private double targetAngle;
 
-  /** Creates a new ArmPositionCommand. */
+  /** Creates a new ElevatorPositionCommand. */
   public ElevatorPositionCommand(
-      ElevatorSubsystem elevatorSubsystem, double targetHeight, double targetAngle) {
-    // FIXME make a second constructor that requires an ElevatorState instead of two doubles for
-    // height and angle
-    this.ElevatorSubsystem = elevatorSubsystem;
+      ElevatorSubsystem subsystem, double targetHeight, double targetAngle) {
+    this.elevatorSubsystem = subsystem;
     this.targetHeight = targetHeight;
     this.targetAngle = targetAngle;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(elevatorSubsystem);
+  }
+
+  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, ElevatorState elevatorState) {
+    // height and angle
+    this.elevatorSubsystem = elevatorSubsystem;
+    targetHeight = elevatorState.height();
+    targetAngle = elevatorState.angle();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
   }
@@ -27,8 +35,8 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ElevatorSubsystem.setTargetHeight(targetHeight);
-    ElevatorSubsystem.setTargetAngle(targetAngle);
+    elevatorSubsystem.setTargetHeight(targetHeight);
+    elevatorSubsystem.setTargetAngle(targetAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
