@@ -14,21 +14,18 @@ import frc.robot.subsystems.IntakeSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundPickupCommand extends SequentialCommandGroup {
   /** Creates a new GroundPickupCommand. */
-  public GroundPickupCommand(
-    ElevatorSubsystem elevatorSubsystem,
-    IntakeSubsystem intakeSubsystem
-  ) {
+  public GroundPickupCommand(ElevatorSubsystem elevatorSubsystem, IntakeSubsystem intakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-    new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE)
-      .deadlineWith(
         new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE)
-        .alongWith(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.HANDOFF)))
-      .andThen(
-        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)
-        .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD))));
-        //hold???
-      
+            .deadlineWith(
+                new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.HANDOFF))
+            .andThen(
+                new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)
+                    .alongWith(
+                        new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.HOLD))));
+    // hold???
+
   }
 }

@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
 import frc.robot.commands.AlignGamepieceCommand;
@@ -408,7 +407,7 @@ public class RobotContainer {
 
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
-            new ScoreStep(ElevatorState(35, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
+            new ScoreStep(ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
             new ScoreStep(IntakeMode.OUTTAKE));
     final boolean[] intakeLow = {false};
     final Map<String, Command> eventMap =

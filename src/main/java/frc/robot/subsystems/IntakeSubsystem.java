@@ -42,6 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(TalonFXControlMode.PercentOutput, -1);
       case HOLD:
       case OFF:
+        intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
       default:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }

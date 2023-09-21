@@ -28,6 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetHeight;
   private double currentAngle;
   private double targetAngle;
+  private double statorCurrentLimit;
 
   private PIDController heightController;
   private PIDController wristController;
@@ -59,6 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetHeight = 0.0;
     currentAngle = 0.0;
     targetAngle = 0.0;
+    statorCurrentLimit = 10.0;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
@@ -72,7 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.setNeutralMode(NeutralMode.Brake);
     wristMotor.setNeutralMode(NeutralMode.Brake);
 
-    filter = LinearFilter.movingAverage(35);
+    filter = LinearFilter.movingAverage(30);
 
     tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
   }
@@ -117,11 +119,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     currentHeight = getHeight();
     currentAngle = getCurrentAngleDegrees();
-    double motorPower = heightController.calculate(currentHeight, targetHeight);
-    rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
+
+    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
+      double motorPower = heightController.calculate(currentHeight, targetHeight);
+      rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
+    } else {
+      rightMotor.set(TalonFXControlMode.PercentOutput, 0);
+    }
+
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(
-            wristController.calculate(currentAngle, targetAngle), -0.25, 0.25));
+        MathUtil.clamp(wristController.calculate(currentAngle, targetAngle), -0.25, 0.25));
   }
 }
