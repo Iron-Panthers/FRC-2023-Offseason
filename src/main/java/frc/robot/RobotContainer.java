@@ -31,6 +31,7 @@ import frc.robot.commands.DriveToPlaceCommand;
 import frc.robot.commands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
+import frc.robot.commands.GroundPickupCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HashMapCommand;
 import frc.robot.commands.IntakeModeCommand;
@@ -54,6 +55,7 @@ import frc.util.NodeSelectorUtility;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeSelection;
 import frc.util.NodeSelectorUtility.NodeType;
+import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.SharedReference;
 import frc.util.Util;
 import frc.util.pathing.AlliancePose2d;
@@ -322,11 +324,11 @@ public class RobotContainer {
         .onTrue(
             // FIXME make a ground pickup command
             new GroundPickupCommand(
-                intakeSubsystem,
                 elevatorSubsystem,
+                intakeSubsystem,
                 () ->
                     jason.getHID().getPOV() == 180
-                        ? IntakeSubsystem.IntakeMode.INTAKE_LOW
+                        ? IntakeSubsystem.IntakeMode.HOLD
                         : IntakeSubsystem.IntakeMode.INTAKE));
 
     // scoring
@@ -358,7 +360,7 @@ public class RobotContainer {
 
     var scoreCommandMap = new HashMap<NodeSelectorUtility.ScoreTypeIdentifier, Command>();
 
-    for (var scoreType : Constants.SCORE_STEP_MAP.keySet())
+    for (ScoreTypeIdentifier scoreType : Constants.SCORE_STEP_MAP.keySet())
       scoreCommandMap.put(
           scoreType,
           new ScoreCommand(

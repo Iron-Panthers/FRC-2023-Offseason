@@ -6,31 +6,28 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.function.DoubleSupplier;
 
 public class WristManualCommand extends CommandBase {
-  private double targetAngle;
+  private DoubleSupplier supplier;
   private ElevatorSubsystem subsystem;
 
-  public WristManualCommand(ElevatorSubsystem subsystem, double targetAngle) {
-    this.targetAngle = targetAngle;
+  public WristManualCommand(ElevatorSubsystem subsystem, DoubleSupplier supplier) {
+    this.supplier = supplier;
     this.subsystem = subsystem;
     addRequirements(subsystem);
-  }
-
-  public void settargetAngle(double targetAngle) {
-    this.targetAngle = targetAngle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    subsystem.setTargetAngle(targetAngle);
+    subsystem.setTargetAngle(supplier.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    subsystem.setTargetAngle(targetAngle);
+    subsystem.setTargetAngle(supplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
