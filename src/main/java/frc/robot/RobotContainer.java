@@ -324,7 +324,6 @@ public class RobotContainer {
             // FIXME make a ground pickup command
             new GroundPickupCommand(
                 intakeSubsystem,
-                outtakeSubsystem,
                 elevatorSubsystem,
                 () ->
                     jason.getHID().getPOV() == 180
@@ -400,7 +399,6 @@ public class RobotContainer {
   /**
    * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
    */
-  // FIXME pretty much all the rest of this needs to be fixed for elevator and intake subsystems
   private void setupAutonomousCommands() {
     if (Config.RUN_PATHPLANNER_SERVER) {
       PathPlannerServer.startServer(5811);

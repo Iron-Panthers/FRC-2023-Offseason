@@ -21,13 +21,14 @@ import frc.robot.Constants.Elevator;
 /** Add your docs here. */
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private TalonFX left_motor;
-  private TalonFX right_motor;
+  private TalonFX leftMotor;
+  private TalonFX rightMotor;
   private TalonFX wristMotor;
   private double currentHeight;
   private double targetHeight;
-  private double targetAngle;
   private double currentAngle;
+  private double targetAngle;
+
   private PIDController heightController;
   private PIDController wristController;
   private CANCoder canCoder;
@@ -45,31 +46,30 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     heightController = new PIDController(0.0001, 0, 0);
 
-    left_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
-    right_motor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
+    leftMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
+    rightMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
 
-    left_motor.follow(right_motor);
+    leftMotor.follow(rightMotor);
 
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
 
     currentHeight = 0.0;
     targetHeight = 0.0;
+    currentAngle = 0.0;
     targetAngle = 0.0;
-    // FIXME Add way to get current angle value
-    currentAngle = 0;
 
-    right_motor.configFactoryDefault();
-    left_motor.configFactoryDefault();
+    rightMotor.configFactoryDefault();
+    leftMotor.configFactoryDefault();
 
-    right_motor.clearStickyFaults();
-    left_motor.clearStickyFaults();
+    rightMotor.clearStickyFaults();
+    leftMotor.clearStickyFaults();
 
-    right_motor.configOpenloopRamp(.5);
+    rightMotor.configOpenloopRamp(.5);
 
-    right_motor.setNeutralMode(NeutralMode.Brake);
-    left_motor.setNeutralMode(NeutralMode.Brake);
+    rightMotor.setNeutralMode(NeutralMode.Brake);
+    leftMotor.setNeutralMode(NeutralMode.Brake);
     wristMotor.setNeutralMode(NeutralMode.Brake);
 
     filter = LinearFilter.movingAverage(35);
@@ -89,22 +89,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
-  // FIXME getCurrentTicks is for the elevator, not the wrist
   private double getCurrentTicks() {
-    return right_motor.getSelectedSensorPosition();
-  }
-
-  // FIXME you can just use the cancoder for this, that's what it's for
-  public double getCurrentAngleDegrees() {
-    return canCoder.getAbsolutePosition();
+    return rightMotor.getSelectedSensorPosition();
   }
 
   public void setTargetHeight(double targetHeight) {
     this.targetHeight = targetHeight;
-  }
-
-  public void setTargetAngle(double targetAngle) {
-    this.targetAngle = targetAngle;
   }
 
   public double getTargetHeight() {
@@ -112,22 +102,26 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getHeight() {
-    return ticksToHeight(right_motor.getSelectedSensorPosition());
+    return ticksToHeight(getCurrentTicks());
   }
 
-  // FIXME organize the elevator methods together and the wrist methods together
+  public double getCurrentAngleDegrees() {
+    return canCoder.getAbsolutePosition();
+  }
+
+  public void setTargetAngle(double targetAngle) {
+    this.targetAngle = targetAngle;
+  }
 
   @Override
   public void periodic() {
     currentHeight = getHeight();
     currentAngle = getCurrentAngleDegrees();
-    // FIXME update the current angle using the cancoder
     double motorPower = heightController.calculate(currentHeight, targetHeight);
-    right_motor.set(TalonFXControlMode.PercentOutput, motorPower);
+    rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
-            wristController.calculate(canCoder.getAbsolutePosition(), targetAngle), -0.25, 0.25));
-    // FIXME replace all uses of "canCOder.getAbsolutePosition()" with currentAngle (variable)
+            wristController.calculate(currentAngle, targetAngle), -0.25, 0.25));
   }
 }
