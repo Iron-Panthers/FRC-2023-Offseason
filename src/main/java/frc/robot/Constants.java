@@ -197,9 +197,10 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final ElevatorState STOWED = ElevatorState(0, 0);
-      public static final ElevatorState HANDOFF = ElevatorState(10, 10);
-      public static final ElevatorState SHELF_INTAKE = ElevatorState(20, 20);
+      public static final ElevatorState STOWED = new ElevatorState(20, 0);
+      public static final ElevatorState HANDOFF = new ElevatorState(10, 10);
+      public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
+      public static final ElevatorState GROUND_INTAKE = new Elevator(0, 0);
     }
 
     public static final double MAX_HEIGHT = 10;
