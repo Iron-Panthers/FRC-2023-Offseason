@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,6 +16,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX intakeMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
   private IntakeMode currentIntakeMode;
+  private LinearFilter filter;
+  private double statorCurrentLimit;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -22,6 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
     currentIntakeMode = IntakeMode.OFF;
     intakeMotor.setNeutralMode(NeutralMode.Brake);
+    filter = LinearFilter.movingAverage(30);
   }
 
   public static record intakeState(IntakeMode mode) {}
@@ -58,6 +62,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (filter.calculate(intakeMotor.getStatorCurrent()) >= statorCurrentLimit) {
+      currentIntakeMode = IntakeMode.HOLD;
+    }
 
     intakePeriodic(currentIntakeMode);
   }

@@ -24,12 +24,9 @@ public class GroundPickupCommand extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE)
-            .andThen(
-                new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
+            .andThen(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
             .andThen(
                 new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)
                     .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD))));
-
-
   }
 }

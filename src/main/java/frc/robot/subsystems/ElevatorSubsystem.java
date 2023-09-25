@@ -60,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetHeight = 0.0;
     currentAngle = 0.0;
     targetAngle = 0.0;
-    statorCurrentLimit = 10.0;
+    statorCurrentLimit = 50.0;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
