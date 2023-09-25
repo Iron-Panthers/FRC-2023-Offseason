@@ -142,6 +142,10 @@ public class RobotContainer {
         new ElevatorManualCommand(
             elevatorSubsystem, () -> ControllerUtil.deadband(jason.getLeftY(), 0.2)));
 
+    elevatorSubsystem.setDefaultCommand(
+        new WristManualCommand(
+            elevatorSubsystem, () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
     SmartDashboard.putBoolean("don't init swerve modules", Config.DISABLE_SWERVE_MODULE_INIT);

@@ -19,6 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private LinearFilter filter;
   private double statorCurrentLimit;
 
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(0);
