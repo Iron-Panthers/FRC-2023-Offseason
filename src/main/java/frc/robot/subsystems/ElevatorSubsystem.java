@@ -107,6 +107,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return targetHeight;
   }
 
+  public double getTargetAngle() {
+    return targetAngle;
+  }
+
   public double getHeight() {
     return ticksToHeight(getCurrentTicks());
   }

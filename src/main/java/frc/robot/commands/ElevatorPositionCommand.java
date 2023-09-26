@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.util.Util;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
@@ -50,8 +51,18 @@ public class ElevatorPositionCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    // add a condition to end the command when the elevator reaches target position
+    return Util.epsilonEquals(
+            elevatorSubsystem.getCurrentAngleDegrees(),
+            elevatorSubsystem.getTargetAngle(),
+            Thresholds.Angles.EPSILON)
+        && Util.epsilonEquals(
+            elevatorSubsystem.getHeight(),
+            elevatorSubsystem.getTargetHeight(),
+            Thresholds.Extensions.EPSILON);
+    // && extensionController.atSetpoint()
+    // && angleController.atSetpoint();
+    // add a condition to end the command when the elevator
+    // reaches target position
     // look at 2022 and 2023 code
   }
 }
