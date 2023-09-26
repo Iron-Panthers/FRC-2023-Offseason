@@ -201,11 +201,11 @@ public final class Constants {
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
       public static final ElevatorState GROUND_INTAKE = new Elevator(0, 0);
       public static final ElevatorState SCORE_HIGH = new Elevator(MAX_HEIGHT, 0);
-      public static final ElevatorState SCORE_MID = new Elevator(15, 0);
-      public static final ElevatorState SCORE_LOW = new Elevator(0, 0);
+      public static final ElevatorState SCORE_MID = new Elevator(15, 20);
+      public static final ElevatorState SCORE_LOW = new Elevator(MIN_HEIGHT, 40);
     }
 
-    public static final double MAX_HEIGHT = 10;
+    public static final double MAX_HEIGHT = 20;
     public static final double MIN_HEIGHT = 0;
 
     public static final int ELEVATOR_TICKS = 2048;
@@ -234,35 +234,29 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MAX_HEIGHT, 102.5)),
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 102.5)).canWaitHere(),
-              new ScoreStep(new ElevatorState(Elevator.MAX_HEIGHT, 87)).canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_HIGH)).canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(Elevator.MIN_HEIGHT, 97), IntakeSubsystem.Modes.OUTTAKE)),
+                  new ElevatorState(Elevator.SCORE_HIGH), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 90)),
-              new ScoreStep(new ElevatorState(6, 90)).canWaitHere(),
-              new ScoreStep(new ElevatorState(6, 72)).canWaitHere(),
-              new ScoreStep(new ArmState(Elevator.MIN_HEIGHT, 72), IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_MID)).canWaitHere(),
+              new ScoreStep(new ArmState(Elevator.SCORE_MID), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 27.7)).canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_LOW)).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 95)),
-              new ScoreStep(new ElevatorState(20, 95)).canWaitHere(),
-              new ScoreStep(new ArmState(Elevator.MIN_HEIGHT, 95), IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_HIGH))canWaitHere(),
+              new ScoreStep(new ArmState(Elevator.SCORE_HIGH), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 67.32)),
-              new ScoreStep(new ElevatorState(0.75, 67.32)).canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_MID)).canWaitHere(),
               new ScoreStep(
-                  new ElevatorState(Elevator.MIN_HEIGHT, 67.32), IntakeSubsystem.Modes.OUTTAKE)),
+                  new ElevatorState(Elevator.SCORE_MID), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.MIN_HEIGHT, 29.7)).canWaitHere(),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_LOW)).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
 
   public static final class Vision {
