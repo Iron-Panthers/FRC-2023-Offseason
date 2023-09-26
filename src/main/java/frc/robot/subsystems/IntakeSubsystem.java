@@ -11,6 +11,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Intake;
 
 public class IntakeSubsystem extends SubsystemBase {
   private TalonFX intakeMotor;
@@ -19,17 +20,18 @@ public class IntakeSubsystem extends SubsystemBase {
   private LinearFilter filter;
   private double statorCurrentLimit;
 
-
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(0);
-    shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
-    currentIntakeMode = IntakeMode.OFF;
-    intakeMotor.setNeutralMode(NeutralMode.Brake);
-    filter = LinearFilter.movingAverage(30);
-  }
 
-  public static record intakeState(IntakeMode mode) {}
+    currentIntakeMode = IntakeMode.OFF;
+
+    intakeMotor.setNeutralMode(NeutralMode.Brake);
+
+    filter = LinearFilter.movingAverage(30);
+
+    shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
+  }
 
   public enum IntakeMode {
     INTAKE,
@@ -42,12 +44,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     switch (mode) {
       case INTAKE:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
+        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
       case OUTTAKE:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, -1);
+        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
       case HOLD:
+        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.HOLD_PERCENT);
       case OFF:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
       default:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }

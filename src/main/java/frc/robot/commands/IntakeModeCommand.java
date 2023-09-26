@@ -30,10 +30,7 @@ public class IntakeModeCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    // FIXME delete this line its unneccessary
-    intakeSubsystem.setMode(intakeSubsystem.getMode());
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +39,10 @@ public class IntakeModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (intakeSubsystem.getMode() == IntakeMode.HOLD
+        || intakeSubsystem.getMode() == IntakeMode.OFF) {
+      return true;
+    }
     return false;
   }
 }

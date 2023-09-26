@@ -40,6 +40,7 @@ import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.VibrateHIDCommand;
+import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -65,7 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -191,13 +191,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    jason
-        .y()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MAX_HEIGHT, 0));
-    jason
-        .a()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.MIN_HEIGHT, 20));
-
     // vibrate jason controller when in layer
     jasonLayer.whenChanged(
         (enabled) -> {
@@ -317,17 +310,13 @@ public class RobotContainer {
         // FIXME: This error is here to kind of guide you...
         .onTrue(
             new ElevatorPositionCommand(
-                elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE));
-    //     .whileTrue(
-    //         new ForceOuttakeSubsystemModeCommand(
-    //             intakeSubsystem, IntakeSubsystem.IntakeMode.INTAKE));
-    // FIXME delete or replace outtake stuff with new intake stuff
+                elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
 
     // ground pickup
     jasonLayer
         .off(jason.a())
         .onTrue(
-            // FIXME make a ground pickup command
             new GroundPickupCommand(
                 elevatorSubsystem,
                 intakeSubsystem,
@@ -414,7 +403,7 @@ public class RobotContainer {
 
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
-            new ScoreStep(ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
+            new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
             new ScoreStep(IntakeMode.OUTTAKE));
     final boolean[] intakeLow = {false};
     final Map<String, Command> eventMap =

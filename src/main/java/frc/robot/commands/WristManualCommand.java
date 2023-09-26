@@ -9,25 +9,25 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class WristManualCommand extends CommandBase {
-  private DoubleSupplier supplier;
-  private ElevatorSubsystem subsystem;
+  private DoubleSupplier rate;
+  private ElevatorSubsystem elevatorSubsystem;
 
-  public WristManualCommand(ElevatorSubsystem subsystem, DoubleSupplier supplier) {
-    this.supplier = supplier;
-    this.subsystem = subsystem;
-    addRequirements(subsystem);
+  public WristManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+    this.rate = rate;
+    this.elevatorSubsystem = elevatorSubsystem;
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    subsystem.setTargetAngle(supplier.getAsDouble());
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    subsystem.setTargetAngle(supplier.getAsDouble());
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

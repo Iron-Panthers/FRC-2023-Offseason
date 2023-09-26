@@ -198,9 +198,11 @@ public final class Constants {
 
     public static final class Setpoints {
       public static final ElevatorState STOWED = new ElevatorState(20, 0);
-      public static final ElevatorState HANDOFF = new ElevatorState(10, 10);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
       public static final ElevatorState GROUND_INTAKE = new Elevator(0, 0);
+      public static final ElevatorState SCORE_HIGH = new Elevator(MAX_HEIGHT, 0);
+      public static final ElevatorState SCORE_MID = new Elevator(15, 0);
+      public static final ElevatorState SCORE_LOW = new Elevator(0, 0);
     }
 
     public static final double MAX_HEIGHT = 10;
@@ -210,16 +212,18 @@ public final class Constants {
     public static final double ELEVATOR_GEAR_RATIO = 1.0;
     public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
 
-    public static final double WRIST_TICKS = 2048;
+    public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
     public static final double WRIST_GEAR_RATIO = 0.061;
   }
 
   public static final class Intake {
 
-    public static final double ZERO_PERCENT = .3;
+    public static final double INTAKE_PERCENT = 1;
 
-    public static final double ZEROING_STATOR_LIMIT = 40;
+    public static final double OUTTAKE_PERCENT = -1;
+
+    public static final double HOLD_PERCENT = 0.15;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");

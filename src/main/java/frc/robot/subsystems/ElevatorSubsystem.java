@@ -38,21 +38,21 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double filterOutput;
 
+  // add soft limits - check 2022 frc code
+
   // stator limits
   private LinearFilter filter;
 
   public static record ElevatorState(double height, double angle) {}
 
   public ElevatorSubsystem() {
-
-    heightController = new PIDController(0.0001, 0, 0);
-
     leftMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     rightMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
 
     leftMotor.follow(rightMotor);
 
+    heightController = new PIDController(0.0001, 0, 0);
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
 

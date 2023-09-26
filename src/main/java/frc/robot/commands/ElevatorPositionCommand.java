@@ -51,5 +51,7 @@ public class ElevatorPositionCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+    // add a condition to end the command when the elevator reaches target position
+    // look at 2022 and 2023 code
   }
 }
