@@ -76,7 +76,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     filter = LinearFilter.movingAverage(30);
 
-    tab.addDouble("Motor Position", () -> canCoder.getAbsolutePosition());
+    tab.addDouble("Wrist Motor Position", () -> canCoder.getAbsolutePosition());
+    tab.addDouble("Wrist Target Angle", () -> targetAngle);
+    tab.addDouble("Wrist Current Angle", () -> currentAngle);
+    tab.addDouble("Elevator Target Height", () -> targetHeight);
+    tab.addDouble("Elevator Current Height", () -> currentHeight);
   }
 
   // FIXME: all the numbers wrong in constants

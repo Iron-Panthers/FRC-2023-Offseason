@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,6 +25,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
+import frc.robot.autonomous.commands.MobilityAuto;
+import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobility;
+import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobilityEngage;
+import frc.robot.autonomous.commands.N2_Engage;
+import frc.robot.autonomous.commands.N3_1ConePlusMobility;
+import frc.robot.autonomous.commands.N3_1ConePlusMobilityEngage;
+import frc.robot.autonomous.commands.N6_1ConePlusEngage;
+import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
+import frc.robot.autonomous.commands.N9_1ConePlusMobility;
+import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.AlignGamepieceCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -39,11 +50,13 @@ import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
+import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
@@ -299,9 +312,9 @@ public class RobotContainer {
     // intake presets
     // jasonLayer
     //     .off(jason.a())
-    //     .onTrue(new ScoreCommand(outtakeSubsystem, elevatorSubsystem, Setpoints.GROUND_INTAKE))
+    //     .onTrue(new ScoreCommand( elevatorSubsystem, Setpoints.GROUND_INTAKE))
     //     .whileTrue(
-    //         new ForceOuttakeSubsystemModeCommand(outtakeSubsystem,
+    //         new ForceOuttakeSubsystemModeCommand(
     // IntakeMode.INTAKE));
 
     // shelf intake
@@ -411,6 +424,14 @@ public class RobotContainer {
             "stow arm",
             "zero everything",
             "intake",
+            /*new GroundPickupCommand(
+            intakeSubsystem,
+            elevatorSubsystem,
+            () ->
+                intakeLow[0]
+                    ? IntakeSubsystem.IntakeMode.INTAKE_LOW
+                    : IntakeSubsystem.IntakeMode.INTAKE),*/
+            "squeeze intake",
             new CommandBase() {
               private double lastTime = Timer.getFPGATimestamp();
 
@@ -457,6 +478,91 @@ public class RobotContainer {
                 .andThen(
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)));
+
+    autoSelector.setDefaultOption(
+        "N1 1Cone + 2Cube Low Mobility Engage",
+        new N1_1ConePlus2CubeHybridMobilityEngage(
+            4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.setDefaultOption(
+        "N1 1Cone + 2Cube Low Mobility NO ENGAGE",
+        new N1_1ConePlus2CubeHybridMobility(
+            4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.setDefaultOption(
+        "N9 1Cone + 1Cube + Grab Cube Mobility",
+        new N9_1ConePlus2CubeMobility(
+            4.95, 3, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "Just Zero Arm [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
+
+    autoSelector.addOption(
+        "Near Substation Mobility [APRILTAG]",
+        new MobilityAuto(
+            manueverGenerator,
+            drivebaseSubsystem,
+            intakeSubsystem,
+            elevatorSubsystem,
+            rgbSubsystem,
+            new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
+
+    autoSelector.addOption(
+        "Far Substation Mobility [APRILTAG]",
+        new MobilityAuto(
+            manueverGenerator,
+            drivebaseSubsystem,
+            intakeSubsystem,
+            elevatorSubsystem,
+            rgbSubsystem,
+            new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
+
+    autoSelector.addOption("N2 Engage", new N2_Engage(5, 3.5, drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "N3 1Cone + Mobility Engage",
+        new N3_1ConePlusMobilityEngage(
+            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.setDefaultOption(
+        "N3 1Cone + Mobility",
+        new N3_1ConePlusMobility(
+            4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.setDefaultOption(
+        "N6 1Cone + Engage",
+        new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "N9 1Cone + Mobility Engage",
+        new N9_1ConePlusMobilityEngage(
+            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "N9 1Cone + Mobility",
+        new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+
+    autoSelector.addOption(
+        "Score High Cone [DOES NOT CALIBRATE]",
+        new SetZeroModeCommand(elevatorSubsystem)
+            .raceWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
+            .andThen(
+                new ScoreCommand(
+                    intakeSubsystem,
+                    elevatorSubsystem,
+                    Constants.SCORE_STEP_MAP.get(
+                        NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH)))));
+
+    driverView.add("auto selector", autoSelector).withSize(4, 1).withPosition(7, 0);
+
+    autoDelay =
+        driverView
+            .add("auto delay", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 15, "block increment", .1))
+            .withSize(4, 1)
+            .withPosition(7, 1)
+            .getEntry();
   }
 
   /**
