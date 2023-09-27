@@ -26,6 +26,7 @@ import frc.robot.subsystems.VisionSubsystem.UnitDeviationParams;
 import frc.util.CAN;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeType;
+import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.pathing.FieldObstructionMap;
 import java.nio.file.Path;
 import java.util.List;
@@ -215,7 +216,7 @@ public final class Constants {
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
     public static final double WRIST_GEAR_RATIO = 0.061;
-    
+
     public static final double ANGLE_EPSILON = 0.5;
     public static final double HEIGHT_EPSILON = 5;
   }
@@ -246,8 +247,8 @@ public final class Constants {
           List.of(new ScoreStep(SCORE_LOW).canWaitHere(), new ScoreStep(IntakeMode.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(SCORE_HIGH).canWaitHere(),
-              new ScoreStep(SCORE_HIGH, IntakeMode.OUTTAKE)),
+              new ScoreStep(new ElevatorState(Elevator.SCORE_HIGH)).canWaitHere(),
+              new ScoreStep(new ArmState(Elevator.SCORE_HIGH), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
               new ScoreStep(SCORE_MID).canWaitHere(), new ScoreStep(SCORE_MID, IntakeMode.OUTTAKE)),

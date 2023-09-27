@@ -74,6 +74,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.setNeutralMode(NeutralMode.Brake);
     wristMotor.setNeutralMode(NeutralMode.Brake);
 
+    rightMotor.configForwardSoftLimitThreshold(heightToTicks(Constants.Elevator.MAX_HEIGHT), 20);
+    rightMotor.configReverseSoftLimitThreshold(heightToTicks(Elevator.MIN_HEIGHT), 20);
+
+    rightMotor.configForwardSoftLimitEnable(true, 20);
+    rightMotor.configReverseSoftLimitEnable(true, 20);
+
     filter = LinearFilter.movingAverage(30);
 
     tab.addDouble("Wrist Motor Position", () -> canCoder.getAbsolutePosition());
