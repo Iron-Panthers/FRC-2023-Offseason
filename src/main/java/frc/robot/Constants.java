@@ -342,26 +342,19 @@ public final class Constants {
     public static final List<VisionSource> VISION_SOURCES =
         List.of(
             new VisionSource(
+              //FIXME need to change translations since position of camera is changing 
                 "frontCam",
                 new Transform3d(
                     new Translation3d(
-                        0.228110, // front/back
+                        0.228110, // front/back 
                         0.253802, // left/right
                         0.443955 // up/down
                         ),
                     new Rotation3d(
                         0,
                         Math.toRadians(-11.5), // angle up/down
-                        0))),
-            new VisionSource(
-                "backCam",
-                new Transform3d(
-                    new Translation3d(
-                        0.102078, // front/back
-                        -0.253802, // left/right
-                        1.222387 // up/down
-                        ),
-                    new Rotation3d(0, Math.toRadians(17), Math.PI))));
+                        0)))
+           );
 
     public static final int THREAD_SLEEP_DURATION_MS = 5;
   }
