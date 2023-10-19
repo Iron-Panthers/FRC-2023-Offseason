@@ -11,8 +11,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive.AutoBalance;
+import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import java.util.Optional;
 
 public class EngageCommand extends CommandBase {
@@ -23,7 +24,7 @@ public class EngageCommand extends CommandBase {
   }
 
   private DrivebaseSubsystem drivebaseSubsystem;
-  private Optional<IntakeSubsystem> intakeSubsystem;
+  private Optional<ElevatorSubsystem> elevatorSubsystem;
   private EngageDirection engageDirection;
   private boolean exceededDockingThreshold = false;
   private Mode currentMode = Mode.DOCKING;
@@ -45,13 +46,13 @@ public class EngageCommand extends CommandBase {
   /** Creates a new EngageCommand. */
   public EngageCommand(
       DrivebaseSubsystem drivebaseSubsystem,
-      Optional<IntakeSubsystem> intakeSubsystem,
+      Optional<ElevatorSubsystem> elevatorSubsystem,
       EngageDirection engageDirection) {
     this.drivebaseSubsystem = drivebaseSubsystem;
-    this.intakeSubsystem = intakeSubsystem;
+    this.elevatorSubsystem = elevatorSubsystem;
     this.engageDirection = engageDirection;
     addRequirements(drivebaseSubsystem);
-    intakeSubsystem.ifPresent(this::addRequirements);
+    elevatorSubsystem.ifPresent(this::addRequirements);
   }
 
   public EngageCommand(DrivebaseSubsystem drivebaseSubsystem, EngageDirection engageDirection) {
@@ -60,9 +61,9 @@ public class EngageCommand extends CommandBase {
 
   public EngageCommand(
       DrivebaseSubsystem drivebaseSubsystem,
-      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       EngageDirection engageDirection) {
-    this(drivebaseSubsystem, Optional.of(intakeSubsystem), engageDirection);
+    this(drivebaseSubsystem, Optional.of(elevatorSubsystem), engageDirection);
   }
 
   // Called when the command is initially scheduled.
@@ -119,12 +120,7 @@ public class EngageCommand extends CommandBase {
         if (filterAbsRoll > AutoBalance.DOCK_HORIZON_ANGLE_DEGREES) {
           exceededDockingThreshold = true;
         }
-        intakeSubsystem.ifPresent(
-            intake ->
-                intake.setMode(
-                    engageDirection == EngageDirection.GO_BACKWARD
-                        ? IntakeSubsystem.Modes.CLIMB
-                        : IntakeSubsystem.Modes.STOWED));
+        elevatorSubsystem.ifPresent(elevator -> elevator.setTargetState(Elevator.Setpoints.STOWED));
         drivebaseSubsystem.drive(
             new ChassisSpeeds(
                 AutoBalance.DOCK_SPEED_METERS_PER_SECOND * engageDirection.driveSign, 0, 0));
@@ -133,7 +129,7 @@ public class EngageCommand extends CommandBase {
             : Mode.DOCKING;
       }
       case ENGAGING -> {
-        intakeSubsystem.ifPresent(intake -> intake.setMode(IntakeSubsystem.Modes.STOWED));
+        elevatorSubsystem.ifPresent(elevator -> elevator.setTargetState(Elevator.Setpoints.STOWED));
         drivebaseSubsystem.drive(
             new ChassisSpeeds(
                 Math.copySign(AutoBalance.ENGAGE_SPEED_METERS_PER_SECOND, rollPitch.roll()), 0, 0));
@@ -143,7 +139,7 @@ public class EngageCommand extends CommandBase {
       }
 
       case DEFENSE -> {
-        intakeSubsystem.ifPresent(intake -> intake.setMode(IntakeSubsystem.Modes.STOWED));
+        elevatorSubsystem.ifPresent(elevator -> elevator.setTargetState(Elevator.Setpoints.STOWED));
         drivebaseSubsystem.setDefenseMode();
         return rollPitch.absRoll() > AutoBalance.ENGAGE_MIN_ANGLE_DEGREES
             ? Mode.ENGAGING

@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -25,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
+import frc.robot.Constants.Elevator;
 import frc.robot.autonomous.commands.MobilityAuto;
 import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobility;
 import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobilityEngage;
@@ -58,7 +57,7 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -298,16 +297,16 @@ public class RobotContainer {
     will.x()
         .onTrue(
             new EngageCommand(
-                drivebaseSubsystem, intakeSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
+                drivebaseSubsystem, elevatorSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
 
     // outtake states
     jasonLayer
         .off(jason.leftTrigger())
-        .whileTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+        .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
     jasonLayer
         .off(jason.rightTrigger())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.IntakeMode.OUTTAKE));
-    jasonLayer.off(jason.x()).onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
+    jasonLayer.off(jason.x()).onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
 
     // intake presets
     // jasonLayer
@@ -324,7 +323,7 @@ public class RobotContainer {
         .onTrue(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
 
     // ground pickup
     jasonLayer
@@ -335,8 +334,8 @@ public class RobotContainer {
                 intakeSubsystem,
                 () ->
                     jason.getHID().getPOV() == 180
-                        ? IntakeSubsystem.IntakeMode.HOLD
-                        : IntakeSubsystem.IntakeMode.INTAKE));
+                        ? IntakeSubsystem.Modes.HOLD
+                        : IntakeSubsystem.Modes.INTAKE));
 
     // scoring
     // jasonLayer
@@ -417,21 +416,22 @@ public class RobotContainer {
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
             new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
-            new ScoreStep(IntakeMode.OUTTAKE));
+            new ScoreStep(Modes.OUTTAKE));
     final boolean[] intakeLow = {false};
+    // FIXME go through each auto and make sure that we dont use a leftover event marker from Simba
     final Map<String, Command> eventMap =
         Map.of(
-            "stow arm",
+            "stow elevator",
+            new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED),
             "zero everything",
+            new SetZeroModeCommand(elevatorSubsystem, true),
             "intake",
-            /*new GroundPickupCommand(
-            intakeSubsystem,
-            elevatorSubsystem,
-            () ->
-                intakeLow[0]
-                    ? IntakeSubsystem.IntakeMode.INTAKE_LOW
-                    : IntakeSubsystem.IntakeMode.INTAKE),*/
-            "squeeze intake",
+            new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
+                // ground or shelf intake
+                elevatorSubsystem,
+                intakeLow[0] ? Elevator.Setpoints.GROUND_INTAKE : Elevator.Setpoints.SHELF_INTAKE),
+            // squeeze intake isn't relevant to offseason bot - leaving here just in case
+            /*"squeeze intake",
             new CommandBase() {
               private double lastTime = Timer.getFPGATimestamp();
 
@@ -450,7 +450,7 @@ public class RobotContainer {
               public void end(boolean interrupted) {
                 intakeLow[0] = false;
               }
-            },
+            },*/
             "stage outtake",
             new ScoreCommand(
                 intakeSubsystem, elevatorSubsystem, drivingCubeOuttake.subList(0, 1), 1),
@@ -472,7 +472,7 @@ public class RobotContainer {
                 .andThen(
                     new ElevatorPositionCommand(
                             elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
-                        .andThen(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))),
+                        .andThen(new IntakeModeCommand(intakeSubsystem, Modes.OFF))),
             "armbat preload",
             new ElevatorPositionCommand(elevatorSubsystem, 30, 0)
                 .andThen(
@@ -495,7 +495,8 @@ public class RobotContainer {
             4.95, 3, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.addOption(
-        "Just Zero Arm [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
+        "Just Zero Elevator [DOES NOT CALIBRATE]",
+        new SetZeroModeCommand(elevatorSubsystem, false));
 
     autoSelector.addOption(
         "Near Substation Mobility [APRILTAG]",
@@ -544,8 +545,10 @@ public class RobotContainer {
 
     autoSelector.addOption(
         "Score High Cone [DOES NOT CALIBRATE]",
-        new SetZeroModeCommand(elevatorSubsystem)
-            .raceWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
+        new SetZeroModeCommand(
+                elevatorSubsystem,
+                false) // FIXME pretty sure this shouldn't zero wrist, double check later
+            .raceWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE))
             .andThen(
                 new ScoreCommand(
                     intakeSubsystem,

@@ -15,7 +15,7 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.util.pathing.LoadMirrorPath;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -39,8 +39,8 @@ public class N1_1ConePlus2CubeHybridMobilityEngage extends SequentialCommandGrou
             path.get().getMarkers(),
             eventMap),
         new EngageCommand(
-                drivebaseSubsystem, intakeSubsystem, EngageCommand.EngageDirection.GO_BACKWARD)
-            .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF))
+                drivebaseSubsystem, elevatorSubsystem, EngageCommand.EngageDirection.GO_BACKWARD)
+            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
             .alongWith(new SetZeroModeCommand(elevatorSubsystem)));
   }
 }
