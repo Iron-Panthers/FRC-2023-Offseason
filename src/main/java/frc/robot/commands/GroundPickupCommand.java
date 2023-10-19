@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import java.util.function.Supplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -19,12 +19,12 @@ public class GroundPickupCommand extends SequentialCommandGroup {
   public GroundPickupCommand(
       ElevatorSubsystem elevatorSubsystem,
       IntakeSubsystem intakeSubsystem,
-      Supplier<IntakeMode> modeSupplier) {
+      Supplier<Modes> modeSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE)
-            .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
+            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE))
             .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
   }
 }

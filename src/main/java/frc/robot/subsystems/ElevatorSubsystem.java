@@ -25,6 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX leftMotor;
   private TalonFX rightMotor;
   private TalonFX wristMotor;
+
   private double currentHeight;
   private double targetHeight;
   private double currentAngle;
@@ -111,6 +112,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setTargetHeight(double targetHeight) {
     this.targetHeight = targetHeight;
+  }
+
+  public void setTargetState(ElevatorState targetState) {
+    targetHeight = targetState.height();
+    targetAngle = targetState.angle();
   }
 
   public double getTargetHeight() {
