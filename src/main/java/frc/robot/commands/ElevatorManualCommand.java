@@ -5,21 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import java.util.function.DoubleSupplier;
 
-public class ArmManualCommand extends CommandBase {
-  ArmSubsystem armSubsystem;
-  DoubleSupplier angleSupplier;
-  DoubleSupplier extensionSupplier;
-  /** Creates a new AngleArmCommand. */
-  public ArmManualCommand(
-      ArmSubsystem armSubsystem, DoubleSupplier angleSupplier, DoubleSupplier extensionSupplier) {
-    this.armSubsystem = armSubsystem;
+public class ElevatorManualCommand extends CommandBase {
+  ElevatorSubsystem elevatorSubsystem;
+  DoubleSupplier rate;
 
-    this.angleSupplier = angleSupplier;
-    this.extensionSupplier = extensionSupplier;
-    addRequirements(armSubsystem);
+  /** Creates a new AngleArmCommand. */
+  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+    this.elevatorSubsystem = elevatorSubsystem;
+    this.rate = rate;
+
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -29,13 +27,7 @@ public class ArmManualCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    double angleOutput = angleSupplier.getAsDouble();
-    double extensionOutput = extensionSupplier.getAsDouble();
-
-    armSubsystem.setTargetPosition(
-        armSubsystem.getTargetAngleDegrees() + angleOutput,
-        armSubsystem.getTargetExtensionInches() + extensionOutput);
+    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getHeight() + rate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

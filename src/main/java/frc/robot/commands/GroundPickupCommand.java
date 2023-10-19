@@ -5,11 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.Arm;
-import frc.robot.Constants.Arm.Setpoints;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.Constants.Elevator;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import java.util.function.Supplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -18,26 +17,14 @@ import java.util.function.Supplier;
 public class GroundPickupCommand extends SequentialCommandGroup {
   /** Creates a new GroundPickupCommand. */
   public GroundPickupCommand(
+      ElevatorSubsystem elevatorSubsystem,
       IntakeSubsystem intakeSubsystem,
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
-      Supplier<IntakeSubsystem.Modes> modeSupplier) {
+      Supplier<IntakeMode> modeSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.INTAKE)
-            .deadlineWith(
-                new IntakeCommand(intakeSubsystem, modeSupplier)
-                    .alongWith(new ArmPositionCommand(armSubsystem, Setpoints.HANDOFF)))
-            .andThen(
-                new ArmPositionCommand(armSubsystem, Arm.Setpoints.STOWED)
-                    .alongWith(new IntakeCommand(intakeSubsystem, IntakeSubsystem.Modes.STOWED))));
-  }
-
-  public GroundPickupCommand(
-      IntakeSubsystem intakeSubsystem,
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem) {
-    this(intakeSubsystem, outtakeSubsystem, armSubsystem, () -> IntakeSubsystem.Modes.INTAKE);
+        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE)
+            .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE))
+            .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
   }
 }

@@ -9,12 +9,12 @@ import com.pathplanner.lib.commands.FollowPathWithEvents;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.FollowTrajectoryCommand;
-import frc.robot.commands.SetOuttakeModeCommand;
+import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem.Modes;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.util.pathing.LoadMirrorPath;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -24,8 +24,8 @@ public class N1_1ConePlus2CubeHybridMobility extends SequentialCommandGroup {
       double maxVelocityMetersPerSecond,
       double maxAccelerationMetersPerSecondSq,
       Map<String, Command> eventMap,
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       DrivebaseSubsystem drivebaseSubsystem) {
 
     Supplier<PathPlannerTrajectory> path =
@@ -39,7 +39,7 @@ public class N1_1ConePlus2CubeHybridMobility extends SequentialCommandGroup {
             new FollowTrajectoryCommand(path, true, drivebaseSubsystem),
             path.get().getMarkers(),
             eventMap),
-        new SetOuttakeModeCommand(outtakeSubsystem, Modes.OFF)
-            .alongWith(new SetZeroModeCommand(armSubsystem)));
+        new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF)
+            .alongWith(new SetZeroModeCommand(elevatorSubsystem)));
   }
 }

@@ -1,0 +1,69 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Elevator;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.util.Util;
+
+public class ElevatorPositionCommand extends CommandBase {
+  private final ElevatorSubsystem elevatorSubsystem;
+  private double targetHeight;
+  private double targetAngle;
+
+  /** Creates a new ElevatorPositionCommand. */
+  public ElevatorPositionCommand(
+      ElevatorSubsystem subsystem, double targetHeight, double targetAngle) {
+    this.elevatorSubsystem = subsystem;
+    this.targetHeight = targetHeight;
+    this.targetAngle = targetAngle;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(elevatorSubsystem);
+  }
+
+  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, ElevatorState elevatorState) {
+    // height and angle
+    this.elevatorSubsystem = elevatorSubsystem;
+    targetHeight = elevatorState.height();
+    targetAngle = elevatorState.angle();
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(elevatorSubsystem);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    elevatorSubsystem.setTargetHeight(targetHeight);
+    elevatorSubsystem.setTargetAngle(targetAngle);
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return Util.epsilonEquals(
+            elevatorSubsystem.getCurrentAngleDegrees(),
+            elevatorSubsystem.getTargetAngle(),
+            Elevator.ANGLE_EPSILON)
+        && Util.epsilonEquals(
+            elevatorSubsystem.getHeight(),
+            elevatorSubsystem.getTargetHeight(),
+            Elevator.HEIGHT_EPSILON);
+    // && extensionController.atSetpoint()
+    // && angleController.atSetpoint();
+    // add a condition to end the command when the elevator
+    // reaches target position
+    // look at 2022 and 2023 code
+  }
+}

@@ -8,9 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ArmSubsystem.ArmState;
-import frc.robot.subsystems.OuttakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.intakeState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,23 +21,23 @@ import java.util.Optional;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCommand extends SequentialCommandGroup {
   public static record ScoreStep(
-      Optional<ArmState> armState,
-      Optional<OuttakeSubsystem.Modes> outtakeState,
+      Optional<ElevatorState> elevatorState,
+      Optional<IntakeSubsystem.Modes> intakeState,
       boolean isPausePoint) {
-    public ScoreStep(ArmState armState, OuttakeSubsystem.Modes outtakeState) {
-      this(Optional.of(armState), Optional.of(outtakeState), false);
+    public ScoreStep(ElevatorState elevatorState, IntakeSubsystem.Modes intakeState) {
+      this(Optional.of(elevatorState), Optional.of(intakeState), false);
     }
 
-    public ScoreStep(ArmState armState) {
-      this(Optional.of(armState), Optional.empty(), false);
+    public ScoreStep(ElevatorState elevatorState) {
+      this(Optional.of(elevatorState), Optional.empty(), false);
     }
 
-    public ScoreStep(OuttakeSubsystem.Modes outtakeState) {
-      this(Optional.empty(), Optional.of(outtakeState), false);
+    public ScoreStep(IntakeSubsystem.Modes intakeState) {
+      this(Optional.empty(), Optional.of(intakeState), false);
     }
 
     public ScoreStep canWaitHere() {
-      return new ScoreStep(armState, outtakeState, true);
+      return new ScoreStep(elevatorState, intakeState, true);
     }
   }
 
@@ -67,56 +68,66 @@ public class ScoreCommand extends SequentialCommandGroup {
   }
 
   private Command createStep(ScoreStep scoreStep) {
-    var armState = scoreStep.armState();
-    var outtakeState = scoreStep.outtakeState();
-    if (armState.isPresent() && outtakeState.isPresent()) {
-      return new ArmPositionCommand(armSubsystem, armState.get())
-          .deadlineWith(new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get()));
-    } else if (armState.isPresent()) {
-      return new ArmPositionCommand(armSubsystem, armState.get());
-    } else if (outtakeState.isPresent()) {
-      return new SetOuttakeModeCommand(outtakeSubsystem, outtakeState.get());
+    var elevatorState = scoreStep.elevatorState();
+    var intakeState = scoreStep.intakeState();
+    if (elevatorState.isPresent() && intakeState.isPresent()) {
+      // FIXME: we need a working elevatorposition command here
+      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle)
+          .deadlineWith(new IntakeCommand(intakeSubsystem, intakeState.get()));
+    } else if (elevatorState.isPresent()) {
+
+      // FIXME: we need a working elevatorposition command here
+      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle);
+    } else if (intakeState.isPresent()) {
+      return new IntakeCommand(intakeSubsystem, intakeState.get());
     } else {
       throw new IllegalArgumentException("ScoreStep must have at least one state");
     }
   }
 
-  private final ArmSubsystem armSubsystem;
-  private final OuttakeSubsystem outtakeSubsystem;
+  private final ElevatorSubsystem elevatorSubsystem;
+  private final IntakeSubsystem intakeSubsystem;
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       List<ScoreStep> scoreSteps,
       Trigger trigger) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.of(trigger), Optional.empty());
+    this(intakeSubsystem, elevatorSubsystem, scoreSteps, Optional.of(trigger), Optional.empty());
   }
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem, ArmSubsystem armSubsystem, List<ScoreStep> scoreSteps) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.empty());
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
+      List<ScoreStep> scoreSteps) {
+    this(intakeSubsystem, elevatorSubsystem, scoreSteps, Optional.empty(), Optional.empty());
   }
 
   public ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
-    this(outtakeSubsystem, armSubsystem, scoreSteps, Optional.empty(), Optional.of(stepDeadline));
+    this(
+        intakeSubsystem,
+        elevatorSubsystem,
+        scoreSteps,
+        Optional.empty(),
+        Optional.of(stepDeadline));
   }
 
   /** Creates a new ScoreCommand. */
   private ScoreCommand(
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       List<ScoreStep> scoreSteps,
       Optional<Trigger> trigger,
       Optional<Double> stepDeadline) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
-    this.outtakeSubsystem = outtakeSubsystem;
-    this.armSubsystem = armSubsystem;
+    this.intakeSubsystem = intakeSubsystem;
+    this.elevatorSubsystem = elevatorSubsystem;
 
     for (ScoreStep scoreStep : scoreSteps) {
       if (trigger.isEmpty())
@@ -133,8 +144,8 @@ public class ScoreCommand extends SequentialCommandGroup {
   }
 
   public static List<ScoreCommand> splitAlongPausePoints(
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       List<ScoreStep> scoreSteps,
       double stepDeadline) {
     var scoreCommands = new ArrayList<ScoreCommand>();
@@ -147,7 +158,10 @@ public class ScoreCommand extends SequentialCommandGroup {
         // System.out.println(scoreSteps.subList(start, end + 1));
         scoreCommands.add(
             new ScoreCommand(
-                outtakeSubsystem, armSubsystem, scoreSteps.subList(start, end + 1), stepDeadline));
+                intakeSubsystem,
+                elevatorSubsystem,
+                scoreSteps.subList(start, end + 1),
+                stepDeadline));
         start = end + 1;
       }
       end++;
@@ -157,7 +171,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     // System.out.println(scoreSteps.subList(start, end));
     scoreCommands.add(
         new ScoreCommand(
-            outtakeSubsystem, armSubsystem, scoreSteps.subList(start, end), stepDeadline));
+            intakeSubsystem, elevatorSubsystem, scoreSteps.subList(start, end), stepDeadline));
 
     return scoreCommands;
   }

@@ -6,36 +6,31 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
-import java.util.function.Supplier;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 
-public class IntakeCommand extends CommandBase {
+public class IntakeModeCommand extends CommandBase {
   private IntakeSubsystem intakeSubsystem;
-  private Supplier<Modes> modeSupplier;
-  /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, Modes mode) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this(intakeSubsystem, () -> mode);
-  }
+  private IntakeMode mode;
 
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, Supplier<Modes> modeSupplier) {
+  /** Creates a new IntakeCommand. */
+  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, IntakeMode mode) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.intakeSubsystem = intakeSubsystem;
-    this.modeSupplier = modeSupplier;
+    this.mode = mode;
 
     addRequirements(intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
+
   @Override
   public void initialize() {
-    intakeSubsystem.setMode(modeSupplier.get());
+    intakeSubsystem.setMode(mode);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    intakeSubsystem.setMode(modeSupplier.get());
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -44,6 +39,10 @@ public class IntakeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (intakeSubsystem.getMode() == IntakeMode.HOLD
+        || intakeSubsystem.getMode() == IntakeMode.OFF) {
+      return true;
+    }
     return false;
   }
 }

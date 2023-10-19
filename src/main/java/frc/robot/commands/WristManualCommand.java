@@ -5,28 +5,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.ControlTypes;
+import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class ZeroIntakeCommand extends CommandBase {
-  private IntakeSubsystem intakeSubsystem;
-  /** Creates a new ZeroIntakeCommand. */
-  public ZeroIntakeCommand(IntakeSubsystem intakeSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.intakeSubsystem = intakeSubsystem;
+public class WristManualCommand extends CommandBase {
+  private DoubleSupplier rate;
+  private ElevatorSubsystem elevatorSubsystem;
 
-    addRequirements(intakeSubsystem);
+  public WristManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+    this.rate = rate;
+    this.elevatorSubsystem = elevatorSubsystem;
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.startZeroing();
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -35,6 +37,6 @@ public class ZeroIntakeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intakeSubsystem.getControlType() != ControlTypes.ZEROING;
+    return false;
   }
 }
