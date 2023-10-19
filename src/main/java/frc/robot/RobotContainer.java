@@ -34,7 +34,6 @@ import frc.robot.autonomous.commands.N6_1ConePlusEngage;
 import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobility;
 import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
-import frc.robot.commands.AlignGamepieceCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
@@ -46,7 +45,6 @@ import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HashMapCommand;
 import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
-import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
@@ -68,7 +66,6 @@ import frc.util.NodeSelectorUtility;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeSelection;
 import frc.util.NodeSelectorUtility.NodeType;
-import frc.util.NodeSelectorUtility.ScoreTypeIdentifier;
 import frc.util.SharedReference;
 import frc.util.Util;
 import frc.util.pathing.AlliancePose2d;
@@ -215,11 +212,9 @@ public class RobotContainer {
     will.back()
         .onTrue(new InstantCommand(drivebaseSubsystem::smartZeroGyroscope, drivebaseSubsystem));
 
-    // pov(-1) is the case when no pov is pressed, so doing while false will bind this command to
-    // any pov angle
-    will.pov(-1).whileFalse(new DefenseModeCommand(drivebaseSubsystem));
+    will.leftBumper().onTrue(new DefenseModeCommand(drivebaseSubsystem));
 
-    will.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+    will.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
     jason.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     DoubleSupplier rotation =
@@ -236,15 +231,14 @@ public class RobotContainer {
                 /** percent of fraction power */
                 (will.getHID().getAButton() ? .3 : .8);
 
-    new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
-        .whileTrue(
-            new RotateVelocityDriveCommand(
-                drivebaseSubsystem,
-                translationXSupplier,
-                translationYSupplier,
-                rotationVelocity,
-                will.rightBumper(),
-                will.leftBumper()));
+    // new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
+    //     .whileTrue(
+    //         new RotateVelocityDriveCommand(
+    //             drivebaseSubsystem,
+    //             translationXSupplier,
+    //             translationYSupplier,
+    //             rotationVelocity,
+    //             will.rightBumper()));
 
     new Trigger(
             () ->
@@ -263,36 +257,26 @@ public class RobotContainer {
     will.b()
         .onTrue(
             new DriveToPlaceCommand(
-                    drivebaseSubsystem,
-                    manueverGenerator,
-                    () -> currentNodeSelection.get().nodeStack().position().get(),
-                    translationXSupplier,
-                    translationYSupplier,
-                    will.rightBumper(),
-                    Optional.of(rgbSubsystem),
-                    Optional.of(will.getHID()))
-                .andThen(
-                    new AlignGamepieceCommand(
-                        drivebaseSubsystem,
-                        manueverGenerator,
-                        () -> currentNodeSelection.get().nodeStack().position().get(),
-                        translationXSupplier,
-                        translationYSupplier,
-                        will.rightBumper(),
-                        Optional.of(rgbSubsystem),
-                        Optional.of(will.getHID()))));
-
-    will.y()
-        .onTrue(
-            new DriveToPlaceCommand(
                 drivebaseSubsystem,
                 manueverGenerator,
-                (new AlliancePose2d(15.3639 - 1.5, 7.3965, Rotation2d.fromDegrees(0)))::get,
+                () -> currentNodeSelection.get().nodeStack().position().get(),
                 translationXSupplier,
                 translationYSupplier,
                 will.rightBumper(),
                 Optional.of(rgbSubsystem),
                 Optional.of(will.getHID())));
+
+    // will.y()
+    //     .onTrue(
+    //         new DriveToPlaceCommand(
+    //             drivebaseSubsystem,
+    //             manueverGenerator,
+    //             (new AlliancePose2d(15.3639 - 1.5, 7.3965, Rotation2d.fromDegrees(0)))::get,
+    //             translationXSupplier,
+    //             translationYSupplier,
+    //             will.rightBumper(),
+    //             Optional.of(rgbSubsystem),
+    //             Optional.of(will.getHID())));
 
     will.x()
         .onTrue(
@@ -305,37 +289,75 @@ public class RobotContainer {
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
     jasonLayer
         .off(jason.rightTrigger())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.OUTTAKE));
-    jasonLayer.off(jason.x()).onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
+    jasonLayer
+        .off(jason.x())
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
+        .onTrue(
+            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
 
     // intake presets
     // jasonLayer
     //     .off(jason.a())
-    //     .onTrue(new ScoreCommand( elevatorSubsystem, Setpoints.GROUND_INTAKE))
+    //     .onTrue(new ScoreCommand(intakeSubsystem, elevatorSubsystem, Setpoints.GROUND_INTAKE))
     //     .whileTrue(
-    //         new ForceOuttakeSubsystemModeCommand(
-    // IntakeMode.INTAKE));
+    //         new ForceintakeSubsystemModeCommand(intakeSubsystem,
+    // Modes.INTAKE));
 
-    // shelf intake
-    jasonLayer
-        .off(jason.b())
-        // FIXME: This error is here to kind of guide you...
+    will.povUp()
         .onTrue(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
+        .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
 
-    // ground pickup
+    // reset
     jasonLayer
-        .off(jason.a())
+        .off(jason.y())
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
+    jason.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
+
+    will.povLeft()
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
+        .onTrue(new SetZeroModeCommand(elevatorSubsystem));
+
+    will.povDown()
         .onTrue(
             new GroundPickupCommand(
-                elevatorSubsystem,
                 intakeSubsystem,
-                () ->
-                    jason.getHID().getPOV() == 180
-                        ? IntakeSubsystem.Modes.HOLD
-                        : IntakeSubsystem.Modes.INTAKE));
+                elevatorSubsystem,
+                () -> jason.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+
+    jason
+        .leftBumper()
+        .onTrue(
+            new GroundPickupCommand(
+                intakeSubsystem,
+                elevatorSubsystem,
+                () -> jason.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+
+    jason
+        .povUp()
+        .onTrue(
+            new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
+                .alongWith(
+                    new ElevatorPositionCommand(
+                        elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)));
+
+    // jason.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
+
+    jason
+        .back()
+        .whileTrue(
+            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)
+                .alongWith(
+                    new ElevatorPositionCommand(
+                        elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
+                .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)))
+        .onFalse(
+            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
+                .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
 
     // scoring
     // jasonLayer
@@ -366,17 +388,16 @@ public class RobotContainer {
 
     var scoreCommandMap = new HashMap<NodeSelectorUtility.ScoreTypeIdentifier, Command>();
 
-    for (ScoreTypeIdentifier scoreType : Constants.SCORE_STEP_MAP.keySet())
+    for (var scoreType : Constants.SCORE_STEP_MAP.keySet())
       scoreCommandMap.put(
           scoreType,
           new ScoreCommand(
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jason.leftBumper()));
+              will.povRight()));
 
-    jasonLayer
-        .on(jason.x())
+    will.povRight()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
