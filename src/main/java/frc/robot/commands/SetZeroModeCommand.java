@@ -6,16 +6,33 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.Optional;
 
 public class SetZeroModeCommand extends CommandBase {
-  ElevatorSubsystem armSubsystem;
+  private ElevatorSubsystem elevatorSubsystem;
+  private boolean includeWrist;
+  private boolean includeElevator;
 
-  public SetZeroModeCommand(ElevatorSubsystem armSubsystem) {
-    this.armSubsystem = armSubsystem;
-    addRequirements(armSubsystem);
+  public SetZeroModeCommand(
+      ElevatorSubsystem elevatorSubsystem,
+      Optional<Boolean> includeWrist,
+      Optional<Boolean> includeElevator) {
+    this.elevatorSubsystem = elevatorSubsystem;
+    if (includeWrist.isPresent()) this.includeWrist = includeWrist.get();
+    if (includeElevator.isPresent()) this.includeElevator = includeElevator.get();
+
+    addRequirements(elevatorSubsystem);
   }
 
-  // Called when the command is initially scheduled.
+  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem) {
+    this(elevatorSubsystem, Optional.of(true), Optional.of(true));
+  }
+
+  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem, boolean includeWrist) {
+    this(elevatorSubsystem, Optional.of(includeWrist), Optional.of(true));
+  }
+
+  // FIXME make it zero elevator + wrist
   @Override
   public void initialize() {}
 

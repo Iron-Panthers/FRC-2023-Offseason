@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX leftMotor;
   private TalonFX rightMotor;
   private TalonFX wristMotor;
+
   private double currentHeight;
   private double targetHeight;
   private double currentAngle;
@@ -37,6 +39,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
   private double filterOutput;
+
+  private DigitalInput proxySensor;
 
   // add soft limits - check 2022 frc code
 
@@ -55,6 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     heightController = new PIDController(0.0001, 0, 0);
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
+    proxySensor = new DigitalInput(0);
 
     currentHeight = 0.0;
     targetHeight = 0.0;
@@ -109,6 +114,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetHeight = targetHeight;
   }
 
+  public void setTargetState(ElevatorState targetState) {
+    targetHeight = targetState.height();
+    targetAngle = targetState.angle();
+  }
+
   public double getTargetHeight() {
     return targetHeight;
   }
@@ -134,7 +144,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     currentHeight = getHeight();
     currentAngle = getCurrentAngleDegrees();
 
-    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
+    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit
+        || proxySensor.get() == false) {
       double motorPower = heightController.calculate(currentHeight, targetHeight);
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {

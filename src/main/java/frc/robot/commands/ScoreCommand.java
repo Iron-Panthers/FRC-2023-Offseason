@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.intakeState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -72,14 +71,14 @@ public class ScoreCommand extends SequentialCommandGroup {
     var intakeState = scoreStep.intakeState();
     if (elevatorState.isPresent() && intakeState.isPresent()) {
       // FIXME: we need a working elevatorposition command here
-      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle)
-          .deadlineWith(new IntakeCommand(intakeSubsystem, intakeState.get()));
+      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get())
+          .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get()));
     } else if (elevatorState.isPresent()) {
 
       // FIXME: we need a working elevatorposition command here
-      return new ElevatorPositionCommand(elevatorSubsystem, targetHeight, desiredAngle);
+      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get());
     } else if (intakeState.isPresent()) {
-      return new IntakeCommand(intakeSubsystem, intakeState.get());
+      return new IntakeModeCommand(intakeSubsystem, intakeState.get());
     } else {
       throw new IllegalArgumentException("ScoreStep must have at least one state");
     }

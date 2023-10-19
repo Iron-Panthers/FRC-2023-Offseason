@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
 import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
@@ -238,22 +239,28 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(SCORE_HIGH).canWaitHere(),
-              new ScoreStep(SCORE_HIGH, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(SCORE_MID).canWaitHere(), new ScoreStep(SCORE_MID, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.LOW),
-          List.of(new ScoreStep(SCORE_LOW).canWaitHere(), new ScoreStep(IntakeMode.OUTTAKE)),
+          List.of(
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.SCORE_HIGH)).canWaitHere(),
-              new ScoreStep(new ArmState(Elevator.SCORE_HIGH), IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(SCORE_MID).canWaitHere(), new ScoreStep(SCORE_MID, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.LOW),
-          List.of(new ScoreStep(SCORE_LOW).canWaitHere(), new ScoreStep(IntakeMode.OUTTAKE)));
+          List.of(
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}

@@ -8,6 +8,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Elevator;
+import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeModeCommand;
@@ -38,7 +40,7 @@ public class N9_1ConePlusMobilityEngage extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,
@@ -47,7 +49,8 @@ public class N9_1ConePlusMobilityEngage extends SequentialCommandGroup {
         (new FollowTrajectoryCommand(path, true, drivebaseSubsystem))
             .alongWith(
                 (new WaitCommand(1))
-                    .andThen(new ElevatorSubsystem(elevatorSubsystem, Elevator.Setpoints.STOWED))),
+                    .andThen(
+                        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED))),
         new EngageCommand(drivebaseSubsystem, EngageCommand.EngageDirection.GO_FORWARD));
   }
 }

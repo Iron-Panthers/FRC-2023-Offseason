@@ -12,7 +12,7 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
@@ -40,7 +40,7 @@ public class MobilityAuto extends SequentialCommandGroup {
                 Optional.of(rgbSubsystem),
                 Optional.empty())
             .alongWith(new SetZeroModeCommand(elevatorSubsystem))
-            .alongWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.HOLD))
+            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.HOLD))
             .andThen(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem)));
   }
 }
