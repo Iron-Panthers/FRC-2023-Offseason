@@ -106,11 +106,11 @@ public class RobotContainer {
       new SharedReference<>(new NodeSelection(NodeSelectorUtility.defaultNodeStack, Height.HIGH));
 
   /** controller 1 */
-  private final CommandXboxController jason = new CommandXboxController(1);
+  private final CommandXboxController jacob = new CommandXboxController(1);
   /** controller 1 layer */
-  private final Layer jasonLayer = new Layer(jason.rightBumper());
+  private final Layer jacobLayer = new Layer(jacob.rightBumper());
   /** controller 0 */
-  private final CommandXboxController will = new CommandXboxController(0);
+  private final CommandXboxController anthony = new CommandXboxController(0);
 
   /** the sendable chooser to select which auto to run. */
   private final SendableChooser<Command> autoSelector = new SendableChooser<>();
@@ -121,9 +121,9 @@ public class RobotContainer {
 
   /* drive joystick "y" is passed to x because controller is inverted */
   private final DoubleSupplier translationXSupplier =
-      () -> (-modifyAxis(will.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+      () -> (-modifyAxis(anthony.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
   private final DoubleSupplier translationYSupplier =
-      () -> (-modifyAxis(will.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+      () -> (-modifyAxis(anthony.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -137,23 +137,23 @@ public class RobotContainer {
             drivebaseSubsystem,
             translationXSupplier,
             translationYSupplier,
-            will.rightBumper(),
-            will.leftBumper()));
+            anthony.rightBumper(),
+            anthony.leftBumper()));
 
     // // FIXME: This error is here to kind of guide you...
     // elevatorSubsystem.setDefaultCommand(
     //     new ArmManualCommand(
     //         elevatorSubsystem,
-    //         () -> ControllerUtil.deadband(-jason.getLeftY(), 0.2),
-    //         () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+    //         () -> ControllerUtil.deadband(-jacob.getLeftY(), 0.2),
+    //         () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
 
     elevatorSubsystem.setDefaultCommand(
         new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(jason.getLeftY(), 0.2)));
+            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getLeftY(), 0.2)));
 
     elevatorSubsystem.setDefaultCommand(
         new WristManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(jason.getRightY(), 0.2)));
+            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -174,7 +174,7 @@ public class RobotContainer {
    */
   public void containerTeleopInit() {
     // runs when teleop happens
-    CommandScheduler.getInstance().schedule(new VibrateHIDCommand(jason.getHID(), 5, .5));
+    CommandScheduler.getInstance().schedule(new VibrateHIDCommand(jacob.getHID(), 5, .5));
   }
 
   /**
@@ -200,28 +200,36 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // vibrate jason controller when in layer
-    jasonLayer.whenChanged(
+
+    /* Current Controls:
+     * Back buttons: Zero gyroscope,
+     */
+
+    // vibrate jacob controller when in layer
+    jacobLayer.whenChanged(
         (enabled) -> {
           final double power = enabled ? .1 : 0;
-          jason.getHID().setRumble(RumbleType.kLeftRumble, power);
-          jason.getHID().setRumble(RumbleType.kRightRumble, power);
+          jacob.getHID().setRumble(RumbleType.kLeftRumble, power);
+          jacob.getHID().setRumble(RumbleType.kRightRumble, power);
         });
 
-    will.start().onTrue(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
-    will.back()
+    anthony
+        .start()
+        .onTrue(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
+    anthony
+        .back()
         .onTrue(new InstantCommand(drivebaseSubsystem::smartZeroGyroscope, drivebaseSubsystem));
 
-    will.leftBumper().onTrue(new DefenseModeCommand(drivebaseSubsystem));
+    anthony.leftBumper().onTrue(new DefenseModeCommand(drivebaseSubsystem));
 
-    will.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
-    jason.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
+    anthony.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+    jacob.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     DoubleSupplier rotation =
         exponential(
             () ->
                 ControllerUtil.deadband(
-                    (will.getRightTriggerAxis() + -will.getLeftTriggerAxis()), .1),
+                    (anthony.getRightTriggerAxis() + -anthony.getLeftTriggerAxis()), .1),
             2);
     DoubleSupplier rotationVelocity =
         () ->
@@ -229,7 +237,7 @@ public class RobotContainer {
                 * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                 *
                 /** percent of fraction power */
-                (will.getHID().getAButton() ? .3 : .8);
+                (anthony.getHID().getAButton() ? .3 : .8);
 
     // new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
     //     .whileTrue(
@@ -238,23 +246,24 @@ public class RobotContainer {
     //             translationXSupplier,
     //             translationYSupplier,
     //             rotationVelocity,
-    //             will.rightBumper()));
+    //             anthony.rightBumper()));
 
     new Trigger(
             () ->
-                Util.vectorMagnitude(will.getRightY(), will.getRightX())
+                Util.vectorMagnitude(anthony.getRightY(), anthony.getRightX())
                     > Drive.ROTATE_VECTOR_MAGNITUDE)
         .onTrue(
             new RotateVectorDriveCommand(
                 drivebaseSubsystem,
                 translationXSupplier,
                 translationYSupplier,
-                will::getRightY,
-                will::getRightX,
-                will.rightBumper()));
+                anthony::getRightY,
+                anthony::getRightX,
+                anthony.rightBumper()));
 
     // start driving to score
-    will.b()
+    anthony
+        .b()
         .onTrue(
             new DriveToPlaceCommand(
                 drivebaseSubsystem,
@@ -262,11 +271,11 @@ public class RobotContainer {
                 () -> currentNodeSelection.get().nodeStack().position().get(),
                 translationXSupplier,
                 translationYSupplier,
-                will.rightBumper(),
+                anthony.rightBumper(),
                 Optional.of(rgbSubsystem),
-                Optional.of(will.getHID())));
+                Optional.of(anthony.getHID())));
 
-    // will.y()
+    // anthony.y()
     //     .onTrue(
     //         new DriveToPlaceCommand(
     //             drivebaseSubsystem,
@@ -274,70 +283,74 @@ public class RobotContainer {
     //             (new AlliancePose2d(15.3639 - 1.5, 7.3965, Rotation2d.fromDegrees(0)))::get,
     //             translationXSupplier,
     //             translationYSupplier,
-    //             will.rightBumper(),
+    //             anthony.rightBumper(),
     //             Optional.of(rgbSubsystem),
-    //             Optional.of(will.getHID())));
+    //             Optional.of(anthony.getHID())));
 
-    will.x()
+    anthony
+        .x()
         .onTrue(
             new EngageCommand(
                 drivebaseSubsystem, elevatorSubsystem, EngageCommand.EngageDirection.GO_BACKWARD));
 
     // outtake states
-    jasonLayer
-        .off(jason.leftTrigger())
+    jacobLayer
+        .off(jacob.leftTrigger())
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
-    jasonLayer
-        .off(jason.rightTrigger())
+    jacobLayer
+        .off(jacob.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
-    jasonLayer
-        .off(jason.x())
+    jacobLayer
+        .off(jacob.x())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(
             new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
 
     // intake presets
-    // jasonLayer
-    //     .off(jason.a())
+    // jacobLayer
+    //     .off(jacob.a())
     //     .onTrue(new ScoreCommand(intakeSubsystem, elevatorSubsystem, Setpoints.GROUND_INTAKE))
     //     .whileTrue(
     //         new ForceintakeSubsystemModeCommand(intakeSubsystem,
     // Modes.INTAKE));
 
-    will.povUp()
+    anthony
+        .povUp()
         .onTrue(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
 
     // reset
-    jasonLayer
-        .off(jason.y())
+    jacobLayer
+        .off(jacob.y())
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
-    jason.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
+    jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
-    will.povLeft()
+    anthony
+        .povLeft()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
-    will.povDown()
+    anthony
+        .povDown()
         .onTrue(
             new GroundPickupCommand(
                 intakeSubsystem,
                 elevatorSubsystem,
-                () -> jason.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    jason
+    jacob
         .leftBumper()
         .onTrue(
             new GroundPickupCommand(
                 intakeSubsystem,
                 elevatorSubsystem,
-                () -> jason.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    jason
+    jacob
         .povUp()
         .onTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
@@ -345,9 +358,9 @@ public class RobotContainer {
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)));
 
-    // jason.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
+    // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
-    jason
+    jacob
         .back()
         .whileTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)
@@ -360,26 +373,26 @@ public class RobotContainer {
                 .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
 
     // scoring
-    // jasonLayer
-    //     .on(jason.a())
+    // jacobLayer
+    //     .on(jacob.a())
     // low
 
-    jasonLayer
-        .on(jason.a())
+    jacobLayer
+        .on(jacob.a())
         .onTrue(
             new InstantCommand(
                 () ->
                     currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.LOW))));
 
-    jasonLayer
-        .on(jason.b())
+    jacobLayer
+        .on(jacob.b())
         .onTrue(
             new InstantCommand(
                 () -> currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.MID)),
                 elevatorSubsystem));
 
-    jasonLayer
-        .on(jason.y())
+    jacobLayer
+        .on(jacob.y())
         .onTrue(
             new InstantCommand(
                 () ->
@@ -395,15 +408,16 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              will.povRight()));
+              anthony.povRight()));
 
-    will.povRight()
+    anthony
+        .povRight()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
 
-    jason.povRight().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(1))));
-    jason.povLeft().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(-1))));
+    jacob.povRight().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(1))));
+    jacob.povLeft().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(-1))));
 
     // control the lights
     currentNodeSelection.subscribe(
