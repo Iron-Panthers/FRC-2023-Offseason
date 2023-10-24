@@ -216,6 +216,7 @@ public class RobotContainer {
     anthony
         .start()
         .onTrue(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
+
     anthony
         .back()
         .onTrue(new InstantCommand(drivebaseSubsystem::smartZeroGyroscope, drivebaseSubsystem));
@@ -223,6 +224,7 @@ public class RobotContainer {
     anthony.leftBumper().onTrue(new DefenseModeCommand(drivebaseSubsystem));
 
     anthony.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
     jacob.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     DoubleSupplier rotation =
@@ -231,6 +233,7 @@ public class RobotContainer {
                 ControllerUtil.deadband(
                     (anthony.getRightTriggerAxis() + -anthony.getLeftTriggerAxis()), .1),
             2);
+
     DoubleSupplier rotationVelocity =
         () ->
             rotation.getAsDouble()
@@ -297,9 +300,11 @@ public class RobotContainer {
     jacobLayer
         .off(jacob.leftTrigger())
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE));
+
     jacobLayer
         .off(jacob.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
+
     jacobLayer
         .off(jacob.x())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
@@ -326,11 +331,12 @@ public class RobotContainer {
         .off(jacob.y())
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
+
     jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
     anthony
         .povLeft()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
@@ -356,7 +362,7 @@ public class RobotContainer {
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)));
+                        elevatorSubsystem, Constants.Elevator.Setpoints.GROUND_INTAKE)));
 
     // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 

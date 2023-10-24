@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import java.util.Optional;
 
@@ -34,7 +35,9 @@ public class SetZeroModeCommand extends CommandBase {
 
   // FIXME make it zero elevator + wrist
   @Override
-  public void initialize() {}
+  public void initialize() {
+    new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
