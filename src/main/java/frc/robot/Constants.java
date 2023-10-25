@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Drive.Dims;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
@@ -220,6 +221,9 @@ public final class Constants {
 
     public static final double ANGLE_EPSILON = 0.5;
     public static final double HEIGHT_EPSILON = 5;
+    c static final double ANGULAR_OFFSET = 0;
+  }
+
   }
 
   public static final class Intake {
