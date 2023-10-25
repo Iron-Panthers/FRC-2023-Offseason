@@ -28,7 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double currentHeight;
   private double targetHeight;
-  private double currentAngle;
+  private double currentWristAngle;
   private double targetAngle;
   private double statorCurrentLimit;
 
@@ -63,7 +63,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     currentHeight = 0.0;
     targetHeight = 0.0;
-    currentAngle = 0.0;
+    currentWristAngle = 0.0;
     targetAngle = 0.0;
     statorCurrentLimit = 50.0;
 
@@ -97,7 +97,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     tab.addDouble("Wrist Motor Position", () -> canCoder.getAbsolutePosition());
     tab.addDouble("Wrist Target Angle", () -> targetAngle);
-    tab.addDouble("Wrist Current Angle", () -> currentAngle);
+    tab.addDouble("Wrist Current Angle", () -> currentWristAngle);
     tab.addDouble("Elevator Target Height", () -> targetHeight);
     tab.addDouble("Elevator Current Height", () -> currentHeight);
   }
@@ -154,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     currentHeight = getHeight();
-    currentAngle = getCurrentAngleDegrees();
+    currentWristAngle = getCurrentAngleDegrees();
 
     if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
       // || proxySensor.get() == false) {
@@ -166,6 +166,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(wristController.calculate(currentAngle, targetAngle), -0.25, 0.25));
+        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
   }
 }
