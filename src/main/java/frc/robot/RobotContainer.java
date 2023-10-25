@@ -201,10 +201,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    /* Current Controls:
-     * Back buttons: Zero gyroscope,
-     */
-
     // vibrate jacob controller when in layer
     jacobLayer.whenChanged(
         (enabled) -> {

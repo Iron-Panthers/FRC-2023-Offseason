@@ -33,7 +33,6 @@ public class SetZeroModeCommand extends CommandBase {
     this(elevatorSubsystem, Optional.of(includeWrist), Optional.of(true));
   }
 
-  // FIXME make it zero elevator + wrist
   @Override
   public void initialize() {
     new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO);

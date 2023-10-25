@@ -70,12 +70,9 @@ public class ScoreCommand extends SequentialCommandGroup {
     var elevatorState = scoreStep.elevatorState();
     var intakeState = scoreStep.intakeState();
     if (elevatorState.isPresent() && intakeState.isPresent()) {
-      // FIXME: we need a working elevatorposition command here
       return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get())
           .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get()));
     } else if (elevatorState.isPresent()) {
-
-      // FIXME: we need a working elevatorposition command here
       return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get());
     } else if (intakeState.isPresent()) {
       return new IntakeModeCommand(intakeSubsystem, intakeState.get());
