@@ -222,10 +222,9 @@ public final class Constants {
 
     public static final double ANGLE_EPSILON = 0.5;
     public static final double HEIGHT_EPSILON = 5;
-    c static final double ANGULAR_OFFSET = 0;
+    public static final double ANGULAR_OFFSET = 0;
   }
 
-  }
 
   public static final class Intake {
 
