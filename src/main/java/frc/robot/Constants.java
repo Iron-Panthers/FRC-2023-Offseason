@@ -16,8 +16,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Drive.Dims;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -218,13 +218,12 @@ public final class Constants {
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
-    public static final double WRIST_GEAR_RATIO = 1 / 75;
+    public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
     public static final double HEIGHT_EPSILON = 5;
     public static final double ANGULAR_OFFSET = 0;
   }
-
 
   public static final class Intake {
 
