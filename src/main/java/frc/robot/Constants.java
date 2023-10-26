@@ -157,8 +157,8 @@ public final class Constants {
       }
 
       public static final class Module2 { // historically front left
-        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
+        public static final int DRIVE_MOTOR = CAN.at(10, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(11, "module 2 steer motor");
         public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
@@ -194,8 +194,8 @@ public final class Constants {
   public static final class Elevator {
     public static final class Ports {
 
-      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
-      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
     }
 
