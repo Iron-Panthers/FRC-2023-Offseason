@@ -26,13 +26,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotor;
   private TalonFX wristMotor;
 
-  private double currentHeight;
-  private double targetHeight;
+  private double currentExtension;
+  private double targetExtension;
   private double currentWristAngle;
   private double targetAngle;
   private double statorCurrentLimit;
 
-  private PIDController heightController;
+  private PIDController ExtensionController;
   private PIDController wristController;
   private CANCoder canCoder;
 
@@ -98,18 +98,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Wrist Motor Position", () -> canCoder.getAbsolutePosition());
     tab.addDouble("Wrist Target Angle", () -> targetAngle);
     tab.addDouble("Wrist Current Angle", () -> currentWristAngle);
-    tab.addDouble("Elevator Target Height", () -> targetHeight);
-    tab.addDouble("Elevator Current Height", () -> currentHeight);
+    tab.addDouble("Elevator Target Extension", () -> targetExtension);
+    tab.addDouble("Elevator Current Extension", () -> currentExtension);
   }
 
   // FIXME: all the numbers wrong in constants
-  public static double heightToTicks(double height) {
-    return height
+  public static double ExtensionToTicks(double Extension) {
+    return Extension
         * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
             / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
   }
 
-  public static double ticksToHeight(double ticks) {
+  public static double ticksToExtension(double ticks) {
     return (ticks * Elevator.ELEVATOR_GEAR_CIRCUMFERENCE)
         / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
   }
@@ -118,25 +118,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     return rightMotor.getSelectedSensorPosition();
   }
 
-  public void setTargetHeight(double targetHeight) {
-    this.targetHeight = targetHeight;
+  public void setTargetExtension(double targetExtension) {
+    this.targetExtension = targetExtension;
   }
 
   public void setTargetState(ElevatorState targetState) {
-    targetHeight = targetState.height();
+    targetExtension = targetState.Extension();
     targetAngle = targetState.angle();
   }
 
-  public double getTargetHeight() {
-    return targetHeight;
+  public double getTargetExtension() {
+    return targetExtension;
   }
 
   public double getTargetAngle() {
     return targetAngle;
   }
 
-  public double getHeight() {
-    return ticksToHeight(getCurrentTicks());
+  public double getExtension() {
+    return ticksToExtension(getCurrentTicks());
   }
 
   public double getCurrentAngleDegrees() {
@@ -153,12 +153,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    currentHeight = getHeight();
+    currentExtension = getExtension();
     currentWristAngle = getCurrentAngleDegrees();
 
     if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
       // || proxySensor.get() == false) {
-      double motorPower = heightController.calculate(currentHeight, targetHeight);
+      double motorPower = ExtensionController.calculate(currentExtension, targetExtension);
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);

@@ -202,18 +202,18 @@ public final class Constants {
     public static final class Setpoints {
       public static final ElevatorState STOWED = new ElevatorState(20, 0);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
-      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_HEIGHT, 0);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_HEIGHT, 0);
-      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_HEIGHT / 2, 20);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_HEIGHT, 40);
-      public static final ElevatorState ZERO = new ElevatorState(MIN_HEIGHT, 0);
+      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION, 0);
+      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION, 0);
+      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION / 2, 20);
+      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION, 40);
+      public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION, 0);
     }
 
-    public static final double MAX_HEIGHT = 20;
-    public static final double MIN_HEIGHT = 0;
+    public static final double MAX_EXTENSION = 20;
+    public static final double MIN_EXTENSION = 0;
 
     public static final int ELEVATOR_TICKS = 2048;
-    public static final double ELEVATOR_GEAR_RATIO = 1 / 9.9206;
+    public static final double ELEVATOR_GEAR_RATIO = 0.1008;
     public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.432 * Math.PI;
 
     public static final int WRIST_TICKS = 2048;
@@ -221,7 +221,7 @@ public final class Constants {
     public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
-    public static final double HEIGHT_EPSILON = 5;
+    public static final double EXTENSION_EPSILON = 5;
     public static final double ANGULAR_OFFSET = 0;
   }
 

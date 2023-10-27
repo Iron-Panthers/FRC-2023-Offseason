@@ -452,7 +452,7 @@ public class RobotContainer {
 
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
-            new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
+            new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_EXTENSION)).canWaitHere(),
             new ScoreStep(Modes.OUTTAKE));
     final boolean[] intakeLow = {false};
     // FIXME go through each auto and make sure that we dont use a leftover event marker from Simba
