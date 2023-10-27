@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double ticksToExtensionInches(double ticks) {
-    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * ((leftMotor.getSelectedSensorPosition() / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
+    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * ((ticks / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
   private double getCurrentTicks() {
