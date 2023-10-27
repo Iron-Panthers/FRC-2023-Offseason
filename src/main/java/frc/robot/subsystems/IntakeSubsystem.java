@@ -28,10 +28,22 @@ public class IntakeSubsystem extends SubsystemBase {
     currentIntakeMode = Modes.OFF;
 
     intakeMotor.setNeutralMode(NeutralMode.Brake);
+    intakeMotor.setInverted(true);
 
     filter = LinearFilter.movingAverage(30);
 
     shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
+
+    shuffleboard.addString("Current Mode", () -> currentIntakeMode.toString());
+
+    shuffleboard.addDouble("stator current", intakeMotor::getStatorCurrent);
+
+    shuffleboard.addDouble("motor power", intakeMotor::getMotorOutputPercent);
+
+    shuffleboard.addDouble("filter output", this::getFilterCalculatedValue);
+
+    // FIXME wrong current limit
+    statorCurrentLimit = 85;
   }
 
   public enum Modes {
@@ -46,13 +58,17 @@ public class IntakeSubsystem extends SubsystemBase {
     switch (mode) {
       case INTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+        break;
       case OUTTAKE:
         intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
+        break;
       case HOLD:
         intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.HOLD_PERCENT);
+        break;
       case OFF:
       default:
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
+        break;
     }
   }
 
@@ -64,9 +80,13 @@ public class IntakeSubsystem extends SubsystemBase {
     currentIntakeMode = mode;
   }
 
+  private double getFilterCalculatedValue() {
+    return filter.calculate(intakeMotor.getStatorCurrent());
+  }
+
   @Override
   public void periodic() {
-    if (filter.calculate(intakeMotor.getStatorCurrent()) >= statorCurrentLimit) {
+    if (getFilterCalculatedValue() >= statorCurrentLimit) {
       currentIntakeMode = Modes.HOLD;
     }
 
