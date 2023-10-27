@@ -12,7 +12,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double filterOutput;
 
-  private DigitalInput proxySensor;
+  // private DigitalInput proxySensor;
 
   // add soft limits - check 2022 frc code
 
@@ -59,7 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     heightController = new PIDController(0.0001, 0, 0);
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
-    proxySensor = new DigitalInput(0);
+    // proxySensor = new DigitalInput(0);
 
     currentHeight = 0.0;
     targetHeight = 0.0;
@@ -81,9 +81,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     rightMotor.configForwardSoftLimitThreshold(heightToTicks(Constants.Elevator.MAX_HEIGHT), 20);
     rightMotor.configReverseSoftLimitThreshold(heightToTicks(Elevator.MIN_HEIGHT), 20);
+    wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
     rightMotor.configReverseSoftLimitEnable(true, 20);
+    wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
+
+    canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
+
+    canCoder.configSensorDirection(true);
+
+    canCoder.setPositionToAbsolute(10); // ms
 
     filter = LinearFilter.movingAverage(30);
 
@@ -135,6 +143,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return canCoder.getAbsolutePosition();
   }
 
+  private double angleToTicks(double angle) {
+    return angle / Elevator.WRIST_TICKS;
+  }
+
   public void setTargetAngle(double targetAngle) {
     this.targetAngle = targetAngle;
   }
@@ -144,8 +156,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     currentHeight = getHeight();
     currentWristAngle = getCurrentAngleDegrees();
 
-    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit
-        || proxySensor.get() == false) {
+    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
+      // || proxySensor.get() == false) {
       double motorPower = heightController.calculate(currentHeight, targetHeight);
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {

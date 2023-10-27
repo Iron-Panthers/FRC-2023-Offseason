@@ -17,6 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -156,8 +157,8 @@ public final class Constants {
       }
 
       public static final class Module2 { // historically front left
-        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
+        public static final int DRIVE_MOTOR = CAN.at(10, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(11, "module 2 steer motor");
         public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
@@ -193,8 +194,8 @@ public final class Constants {
   public static final class Elevator {
     public static final class Ports {
 
-      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
-      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
     }
 
@@ -217,10 +218,11 @@ public final class Constants {
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
-    public static final double WRIST_GEAR_RATIO = 1 / 75;
+    public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
     public static final double HEIGHT_EPSILON = 5;
+    public static final double ANGULAR_OFFSET = 0;
   }
 
   public static final class Intake {
