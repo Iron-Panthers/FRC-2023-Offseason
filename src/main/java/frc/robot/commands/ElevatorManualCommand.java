@@ -27,7 +27,7 @@ public class ElevatorManualCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetExtension(elevatorSubsystem.getExtension() + rate.getAsDouble());
+    elevatorSubsystem.setTargetExtensionInches(elevatorSubsystem.getExtensionInches() + rate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

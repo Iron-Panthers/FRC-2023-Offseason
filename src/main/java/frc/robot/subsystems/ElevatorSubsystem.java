@@ -80,8 +80,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     wristMotor.setNeutralMode(NeutralMode.Brake);
 
     rightMotor.configForwardSoftLimitThreshold(
-        extensionToTicks(Constants.Elevator.MAX_EXTENSION), 20);
-    rightMotor.configReverseSoftLimitThreshold(extensionToTicks(Elevator.MIN_EXTENSION), 20);
+        extensionInchesToTicks(Constants.Elevator.MAX_EXTENSION_INCHES), 20);
+    rightMotor.configReverseSoftLimitThreshold(extensionInchesToTicks(Elevator.MIN_EXTENSION_INCHES), 20);
     wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
@@ -103,23 +103,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Elevator Current Extension", () -> currentExtension);
   }
 
-  // FIXME: all the numbers wrong in constants
-  public static double extensionToTicks(double Extension) {
-    return Extension
-        * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
-            / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
+  public static double extensionInchesToTicks(double inches) {
+    return (Elevator.FALCON_CPR * inches) / ((Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
-  public static double ticksToExtension(double ticks) {
-    return (ticks * Elevator.ELEVATOR_GEAR_CIRCUMFERENCE)
-        / (Elevator.ELEVATOR_TICKS * Elevator.ELEVATOR_GEAR_RATIO);
+  public double ticksToExtensionInches(double ticks) {
+    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * ((leftMotor.getSelectedSensorPosition() / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
   private double getCurrentTicks() {
     return rightMotor.getSelectedSensorPosition();
   }
 
-  public void setTargetExtension(double targetExtension) {
+  public void setTargetExtensionInches(double targetExtension) {
     this.targetExtension = targetExtension;
   }
 
@@ -136,8 +132,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     return targetAngle;
   }
 
-  public double getExtension() {
-    return ticksToExtension(getCurrentTicks());
+  public double getExtensionInches() {
+    return ticksToExtensionInches(getCurrentTicks());
   }
 
   public double getCurrentAngleDegrees() {
@@ -154,7 +150,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    currentExtension = getExtension();
+    currentExtension = getExtensionInches();
     currentWristAngle = getCurrentAngleDegrees();
 
     if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {

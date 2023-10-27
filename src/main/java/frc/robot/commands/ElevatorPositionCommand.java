@@ -37,7 +37,7 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setTargetExtension(targetExtension);
+    elevatorSubsystem.setTargetExtensionInches(targetExtension);
     elevatorSubsystem.setTargetAngle(targetAngle);
   }
 
@@ -57,7 +57,7 @@ public class ElevatorPositionCommand extends CommandBase {
             elevatorSubsystem.getTargetAngle(),
             Elevator.ANGLE_EPSILON)
         && Util.epsilonEquals(
-            elevatorSubsystem.getExtension(),
+            elevatorSubsystem.getExtensionInches(),
             elevatorSubsystem.getTargetExtension(),
             Elevator.EXTENSION_EPSILON);
     // && extensionController.atSetpoint()
