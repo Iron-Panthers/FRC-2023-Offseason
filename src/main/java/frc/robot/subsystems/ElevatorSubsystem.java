@@ -32,7 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetAngle;
   private double statorCurrentLimit;
 
-  private PIDController ExtensionController;
+  private PIDController extensionController;
   private PIDController wristController;
   private CANCoder canCoder;
 
@@ -47,7 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // stator limits
   private LinearFilter filter;
 
-  public static record ElevatorState(double height, double angle) {}
+  public static record ElevatorState(double extension, double angle) {}
 
   public ElevatorSubsystem() {
     leftMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
@@ -56,13 +56,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftMotor.follow(rightMotor);
 
-    heightController = new PIDController(0.0001, 0, 0);
+    extensionController = new PIDController(0.0001, 0, 0);
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
     // proxySensor = new DigitalInput(0);
 
-    currentHeight = 0.0;
-    targetHeight = 0.0;
+    currentExtension = 0.0;
+    targetExtension = 0.0;
     currentWristAngle = 0.0;
     targetAngle = 0.0;
     statorCurrentLimit = 50.0;
@@ -79,8 +79,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.setNeutralMode(NeutralMode.Brake);
     wristMotor.setNeutralMode(NeutralMode.Brake);
 
-    rightMotor.configForwardSoftLimitThreshold(heightToTicks(Constants.Elevator.MAX_HEIGHT), 20);
-    rightMotor.configReverseSoftLimitThreshold(heightToTicks(Elevator.MIN_HEIGHT), 20);
+    rightMotor.configForwardSoftLimitThreshold(
+        extensionToTicks(Constants.Elevator.MAX_EXTENSION), 20);
+    rightMotor.configReverseSoftLimitThreshold(extensionToTicks(Elevator.MIN_EXTENSION), 20);
     wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
@@ -103,7 +104,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // FIXME: all the numbers wrong in constants
-  public static double ExtensionToTicks(double Extension) {
+  public static double extensionToTicks(double Extension) {
     return Extension
         * ((Elevator.ELEVATOR_GEAR_RATIO * Elevator.ELEVATOR_TICKS)
             / (Elevator.ELEVATOR_GEAR_CIRCUMFERENCE));
@@ -123,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setTargetState(ElevatorState targetState) {
-    targetExtension = targetState.Extension();
+    targetExtension = targetState.extension();
     targetAngle = targetState.angle();
   }
 
@@ -158,7 +159,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
       // || proxySensor.get() == false) {
-      double motorPower = ExtensionController.calculate(currentExtension, targetExtension);
+      double motorPower = extensionController.calculate(currentExtension, targetExtension);
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
