@@ -5,32 +5,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
+import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class IntakeModeCommand extends CommandBase {
-  private IntakeSubsystem intakeSubsystem;
-  private Modes mode;
+public class WristManualCommand extends CommandBase {
+  private DoubleSupplier rate;
+  private ElevatorSubsystem elevatorSubsystem;
 
-  /** Creates a new IntakeCommand. */
-  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, Modes mode) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.intakeSubsystem = intakeSubsystem;
-    this.mode = mode;
-
-    addRequirements(intakeSubsystem);
+  public WristManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+    this.rate = rate;
+    this.elevatorSubsystem = elevatorSubsystem;
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
-
   @Override
   public void initialize() {
-    intakeSubsystem.setMode(mode);
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    elevatorSubsystem.setTargetAngle(rate.getAsDouble());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -39,9 +37,6 @@ public class IntakeModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (intakeSubsystem.getMode() == Modes.HOLD || intakeSubsystem.getMode() == Modes.OFF) {
-      return true;
-    }
     return false;
   }
 }

@@ -7,11 +7,12 @@ package frc.robot.autonomous.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveToPlaceCommand;
-import frc.robot.commands.SetOuttakeModeCommand;
+import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
-import frc.robot.subsystems.OuttakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
@@ -22,8 +23,8 @@ public class MobilityAuto extends SequentialCommandGroup {
   public MobilityAuto(
       RubenManueverGenerator manueverGenerator,
       DrivebaseSubsystem drivebaseSubsystem,
-      OuttakeSubsystem outtakeSubsystem,
-      ArmSubsystem armSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       RGBSubsystem rgbSubsystem,
       AlliancePose2d finalPose) {
     // Add your commands in the addCommands() call, e.g.
@@ -38,8 +39,8 @@ public class MobilityAuto extends SequentialCommandGroup {
                 () -> false,
                 Optional.of(rgbSubsystem),
                 Optional.empty())
-            .alongWith(new SetZeroModeCommand(armSubsystem))
-            .alongWith(new SetOuttakeModeCommand(outtakeSubsystem, OuttakeSubsystem.Modes.HOLD))
+            .alongWith(new SetZeroModeCommand(elevatorSubsystem))
+            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.HOLD))
             .andThen(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem)));
   }
 }
