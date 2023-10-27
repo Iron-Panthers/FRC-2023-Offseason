@@ -17,8 +17,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NetworkWatchdogSubsystem.IPv4;
 import frc.robot.subsystems.RGBSubsystem.RGBColor;
 import frc.robot.subsystems.VisionSubsystem.TagCountDeviation;
@@ -155,8 +157,8 @@ public final class Constants {
       }
 
       public static final class Module2 { // historically front left
-        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
+        public static final int DRIVE_MOTOR = CAN.at(10, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(11, "module 2 steer motor");
         public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
@@ -192,33 +194,35 @@ public final class Constants {
   public static final class Elevator {
     public static final class Ports {
 
-      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
-      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
     }
 
     public static final class Setpoints {
       public static final ElevatorState STOWED = new ElevatorState(20, 0);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
-      public static final ElevatorState GROUND_INTAKE = new ElevatorState(0, 0);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_HEIGHT, 0);
-      public static final ElevatorState SCORE_MID = new ElevatorState(15, 20);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_HEIGHT, 40);
+      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION_INCHES, 0);
+      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 0);
+      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION_INCHES / 2, 20);
+      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION_INCHES, 40);
+      public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION_INCHES, 0);
     }
 
-    public static final double MAX_HEIGHT = 20;
-    public static final double MIN_HEIGHT = 0;
+    public static final double MAX_EXTENSION_INCHES = 20;
+    public static final double MIN_EXTENSION_INCHES = 0;
 
-    public static final int ELEVATOR_TICKS = 2048;
-    public static final double ELEVATOR_GEAR_RATIO = 1.0;
-    public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
+    public static final int FALCON_CPR = 2048;
+    public static final double ELEVATOR_GEAR_RATIO = 0.1008;
+    public static final double ELEVATOR_SPROCKET_DIAMETER_INCHES = 1.432;
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
-    public static final double WRIST_GEAR_RATIO = 0.061;
+    public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
-    public static final double HEIGHT_EPSILON = 5;
+    public static final double EXTENSION_EPSILON = 5;
+    public static final double ANGULAR_OFFSET = 0;
   }
 
   public static final class Intake {
@@ -238,22 +242,28 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(SCORE_HIGH).canWaitHere(),
-              new ScoreStep(SCORE_HIGH, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(SCORE_MID).canWaitHere(), new ScoreStep(SCORE_MID, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.LOW),
-          List.of(new ScoreStep(SCORE_LOW).canWaitHere(), new ScoreStep(IntakeMode.OUTTAKE)),
+          List.of(
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(new ElevatorState(Elevator.SCORE_HIGH)).canWaitHere(),
-              new ScoreStep(new ArmState(Elevator.SCORE_HIGH), IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(SCORE_MID).canWaitHere(), new ScoreStep(SCORE_MID, IntakeMode.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.LOW),
-          List.of(new ScoreStep(SCORE_LOW).canWaitHere(), new ScoreStep(IntakeMode.OUTTAKE)));
+          List.of(
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}

@@ -14,7 +14,7 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.util.pathing.LoadMirrorPath;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -39,7 +39,7 @@ public class N1_1ConePlus2CubeHybridMobility extends SequentialCommandGroup {
             new FollowTrajectoryCommand(path, true, drivebaseSubsystem),
             path.get().getMarkers(),
             eventMap),
-        new IntakeModeCommand(intakeSubsystem, IntakeMode.OFF)
+        new IntakeModeCommand(intakeSubsystem, Modes.OFF)
             .alongWith(new SetZeroModeCommand(elevatorSubsystem)));
   }
 }

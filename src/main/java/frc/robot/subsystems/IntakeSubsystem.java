@@ -11,20 +11,21 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Intake;
 
 public class IntakeSubsystem extends SubsystemBase {
   private TalonFX intakeMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
-  private IntakeMode currentIntakeMode;
+  private Modes currentIntakeMode;
   private LinearFilter filter;
   private double statorCurrentLimit;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    intakeMotor = new TalonFX(0);
+    intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
 
-    currentIntakeMode = IntakeMode.OFF;
+    currentIntakeMode = Modes.OFF;
 
     intakeMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -33,14 +34,14 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
   }
 
-  public enum IntakeMode {
+  public enum Modes {
     INTAKE,
     OUTTAKE,
     HOLD,
     OFF;
   }
 
-  public void intakePeriodic(IntakeMode mode) {
+  public void intakePeriodic(Modes mode) {
 
     switch (mode) {
       case INTAKE:
@@ -55,18 +56,18 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public IntakeMode getMode() {
+  public Modes getMode() {
     return currentIntakeMode;
   }
 
-  public void setMode(IntakeMode mode) {
+  public void setMode(Modes mode) {
     currentIntakeMode = mode;
   }
 
   @Override
   public void periodic() {
     if (filter.calculate(intakeMotor.getStatorCurrent()) >= statorCurrentLimit) {
-      currentIntakeMode = IntakeMode.HOLD;
+      currentIntakeMode = Modes.HOLD;
     }
 
     intakePeriodic(currentIntakeMode);

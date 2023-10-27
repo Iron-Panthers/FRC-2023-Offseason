@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.ElevatorPositionCommand;
 import frc.robot.commands.EngageCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
@@ -17,7 +18,7 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeType;
 import frc.util.pathing.LoadMirrorPath;
@@ -38,7 +39,7 @@ public class N6_1ConePlusEngage extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, IntakeMode.INTAKE)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,

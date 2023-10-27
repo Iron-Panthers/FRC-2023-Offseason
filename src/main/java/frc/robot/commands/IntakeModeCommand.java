@@ -6,14 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 
 public class IntakeModeCommand extends CommandBase {
   private IntakeSubsystem intakeSubsystem;
-  private IntakeMode mode;
+  private Modes mode;
 
   /** Creates a new IntakeCommand. */
-  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, IntakeMode mode) {
+  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, Modes mode) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intakeSubsystem = intakeSubsystem;
     this.mode = mode;
@@ -39,8 +39,7 @@ public class IntakeModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (intakeSubsystem.getMode() == IntakeMode.HOLD
-        || intakeSubsystem.getMode() == IntakeMode.OFF) {
+    if (intakeSubsystem.getMode() == Modes.HOLD || intakeSubsystem.getMode() == Modes.OFF) {
       return true;
     }
     return false;
