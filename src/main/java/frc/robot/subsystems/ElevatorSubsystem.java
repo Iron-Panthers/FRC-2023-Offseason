@@ -81,7 +81,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     rightMotor.configForwardSoftLimitThreshold(
         extensionInchesToTicks(Constants.Elevator.MAX_EXTENSION_INCHES), 20);
-    rightMotor.configReverseSoftLimitThreshold(extensionInchesToTicks(Elevator.MIN_EXTENSION_INCHES), 20);
+    rightMotor.configReverseSoftLimitThreshold(
+        extensionInchesToTicks(Elevator.MIN_EXTENSION_INCHES), 20);
     wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
@@ -104,11 +105,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public static double extensionInchesToTicks(double inches) {
-    return (Elevator.FALCON_CPR * inches) / ((Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * Elevator.ELEVATOR_GEAR_RATIO);
+    return (Elevator.FALCON_CPR * inches)
+        / ((Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
   public double ticksToExtensionInches(double ticks) {
-    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * ((ticks / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
+    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI)
+        * ((ticks / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
   private double getCurrentTicks() {
