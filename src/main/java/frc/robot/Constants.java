@@ -200,7 +200,7 @@ public final class Constants {
     }
 
     public static final class Setpoints {
-      public static final ElevatorState STOWED = new ElevatorState(20, 0);
+      public static final ElevatorState STOWED = new ElevatorState(0, 0);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
       public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION_INCHES, 0);
       public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 0);
@@ -209,7 +209,7 @@ public final class Constants {
       public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION_INCHES, 0);
     }
 
-    public static final double MAX_EXTENSION_INCHES = 20;
+    public static final double MAX_EXTENSION_INCHES = 30;
     public static final double MIN_EXTENSION_INCHES = 0;
 
     public static final int FALCON_CPR = 2048;
@@ -223,6 +223,9 @@ public final class Constants {
     public static final double ANGLE_EPSILON = 0.5;
     public static final double EXTENSION_EPSILON = 5;
     public static final double ANGULAR_OFFSET = 0;
+
+    public static final double ZERO_MOTOR_POWER = -0.2;
+    public static final double ZERO_STATOR_LIMIT = 25;
   }
 
   public static final class Intake {

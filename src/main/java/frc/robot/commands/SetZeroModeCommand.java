@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import java.util.Optional;
 
 public class SetZeroModeCommand extends CommandBase {
@@ -35,7 +35,7 @@ public class SetZeroModeCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO);
+    elevatorSubsystem.setMode(Modes.ZERO);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +49,6 @@ public class SetZeroModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.getMode() != Modes.ZERO;
   }
 }

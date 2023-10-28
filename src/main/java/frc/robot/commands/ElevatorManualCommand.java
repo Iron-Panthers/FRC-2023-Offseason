@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import java.util.function.DoubleSupplier;
 
@@ -28,7 +30,10 @@ public class ElevatorManualCommand extends CommandBase {
   @Override
   public void execute() {
     elevatorSubsystem.setTargetExtensionInches(
-        elevatorSubsystem.getExtensionInches() + rate.getAsDouble());
+        MathUtil.clamp(
+            (elevatorSubsystem.getTargetExtension() + rate.getAsDouble()),
+            Elevator.MIN_EXTENSION_INCHES,
+            Elevator.MAX_EXTENSION_INCHES));
   }
 
   // Called once the command ends or is interrupted.

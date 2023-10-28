@@ -5,6 +5,8 @@
 // need: have a way for elevator to go up, take in double and goes up
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -21,6 +23,13 @@ import frc.robot.Constants.Elevator;
 
 /** Add your docs here. */
 public class ElevatorSubsystem extends SubsystemBase {
+
+  public enum Modes {
+    DRIVE,
+    ZERO
+  }
+
+  private Modes currentMode;
 
   private TalonFX leftMotor;
   private TalonFX rightMotor;
@@ -50,16 +59,24 @@ public class ElevatorSubsystem extends SubsystemBase {
   public static record ElevatorState(double extension, double angle) {}
 
   public ElevatorSubsystem() {
+
+    currentMode = Modes.ZERO;
+
     leftMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     rightMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
 
     leftMotor.follow(rightMotor);
 
-    extensionController = new PIDController(0.0001, 0, 0);
+    extensionController = new PIDController(0.1, 0.03, 0.035);
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(0);
     // proxySensor = new DigitalInput(0);
+
+    extensionController.setTolerance(0.25);
+
+    rightMotor.setSelectedSensorPosition(0);
+    leftMotor.setSelectedSensorPosition(0);
 
     currentExtension = 0.0;
     targetExtension = 0.0;
@@ -69,9 +86,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
+    wristMotor.configFactoryDefault();
 
     rightMotor.clearStickyFaults();
     leftMotor.clearStickyFaults();
+    wristMotor.clearStickyFaults();
+
+    rightMotor.setInverted(true);
+    leftMotor.setInverted(InvertType.FollowMaster);
 
     rightMotor.configOpenloopRamp(.5);
 
@@ -102,6 +124,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Wrist Current Angle", () -> currentWristAngle);
     tab.addDouble("Elevator Target Extension", () -> targetExtension);
     tab.addDouble("Elevator Current Extension", () -> currentExtension);
+    tab.addDouble("Elevator Output", rightMotor::getMotorOutputPercent);
+    tab.addDouble("filter output", () -> filterOutput);
+    tab.addDouble("Stator current", rightMotor::getStatorCurrent);
+    tab.add("PID", extensionController);
+    tab.addString("mode", () -> currentMode.toString());
+  }
+
+  public void setMode(Modes mode) {
+    currentMode = mode;
+  }
+
+  public Modes getMode() {
+    return currentMode;
   }
 
   public static double extensionInchesToTicks(double inches) {
@@ -151,12 +186,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetAngle = targetAngle;
   }
 
-  @Override
-  public void periodic() {
-    currentExtension = getExtensionInches();
-    currentWristAngle = getCurrentAngleDegrees();
-
-    if (filter.calculate(rightMotor.getStatorCurrent()) < statorCurrentLimit) {
+  private void drivePeriodic() {
+    if (filterOutput < statorCurrentLimit) {
       // || proxySensor.get() == false) {
       double motorPower = extensionController.calculate(currentExtension, targetExtension);
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
@@ -167,5 +198,38 @@ public class ElevatorSubsystem extends SubsystemBase {
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
         MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+  }
+
+  private void zeroPeriodic() {
+    rightMotor.configForwardSoftLimitEnable(false, 20);
+    rightMotor.configReverseSoftLimitEnable(false, 20);
+
+    rightMotor.set(ControlMode.PercentOutput, Elevator.ZERO_MOTOR_POWER);
+
+    if (filterOutput > Elevator.ZERO_STATOR_LIMIT) {
+      rightMotor.setSelectedSensorPosition(0);
+      leftMotor.setSelectedSensorPosition(0);
+      rightMotor.set(ControlMode.PercentOutput, 0);
+      currentMode = Modes.DRIVE;
+      rightMotor.configForwardSoftLimitEnable(true, 20);
+      rightMotor.configReverseSoftLimitEnable(true, 20);
+      targetExtension = Elevator.MIN_EXTENSION_INCHES;
+    }
+  }
+
+  @Override
+  public void periodic() {
+    currentExtension = getExtensionInches();
+    currentWristAngle = getCurrentAngleDegrees();
+    filterOutput = filter.calculate(rightMotor.getStatorCurrent());
+
+    switch (currentMode) {
+      case ZERO:
+        zeroPeriodic();
+        break;
+      case DRIVE:
+        drivePeriodic();
+        break;
+    }
   }
 }
