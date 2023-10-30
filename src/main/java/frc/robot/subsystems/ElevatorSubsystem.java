@@ -70,7 +70,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     extensionController = new PIDController(0.1, 0.03, 0.035);
     wristController = new PIDController(0, 0, 0);
-    canCoder = new CANCoder(0);
+    canCoder = new CANCoder(Elevator.Ports.CANCODER);
     // proxySensor = new DigitalInput(0);
 
     extensionController.setTolerance(0.25);
@@ -82,7 +82,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetExtension = 0.0;
     currentWristAngle = 0.0;
     targetAngle = 0.0;
-    statorCurrentLimit = 50.0;
+    statorCurrentLimit = 20.0;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
@@ -141,11 +141,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public static double extensionInchesToTicks(double inches) {
     return (Elevator.FALCON_CPR * inches)
-        / ((Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI) * Elevator.ELEVATOR_GEAR_RATIO);
+        / (Elevator.CARRIAGE_RATIO
+            * (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI)
+            * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
   public double ticksToExtensionInches(double ticks) {
-    return (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI)
+    return Elevator.CARRIAGE_RATIO
+        * (Elevator.ELEVATOR_SPROCKET_DIAMETER_INCHES * Math.PI)
         * ((ticks / Elevator.FALCON_CPR) * Elevator.ELEVATOR_GEAR_RATIO);
   }
 
@@ -190,6 +193,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (filterOutput < statorCurrentLimit) {
       // || proxySensor.get() == false) {
       double motorPower = extensionController.calculate(currentExtension, targetExtension);
+      if (currentExtension < 10 && motorPower < 0) {
+        motorPower = MathUtil.clamp(motorPower, -0.25, 0.25);
+        if (currentExtension < 3 && motorPower < 0) {
+          motorPower = MathUtil.clamp(motorPower, -0.1, 0.1);
+        }
+      }
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
@@ -209,10 +218,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (filterOutput > Elevator.ZERO_STATOR_LIMIT) {
       rightMotor.setSelectedSensorPosition(0);
       leftMotor.setSelectedSensorPosition(0);
+
       rightMotor.set(ControlMode.PercentOutput, 0);
+
       currentMode = Modes.DRIVE;
+
       rightMotor.configForwardSoftLimitEnable(true, 20);
       rightMotor.configReverseSoftLimitEnable(true, 20);
+
       targetExtension = Elevator.MIN_EXTENSION_INCHES;
     }
   }

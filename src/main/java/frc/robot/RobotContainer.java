@@ -136,7 +136,7 @@ public class RobotContainer {
 
     elevatorSubsystem.setDefaultCommand(
         new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(-jacob.getLeftY() * 0.420, 0.2)));
+            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getLeftY() * -0.42, 0.2)));
 
     // elevatorSubsystem.setDefaultCommand(
     //     new WristManualCommand(
@@ -333,13 +333,13 @@ public class RobotContainer {
                 elevatorSubsystem,
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    jacob
-        .leftBumper()
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                elevatorSubsystem,
-                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+    // jacob
+    //     .leftBumper()
+    //     .onTrue(
+    //         new GroundPickupCommand(
+    //             intakeSubsystem,
+    //             elevatorSubsystem,
+    //             () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
     jacob
         .povUp()
@@ -398,13 +398,20 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              anthony.povRight()));
+              jacob.leftBumper()));
+    //   anthony.povRight()));
 
-    anthony
-        .povRight()
+    jacob
+        .leftBumper()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
+
+    // anthony
+    //     .povRight()
+    //     .onTrue(
+    //         new HashMapCommand<>(
+    //             scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
 
     jacob.povRight().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(1))));
     jacob.povLeft().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(-1))));

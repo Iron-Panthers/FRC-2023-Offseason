@@ -197,6 +197,7 @@ public final class Constants {
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
+      public static final int CANCODER = CAN.at(0, "cancoder");
     }
 
     public static final class Setpoints {
@@ -210,11 +211,12 @@ public final class Constants {
     }
 
     public static final double MAX_EXTENSION_INCHES = 30;
-    public static final double MIN_EXTENSION_INCHES = 0;
+    public static final double MIN_EXTENSION_INCHES = 2;
 
     public static final int FALCON_CPR = 2048;
     public static final double ELEVATOR_GEAR_RATIO = 0.1008;
     public static final double ELEVATOR_SPROCKET_DIAMETER_INCHES = 1.432;
+    public static final double CARRIAGE_RATIO = 2;
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
