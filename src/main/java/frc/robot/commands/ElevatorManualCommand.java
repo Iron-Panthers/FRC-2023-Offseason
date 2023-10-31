@@ -12,12 +12,15 @@ import java.util.function.DoubleSupplier;
 
 public class ElevatorManualCommand extends CommandBase {
   ElevatorSubsystem elevatorSubsystem;
-  DoubleSupplier rate;
+  DoubleSupplier extensionRate;
+  DoubleSupplier angleRate;
 
   /** Creates a new AngleArmCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+  public ElevatorManualCommand(
+      ElevatorSubsystem elevatorSubsystem, DoubleSupplier extentionRate, DoubleSupplier angleRate) {
     this.elevatorSubsystem = elevatorSubsystem;
-    this.rate = rate;
+    this.extensionRate = extentionRate;
+    this.angleRate = angleRate;
 
     addRequirements(elevatorSubsystem);
   }
@@ -31,9 +34,14 @@ public class ElevatorManualCommand extends CommandBase {
   public void execute() {
     elevatorSubsystem.setTargetExtensionInches(
         MathUtil.clamp(
-            (elevatorSubsystem.getTargetExtension() + rate.getAsDouble()),
+            (elevatorSubsystem.getTargetExtension() + extensionRate.getAsDouble()),
             Elevator.MIN_EXTENSION_INCHES,
             Elevator.MAX_EXTENSION_INCHES));
+    elevatorSubsystem.setTargetAngle(
+        MathUtil.clamp(
+            (elevatorSubsystem.getCurrentAngleDegrees() + angleRate.getAsDouble()),
+            Elevator.MIN_ANGLE,
+            Elevator.MAX_ANGLE));
   }
 
   // Called once the command ends or is interrupted.

@@ -136,11 +136,9 @@ public class RobotContainer {
 
     elevatorSubsystem.setDefaultCommand(
         new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getLeftY() * -0.42, 0.2)));
-
-    // elevatorSubsystem.setDefaultCommand(
-    //     new WristManualCommand(
-    //         elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
+            elevatorSubsystem,
+            () -> ControllerUtil.deadband(jacob.getLeftY() * -0.42, 0.2),
+            () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);

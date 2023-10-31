@@ -213,6 +213,9 @@ public final class Constants {
     public static final double MAX_EXTENSION_INCHES = 30;
     public static final double MIN_EXTENSION_INCHES = 2;
 
+    public static final double MIN_ANGLE_DEGREES = 0;
+    public static final double MAX_ANGLE_DEGREES = 109.25;
+
     public static final int FALCON_CPR = 2048;
     public static final double ELEVATOR_GEAR_RATIO = 0.1008;
     public static final double ELEVATOR_SPROCKET_DIAMETER_INCHES = 1.432;
