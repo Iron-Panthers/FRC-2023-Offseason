@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import frc.util.Util;
 
 public class ElevatorPositionCommand extends CommandBase {
@@ -39,6 +40,7 @@ public class ElevatorPositionCommand extends CommandBase {
   public void initialize() {
     elevatorSubsystem.setTargetExtensionInches(targetExtension);
     elevatorSubsystem.setTargetAngle(targetAngle);
+    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

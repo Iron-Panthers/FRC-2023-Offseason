@@ -157,8 +157,8 @@ public final class Constants {
       }
 
       public static final class Module2 { // historically front left
-        public static final int DRIVE_MOTOR = CAN.at(10, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(11, "module 2 steer motor");
+        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
         public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
@@ -210,8 +210,8 @@ public final class Constants {
       public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION_INCHES, 0);
     }
 
-    public static final double MAX_EXTENSION_INCHES = 30;
-    public static final double MIN_EXTENSION_INCHES = 2;
+    public static final double MAX_EXTENSION_INCHES = 61;
+    public static final double MIN_EXTENSION_INCHES = 0;
 
     public static final double MIN_ANGLE_DEGREES = 0;
     public static final double MAX_ANGLE_DEGREES = 109.25;

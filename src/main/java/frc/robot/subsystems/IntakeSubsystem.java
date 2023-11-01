@@ -31,7 +31,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     filter = LinearFilter.movingAverage(30);
 
-    shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
+    shuffleboard.addDouble(
+        "Intake motor sensor position", () -> intakeMotor.getSelectedSensorPosition());
+    shuffleboard.addString("Current mode", () -> currentIntakeMode.toString());
   }
 
   public enum Modes {

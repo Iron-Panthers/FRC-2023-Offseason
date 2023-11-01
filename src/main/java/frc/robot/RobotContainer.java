@@ -369,8 +369,8 @@ public class RobotContainer {
         .on(jacob.a())
         .onTrue(
             new InstantCommand(
-                () ->
-                    currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.LOW))));
+                () -> currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.LOW)),
+                elevatorSubsystem));
 
     jacobLayer
         .on(jacob.b())

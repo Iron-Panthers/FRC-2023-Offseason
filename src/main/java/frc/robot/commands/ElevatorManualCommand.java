@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorManualCommand extends CommandBase {
@@ -27,21 +28,24 @@ public class ElevatorManualCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    elevatorSubsystem.setMode(Modes.PERCENT_CONTROL);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetExtensionInches(
-        MathUtil.clamp(
-            (elevatorSubsystem.getTargetExtension() + extensionRate.getAsDouble()),
-            Elevator.MIN_EXTENSION_INCHES,
-            Elevator.MAX_EXTENSION_INCHES));
+    // elevatorSubsystem.setTargetExtensionInches(
+    //     MathUtil.clamp(
+    //         (elevatorSubsystem.getTargetExtension() + extensionRate.getAsDouble()),
+    //         Elevator.MIN_EXTENSION_INCHES,
+    //         Elevator.MAX_EXTENSION_INCHES));
     elevatorSubsystem.setTargetAngle(
         MathUtil.clamp(
             (elevatorSubsystem.getCurrentAngleDegrees() + angleRate.getAsDouble()),
-            Elevator.MIN_ANGLE,
-            Elevator.MAX_ANGLE));
+            Elevator.MIN_ANGLE_DEGREES,
+            Elevator.MAX_ANGLE_DEGREES));
+    elevatorSubsystem.setPercentControl(extensionRate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

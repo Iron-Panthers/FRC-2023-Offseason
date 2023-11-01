@@ -25,7 +25,8 @@ import frc.robot.Constants.Elevator;
 public class ElevatorSubsystem extends SubsystemBase {
 
   public enum Modes {
-    DRIVE,
+    PERCENT_CONTROL,
+    POSITION_CONTROL,
     ZERO
   }
 
@@ -40,10 +41,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double currentWristAngle;
   private double targetAngle;
   private double statorCurrentLimit;
+  private double percentControl;
 
   private PIDController extensionController;
   private PIDController wristController;
   private CANCoder canCoder;
+
+  private boolean isInSlowZone;
 
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
@@ -83,6 +87,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     currentWristAngle = 0.0;
     targetAngle = 0.0;
     statorCurrentLimit = 20.0;
+    percentControl = 0.0;
+
+    isInSlowZone = false;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
@@ -129,6 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Stator current", rightMotor::getStatorCurrent);
     tab.add("PID", extensionController);
     tab.addString("mode", () -> currentMode.toString());
+    tab.addBoolean("In slow zone", () -> isInSlowZone);
   }
 
   public void setMode(Modes mode) {
@@ -165,6 +173,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetAngle = targetState.angle();
   }
 
+  public void setPercentControl(double percentControl) {
+    this.percentControl = percentControl;
+  }
+
+  public double getPercentControl() {
+    return percentControl;
+  }
+
   public double getTargetExtension() {
     return targetExtension;
   }
@@ -189,14 +205,36 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetAngle = targetAngle;
   }
 
-  private void drivePeriodic() {
+  private double applySlowZoneToPercent(double percentControl) {
+    if (getExtensionInches() < 15) {
+      isInSlowZone = true;
+      return percentControl * 0.25;
+    } else {
+      isInSlowZone = false;
+      return percentControl;
+    }
+  }
+
+  private void percentDrivePeriodic() {
+    if (targetExtension > currentExtension) {
+      rightMotor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percentControl));
+    } else {
+      rightMotor.set(TalonFXControlMode.PercentOutput, percentControl);
+    }
+
+    wristMotor.set(
+        TalonFXControlMode.PercentOutput,
+        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+  }
+
+  private void positionDrivePeriodic() {
     if (filterOutput < statorCurrentLimit) {
       // || proxySensor.get() == false) {
       double motorPower = extensionController.calculate(currentExtension, targetExtension);
-      if (currentExtension < 10 && motorPower < 0) {
-        motorPower = MathUtil.clamp(motorPower, -0.25, 0.25);
-        if (currentExtension < 3 && motorPower < 0) {
-          motorPower = MathUtil.clamp(motorPower, -0.1, 0.1);
+      if (currentExtension < 20 && motorPower < 0) {
+        motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
+        if (currentExtension < 6 && motorPower < 0) {
+          motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
         }
       }
       rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
@@ -221,7 +259,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
       rightMotor.set(ControlMode.PercentOutput, 0);
 
-      currentMode = Modes.DRIVE;
+      currentMode = Modes.POSITION_CONTROL;
 
       rightMotor.configForwardSoftLimitEnable(true, 20);
       rightMotor.configReverseSoftLimitEnable(true, 20);
@@ -240,8 +278,11 @@ public class ElevatorSubsystem extends SubsystemBase {
       case ZERO:
         zeroPeriodic();
         break;
-      case DRIVE:
-        drivePeriodic();
+      case POSITION_CONTROL:
+        positionDrivePeriodic();
+        break;
+      case PERCENT_CONTROL:
+        percentDrivePeriodic();
         break;
     }
   }
