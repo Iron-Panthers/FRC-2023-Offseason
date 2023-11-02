@@ -205,21 +205,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetAngle = targetAngle;
   }
 
-  private double applySlowZoneToPercent(double percentControl) {
-    if (getExtensionInches() < 15) {
-      isInSlowZone = true;
-      return percentControl * 0.25;
-    } else {
-      isInSlowZone = false;
-      return percentControl;
-    }
-  }
+  // private double applySlowZoneToPercent(double percentControl) {
+  //   if (getExtensionInches() < 15) {
+  //     isInSlowZone = true;
+  //     return percentControl * 0.25;
+  //   } else {
+  //     isInSlowZone = false;
+  //     return percentControl;
+  //   }
+  // }
 
   private void percentDrivePeriodic() {
-    if (targetExtension > currentExtension) {
-      rightMotor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percentControl));
+    if (currentExtension < 15) {
+      rightMotor.set(TalonFXControlMode.PercentOutput, 0.15);
+      isInSlowZone = true;
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, percentControl);
+      isInSlowZone = false;
     }
 
     wristMotor.set(
@@ -232,12 +234,14 @@ public class ElevatorSubsystem extends SubsystemBase {
       // || proxySensor.get() == false) {
       double motorPower = extensionController.calculate(currentExtension, targetExtension);
       if (currentExtension < 20 && motorPower < 0) {
+        isInSlowZone = true;
         motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
         if (currentExtension < 6 && motorPower < 0) {
           motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
         }
+      } else {
+        rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
       }
-      rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
