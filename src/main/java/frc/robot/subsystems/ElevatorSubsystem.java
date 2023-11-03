@@ -181,6 +181,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     return percentControl;
   }
 
+  private double calculateGravityOffset() {
+    //maybe make it nonlinear, current model is very bad and not thought out
+    //interpolated tree map? prob not logarithmic but maybe
+    //
+    return (currentExtension / Elevator.MAX_EXTENSION_INCHES) * Elevator.GRAVITY_OFFSET_PERCENT;
+  }
+
   public double getTargetExtension() {
     return targetExtension;
   }
@@ -226,22 +233,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle) + calculateGravityOffset(), -0.25, 0.25));
   }
 
   private void positionDrivePeriodic() {
     if (filterOutput < statorCurrentLimit) {
-      // || proxySensor.get() == false) {
       double motorPower = extensionController.calculate(currentExtension, targetExtension);
-      if (currentExtension < 20 && motorPower < 0) {
-        isInSlowZone = true;
-        motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
-        if (currentExtension < 6 && motorPower < 0) {
-          motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
-        }
-      } else {
-        rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
-      }
+      final double gravityOffset = calculateGravityOffset();
+      
+      rightMotor.set(
+        TalonFXControlMode.PercentOutput, MathUtil.clamp(motorPower + gravityOffset, -0.8, 0.8));
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
     }

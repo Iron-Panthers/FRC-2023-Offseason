@@ -231,6 +231,8 @@ public final class Constants {
 
     public static final double ZERO_MOTOR_POWER = -0.2;
     public static final double ZERO_STATOR_LIMIT = 25;
+
+    public static final double GRAVITY_OFFSET_PERCENT = 0.08;
   }
 
   public static final class Intake {
