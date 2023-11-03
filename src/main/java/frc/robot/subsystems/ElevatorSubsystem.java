@@ -137,6 +137,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.add("PID", extensionController);
     tab.addString("mode", () -> currentMode.toString());
     tab.addBoolean("In slow zone", () -> isInSlowZone);
+    tab.addDouble("gravity offset", this::calculateGravityOffset);
   }
 
   public void setMode(Modes mode) {
