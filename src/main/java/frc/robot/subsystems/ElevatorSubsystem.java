@@ -13,7 +13,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -43,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double statorCurrentLimit;
   private double percentControl;
 
-  private PIDController extensionController;
+  private ProfiledPIDController extensionController;
   private PIDController wristController;
   private CANCoder canCoder;
 
@@ -72,12 +74,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftMotor.follow(rightMotor);
 
-    extensionController = new PIDController(0.1, 0.03, 0.035);
+    // extensionController = new PIDController(0.1, 0.03, 0.035);
+    extensionController =
+        new ProfiledPIDController(0.1, 0, 0035, new TrapezoidProfile.Constraints(8, 8));
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(Elevator.Ports.CANCODER);
     // proxySensor = new DigitalInput(0);
 
-    extensionController.setTolerance(0.25);
+    extensionController.setTolerance(0.25, 0.05);
 
     rightMotor.setSelectedSensorPosition(0);
     leftMotor.setSelectedSensorPosition(0);
@@ -116,7 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
     rightMotor.configReverseSoftLimitEnable(true, 20);
-    wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
+    wristMotor.configForwardSoftLimitEnable(true);
 
     canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
 
@@ -132,6 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("Elevator Target Extension", () -> targetExtension);
     tab.addDouble("Elevator Current Extension", () -> currentExtension);
     tab.addDouble("Elevator Output", rightMotor::getMotorOutputPercent);
+    tab.addDouble("velocity", rightMotor::getSelectedSensorVelocity);
     tab.addDouble("filter output", () -> filterOutput);
     tab.addDouble("Stator current", rightMotor::getStatorCurrent);
     tab.add("PID", extensionController);
@@ -232,17 +237,25 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void positionDrivePeriodic() {
     if (filterOutput < statorCurrentLimit) {
       // || proxySensor.get() == false) {
-      double motorPower = extensionController.calculate(currentExtension, targetExtension);
-      if (currentExtension < 20 && motorPower < 0) {
-        isInSlowZone = true;
-        motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
-        if (currentExtension < 6 && motorPower < 0) {
-          motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
-        }
-      } else {
-        rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
-      }
+      double motorPower =
+          MathUtil.clamp(
+              extensionController.calculate(
+                  currentExtension, new TrapezoidProfile.State(targetExtension, 0)),
+              -1,
+              1);
+
+      // if (currentExtension < 20 && motorPower < 0) {
+      //   isInSlowZone = true;
+      //   motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
+      //   if (currentExtension < 6 && motorPower < 0) {
+      //     motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
+      //   }
+      // } else {
+      //   isInSlowZone = false;
+      //   rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
+      // }
     } else {
+      isInSlowZone = false;
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
 

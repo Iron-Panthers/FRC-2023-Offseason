@@ -339,8 +339,8 @@ public class RobotContainer {
     //             elevatorSubsystem,
     //             () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    jacob
-        .povUp()
+    jacobLayer
+        .off(jacob.povUp())
         .onTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
@@ -349,8 +349,8 @@ public class RobotContainer {
 
     // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
-    jacob
-        .back()
+    jacobLayer
+        .off(jacob.back())
         .whileTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)
                 .alongWith(
