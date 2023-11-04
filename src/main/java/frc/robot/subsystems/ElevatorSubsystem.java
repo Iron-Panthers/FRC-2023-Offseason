@@ -42,7 +42,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetExtension;
   private double currentWristAngle;
   private double targetAngle;
-  private double statorCurrentLimit;
   private double percentControl;
 
   private ProfiledPIDController extensionController;
@@ -54,6 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
   private double filterOutput;
+  private double gravityOffset;
 
   // private DigitalInput proxySensor;
 
@@ -75,8 +75,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.follow(rightMotor);
 
     // extensionController = new PIDController(0.1, 0.03, 0.035);
-    extensionController =
-        new ProfiledPIDController(0.1, 0, 0035, new TrapezoidProfile.Constraints(8, 8));
     wristController = new PIDController(0, 0, 0);
     canCoder = new CANCoder(Elevator.Ports.CANCODER);
     // proxySensor = new DigitalInput(0);
@@ -90,8 +88,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetExtension = 0.0;
     currentWristAngle = 0.0;
     targetAngle = 0.0;
-    statorCurrentLimit = 20.0;
     percentControl = 0.0;
+    gravityOffset = 0.15;
 
     isInSlowZone = false;
 
@@ -122,6 +120,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotor.configReverseSoftLimitEnable(true, 20);
     wristMotor.configForwardSoftLimitEnable(true);
 
+    rightMotor.configMotionAcceleration(30000, 30);
+    rightMotor.configMotionCruiseVelocity(15000, 30);
+
+    rightMotor.config_kP(0, 0.2);
+    rightMotor.config_kD(0, 0);
+    rightMotor.config_kI(0, 0);
+    rightMotor.config_kF(0, 0);
+
     canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
 
     canCoder.configSensorDirection(true);
@@ -139,7 +145,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     tab.addDouble("velocity", rightMotor::getSelectedSensorVelocity);
     tab.addDouble("filter output", () -> filterOutput);
     tab.addDouble("Stator current", rightMotor::getStatorCurrent);
-    tab.add("PID", extensionController);
+    // tab.add("PID", extensionController);
     tab.addString("mode", () -> currentMode.toString());
     tab.addBoolean("In slow zone", () -> isInSlowZone);
   }
@@ -221,13 +227,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   // }
 
   private void percentDrivePeriodic() {
-    if (currentExtension < 15) {
-      rightMotor.set(TalonFXControlMode.PercentOutput, 0.15);
+    if (currentExtension < 15 && percentControl < 0) {
+      rightMotor.set(TalonFXControlMode.PercentOutput, percentControl * 0.4);
       isInSlowZone = true;
     } else {
       rightMotor.set(TalonFXControlMode.PercentOutput, percentControl);
       isInSlowZone = false;
     }
+
+    // rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
 
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
@@ -235,29 +243,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private void positionDrivePeriodic() {
-    if (filterOutput < statorCurrentLimit) {
-      // || proxySensor.get() == false) {
-      double motorPower =
-          MathUtil.clamp(
-              extensionController.calculate(
-                  currentExtension, new TrapezoidProfile.State(targetExtension, 0)),
-              -1,
-              1);
+    // if (filterOutput < statorCurrentLimit) {
+    //   double motorPower = extensionController.calculate(currentExtension, targetExtension);
+    //   final double gravityOffset = calculateElevatorGravityOffset();
 
-      // if (currentExtension < 20 && motorPower < 0) {
-      //   isInSlowZone = true;
-      //   motorPower = MathUtil.clamp(motorPower, -0.15, 0.15);
-      //   if (currentExtension < 6 && motorPower < 0) {
-      //     motorPower = MathUtil.clamp(motorPower, -0.075, 0.075);
-      //   }
-      // } else {
-      //   isInSlowZone = false;
-      //   rightMotor.set(TalonFXControlMode.PercentOutput, motorPower);
-      // }
-    } else {
-      isInSlowZone = false;
-      rightMotor.set(TalonFXControlMode.PercentOutput, 0);
-    }
+    //   rightMotor.set(
+    //       TalonFXControlMode.PercentOutput, MathUtil.clamp(motorPower + gravityOffset, -0.8,
+    // 0.8));
+    // } else {
+    //   rightMotor.set(TalonFXControlMode.PercentOutput, 0);
+    // }
+    rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
 
     wristMotor.set(
         TalonFXControlMode.PercentOutput,
