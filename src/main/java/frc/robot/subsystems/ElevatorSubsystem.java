@@ -13,9 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -44,7 +42,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetAngle;
   private double percentControl;
 
-  private ProfiledPIDController extensionController;
+  // private ProfiledPIDController extensionController;
   private PIDController wristController;
   private CANCoder canCoder;
 
@@ -53,7 +51,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
   private double filterOutput;
-  private double gravityOffset;
 
   // private DigitalInput proxySensor;
 
@@ -79,7 +76,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     canCoder = new CANCoder(Elevator.Ports.CANCODER);
     // proxySensor = new DigitalInput(0);
 
-    extensionController.setTolerance(0.25, 0.05);
+    // extensionController.setTolerance(0.25, 0.05);
 
     rightMotor.setSelectedSensorPosition(0);
     leftMotor.setSelectedSensorPosition(0);
@@ -89,7 +86,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     currentWristAngle = 0.0;
     targetAngle = 0.0;
     percentControl = 0.0;
-    gravityOffset = 0.15;
 
     isInSlowZone = false;
 
@@ -123,11 +119,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotor.configMotionAcceleration(30000, 30);
     rightMotor.configMotionCruiseVelocity(15000, 30);
 
-    rightMotor.config_kP(0, 0.2);
+    rightMotor.config_kP(0, 0.08);
     rightMotor.config_kD(0, 0);
     rightMotor.config_kI(0, 0);
-    rightMotor.config_kF(0, 0);
-
+    rightMotor.config_kF(0, 0.0);
+    rightMotor.configNeutralDeadband(0.001);
     canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
 
     canCoder.configSensorDirection(true);
@@ -216,24 +212,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetAngle = targetAngle;
   }
 
-  // private double applySlowZoneToPercent(double percentControl) {
-  //   if (getExtensionInches() < 15) {
-  //     isInSlowZone = true;
-  //     return percentControl * 0.25;
-  //   } else {
-  //     isInSlowZone = false;
-  //     return percentControl;
-  //   }
-  // }
+  private double applySlowZoneToPercent(double percentControl) {
+    if ((currentExtension > (Elevator.MAX_EXTENSION_INCHES - 7))
+        || (currentExtension < (Elevator.MIN_EXTENSION_INCHES + 7))) {
+      isInSlowZone = true;
+      return percentControl * 0.5;
+    }
+    isInSlowZone = false;
+    return percentControl;
+  }
 
   private void percentDrivePeriodic() {
-    if (currentExtension < 15 && percentControl < 0) {
-      rightMotor.set(TalonFXControlMode.PercentOutput, percentControl * 0.4);
-      isInSlowZone = true;
-    } else {
-      rightMotor.set(TalonFXControlMode.PercentOutput, percentControl);
-      isInSlowZone = false;
-    }
+    rightMotor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percentControl) + 0.02);
+    isInSlowZone = false;
 
     // rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
 
