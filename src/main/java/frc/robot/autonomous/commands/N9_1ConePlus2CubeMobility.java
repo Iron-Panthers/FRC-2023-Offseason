@@ -22,7 +22,6 @@ import frc.util.NodeSelectorUtility.NodeType;
 import frc.util.pathing.LoadMirrorPath;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class N9_1ConePlus2CubeMobility extends SequentialCommandGroup {
@@ -39,10 +38,8 @@ public class N9_1ConePlus2CubeMobility extends SequentialCommandGroup {
             "n9 1cone + 2cube", maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq);
 
     addCommands(
-        (new SetZeroModeCommand(elevatorSubsystem)
-                .alongWith(
-                    new SetZeroModeCommand(
-                        elevatorSubsystem, Optional.of(true), Optional.of(false))))
+        new SetZeroModeCommand(elevatorSubsystem)
+            .alongWith(new SetZeroModeCommand(elevatorSubsystem))
             .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)),
         new ScoreCommand(
             intakeSubsystem,

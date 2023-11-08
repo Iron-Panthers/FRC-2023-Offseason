@@ -11,6 +11,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Intake;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -22,7 +23,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    intakeMotor = new TalonFX(0);
+    intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
 
     currentIntakeMode = Modes.OFF;
 
@@ -30,7 +31,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     filter = LinearFilter.movingAverage(30);
 
-    shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
+    shuffleboard.addDouble(
+        "Intake motor sensor position", () -> intakeMotor.getSelectedSensorPosition());
+    shuffleboard.addString("Current mode", () -> currentIntakeMode.toString());
   }
 
   public enum Modes {

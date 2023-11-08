@@ -6,28 +6,49 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorManualCommand extends CommandBase {
   ElevatorSubsystem elevatorSubsystem;
-  DoubleSupplier rate;
+  DoubleSupplier extensionRate;
+  DoubleSupplier angleRate;
 
   /** Creates a new AngleArmCommand. */
-  public ElevatorManualCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier rate) {
+  public ElevatorManualCommand(
+      ElevatorSubsystem elevatorSubsystem, DoubleSupplier extentionRate, DoubleSupplier angleRate) {
     this.elevatorSubsystem = elevatorSubsystem;
-    this.rate = rate;
+    this.extensionRate = extentionRate;
+    this.angleRate = angleRate;
 
     addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    elevatorSubsystem.setMode(Modes.PERCENT_CONTROL);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setTargetHeight(elevatorSubsystem.getHeight() + rate.getAsDouble());
+    // elevatorSubsystem.setTargetExtensionInches(
+    //     MathUtil.clamp(
+    //         (elevatorSubsystem.getTargetExtension() + extensionRate.getAsDouble()),
+    //         Elevator.MIN_EXTENSION_INCHES,
+    //         Elevator.MAX_EXTENSION_INCHES));
+    // elevatorSubsystem.setTargetAngle(
+    //     MathUtil.clamp(
+    //         (elevatorSubsystem.getCurrentAngleDegrees() + angleRate.getAsDouble()),
+    //         Elevator.MIN_ANGLE_DEGREES,
+    //         Elevator.MAX_ANGLE_DEGREES));
+    // elevatorSubsystem.setTargetExtensionInches(
+    //     MathUtil.clamp(
+    //         (elevatorSubsystem.getExtensionInches() + extensionRate.getAsDouble()),
+    //         Elevator.MIN_EXTENSION_INCHES,
+    //         Elevator.MAX_EXTENSION_INCHES));
+    elevatorSubsystem.setPercentControl(extensionRate.getAsDouble(), angleRate.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

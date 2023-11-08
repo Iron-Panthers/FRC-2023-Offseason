@@ -17,8 +17,8 @@ import java.util.function.Supplier;
 public class GroundPickupCommand extends SequentialCommandGroup {
   /** Creates a new GroundPickupCommand. */
   public GroundPickupCommand(
-      ElevatorSubsystem elevatorSubsystem,
       IntakeSubsystem intakeSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
       Supplier<Modes> modeSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
