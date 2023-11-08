@@ -138,7 +138,7 @@ public class RobotContainer {
         new ElevatorManualCommand(
             elevatorSubsystem,
             () -> ControllerUtil.deadband(jacob.getLeftY() * -0.42, 0.2),
-            () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
+            () -> ControllerUtil.deadband(jacob.getRightY() * 0.5, 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -455,7 +455,7 @@ public class RobotContainer {
             "stow elevator",
             new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED),
             "zero everything",
-            new SetZeroModeCommand(elevatorSubsystem, true),
+            new SetZeroModeCommand(elevatorSubsystem),
             "intake",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake

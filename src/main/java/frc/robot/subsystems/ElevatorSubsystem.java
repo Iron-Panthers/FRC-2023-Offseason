@@ -5,12 +5,10 @@
 // need: have a way for elevator to go up, take in double and goes up
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -40,24 +38,31 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetExtension;
   private double currentWristAngle;
   private double targetAngle;
-  private double percentControl;
+  private double elevatorPercentControl;
+  private double wristPercentControl;
+
+  private boolean elevatorZeroed;
+  private boolean wristZeroed;
 
   // private ProfiledPIDController extensionController;
   private PIDController wristController;
-  private CANCoder canCoder;
+  // private CANCoder canCoder;
 
-  private boolean isInSlowZone;
+  private final ShuffleboardTab elevatorTab = Shuffleboard.getTab("Elevator");
 
-  private final ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
+  private final ShuffleboardTab wristTab = Shuffleboard.getTab("Wrist");
 
-  private double filterOutput;
+  private double elevatorFilterOutput;
+
+  private double wristFilterOutput;
 
   // private DigitalInput proxySensor;
 
   // add soft limits - check 2022 frc code
 
   // stator limits
-  private LinearFilter filter;
+  private LinearFilter elevatorFilter;
+  private LinearFilter wristFilter;
 
   public static record ElevatorState(double extension, double angle) {}
 
@@ -72,22 +77,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.follow(rightMotor);
 
     // extensionController = new PIDController(0.1, 0.03, 0.035);
-    wristController = new PIDController(0, 0, 0);
-    canCoder = new CANCoder(Elevator.Ports.CANCODER);
+    wristController = new PIDController(0.1, 0, 0);
+    // canCoder = new CANCoder(Elevator.Ports.CANCODER);
     // proxySensor = new DigitalInput(0);
 
     // extensionController.setTolerance(0.25, 0.05);
 
     rightMotor.setSelectedSensorPosition(0);
     leftMotor.setSelectedSensorPosition(0);
+    wristMotor.setSelectedSensorPosition(0);
 
     currentExtension = 0.0;
     targetExtension = 0.0;
     currentWristAngle = 0.0;
     targetAngle = 0.0;
-    percentControl = 0.0;
+    elevatorPercentControl = 0.0;
+    wristPercentControl = 0.0;
 
-    isInSlowZone = false;
+    elevatorZeroed = false;
+    wristZeroed = false;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();
@@ -99,6 +107,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     rightMotor.setInverted(true);
     leftMotor.setInverted(InvertType.FollowMaster);
+    // wristMotor.setInverted(false);
+    wristMotor.setSensorPhase(true);
 
     rightMotor.configOpenloopRamp(.5);
 
@@ -110,11 +120,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         extensionInchesToTicks(Constants.Elevator.MAX_EXTENSION_INCHES), 20);
     rightMotor.configReverseSoftLimitThreshold(
         extensionInchesToTicks(Elevator.MIN_EXTENSION_INCHES), 20);
-    wristMotor.configForwardSoftLimitThreshold(angleToTicks(0));
+    wristMotor.configReverseSoftLimitThreshold(angleToTicks(Elevator.MIN_ANGLE_DEGREES));
+    wristMotor.configForwardSoftLimitThreshold(angleToTicks(Elevator.MAX_ANGLE_DEGREES));
 
     rightMotor.configForwardSoftLimitEnable(true, 20);
     rightMotor.configReverseSoftLimitEnable(true, 20);
     wristMotor.configForwardSoftLimitEnable(true);
+    // wristMotor.configReverseSoftLimitEnable(true);
 
     rightMotor.configMotionAcceleration(30000, 30);
     rightMotor.configMotionCruiseVelocity(15000, 30);
@@ -124,26 +136,31 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotor.config_kI(0, 0);
     rightMotor.config_kF(0, 0.0);
     rightMotor.configNeutralDeadband(0.001);
-    canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
+    // canCoder.configMagnetOffset(Elevator.ANGULAR_OFFSET);
 
-    canCoder.configSensorDirection(true);
+    // canCoder.configSensorDirection(true);
 
-    canCoder.setPositionToAbsolute(10); // ms
+    // canCoder.setPositionToAbsolute(10); // ms
 
-    filter = LinearFilter.movingAverage(30);
+    elevatorFilter = LinearFilter.movingAverage(30);
+    wristFilter = LinearFilter.movingAverage(30);
 
-    tab.addDouble("Wrist Motor Position", () -> canCoder.getAbsolutePosition());
-    tab.addDouble("Wrist Target Angle", () -> targetAngle);
-    tab.addDouble("Wrist Current Angle", () -> currentWristAngle);
-    tab.addDouble("Elevator Target Extension", () -> targetExtension);
-    tab.addDouble("Elevator Current Extension", () -> currentExtension);
-    tab.addDouble("Elevator Output", rightMotor::getMotorOutputPercent);
-    tab.addDouble("velocity", rightMotor::getSelectedSensorVelocity);
-    tab.addDouble("filter output", () -> filterOutput);
-    tab.addDouble("Stator current", rightMotor::getStatorCurrent);
-    // tab.add("PID", extensionController);
-    tab.addString("mode", () -> currentMode.toString());
-    tab.addBoolean("In slow zone", () -> isInSlowZone);
+    wristTab.addDouble("Wrist Target Angle", () -> targetAngle);
+    wristTab.addDouble("Wrist Current Angle", () -> currentWristAngle);
+    wristTab.addDouble("filter output", () -> wristFilterOutput);
+    wristTab.addDouble("percent control", () -> wristPercentControl);
+    wristTab.addBoolean("is zeroed", () -> wristZeroed);
+    wristTab.add("Wrist PID", wristController);
+    wristTab.addString("mode", () -> currentMode.toString());
+    elevatorTab.addDouble("Elevator Target Extension", () -> targetExtension);
+    elevatorTab.addDouble("Elevator Current Extension", () -> currentExtension);
+    elevatorTab.addDouble("Elevator Output", rightMotor::getMotorOutputPercent);
+    elevatorTab.addDouble("percent control", () -> elevatorPercentControl);
+    elevatorTab.addDouble("velocity", rightMotor::getSelectedSensorVelocity);
+    elevatorTab.addDouble("filter output", () -> elevatorFilterOutput);
+    elevatorTab.addDouble("Stator current", rightMotor::getStatorCurrent);
+    elevatorTab.addBoolean("is zeroed", () -> elevatorZeroed);
+    elevatorTab.addString("mode", () -> currentMode.toString());
   }
 
   public void setMode(Modes mode) {
@@ -180,12 +197,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetAngle = targetState.angle();
   }
 
-  public void setPercentControl(double percentControl) {
-    this.percentControl = percentControl;
+  public void setPercentControl(double elevatorPercentControl, double wristPercentControl) {
+    this.elevatorPercentControl = elevatorPercentControl;
+    this.wristPercentControl = wristPercentControl;
   }
 
-  public double getPercentControl() {
-    return percentControl;
+  public double getElevatorPercentControl() {
+    return elevatorPercentControl;
+  }
+
+  public double getWristPercentControl() {
+    return wristPercentControl;
   }
 
   public double getTargetExtension() {
@@ -196,41 +218,56 @@ public class ElevatorSubsystem extends SubsystemBase {
     return targetAngle;
   }
 
-  public double getExtensionInches() {
+  public double getCurrentExtensionInches() {
     return ticksToExtensionInches(getCurrentTicks());
   }
 
   public double getCurrentAngleDegrees() {
-    return canCoder.getAbsolutePosition();
+    // 1:128 ratio
+    return (wristMotor.getSelectedSensorPosition() * 360) / (128 * 2048);
+    // return canCoder.getAbsolutePosition();
   }
 
   private double angleToTicks(double angle) {
-    return angle / Elevator.WRIST_TICKS;
+    return angle / 360 * 128 * 2048;
+  }
+
+  private double ticksToAngle(double ticks) {
+    return ticks / 2048 / 128 * 360;
   }
 
   public void setTargetAngle(double targetAngle) {
     this.targetAngle = targetAngle;
   }
 
-  private double applySlowZoneToPercent(double percentControl) {
+  public void setNotZeroed() {
+    elevatorZeroed = false;
+    wristZeroed = false;
+  }
+
+  private double applySlowZoneToElevatorPercent(double elevatorPercentControl) {
     if ((currentExtension > (Elevator.MAX_EXTENSION_INCHES - 7))
         || (currentExtension < (Elevator.MIN_EXTENSION_INCHES + 7))) {
-      isInSlowZone = true;
-      return percentControl * 0.5;
+      return MathUtil.clamp(elevatorPercentControl * 0.5, -1, 1);
     }
-    isInSlowZone = false;
-    return percentControl;
+    return MathUtil.clamp(elevatorPercentControl, -1, 1);
   }
 
   private void percentDrivePeriodic() {
-    rightMotor.set(TalonFXControlMode.PercentOutput, applySlowZoneToPercent(percentControl) + 0.02);
-    isInSlowZone = false;
+    if (elevatorFilterOutput > Elevator.STATOR_LIMIT) {
+      rightMotor.set(TalonFXControlMode.PercentOutput, 0);
+    } else {
+      rightMotor.set(
+          TalonFXControlMode.PercentOutput,
+          applySlowZoneToElevatorPercent(elevatorPercentControl) + 0.02);
+    }
 
     // rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
-
-    wristMotor.set(
-        TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+    if (wristFilterOutput > Elevator.STATOR_LIMIT) {
+      wristMotor.set(TalonFXControlMode.PercentOutput, 0);
+    } else {
+      wristMotor.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(wristPercentControl, -1, 1));
+    }
   }
 
   private void positionDrivePeriodic() {
@@ -244,39 +281,67 @@ public class ElevatorSubsystem extends SubsystemBase {
     // } else {
     //   rightMotor.set(TalonFXControlMode.PercentOutput, 0);
     // }
-    rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
+    if (elevatorFilterOutput > Elevator.STATOR_LIMIT) {
+      rightMotor.set(TalonFXControlMode.PercentOutput, 0);
+    } else {
+      rightMotor.set(TalonFXControlMode.MotionMagic, extensionInchesToTicks(targetExtension));
+    }
 
-    wristMotor.set(
-        TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+    if (wristFilterOutput > Elevator.STATOR_LIMIT) {
+      wristMotor.set(TalonFXControlMode.PercentOutput, 0);
+    } else {
+      wristMotor.set(
+          TalonFXControlMode.PercentOutput,
+          MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.25, 0.25));
+    }
   }
 
   private void zeroPeriodic() {
+
     rightMotor.configForwardSoftLimitEnable(false, 20);
     rightMotor.configReverseSoftLimitEnable(false, 20);
 
-    rightMotor.set(ControlMode.PercentOutput, Elevator.ZERO_MOTOR_POWER);
+    rightMotor.set(TalonFXControlMode.PercentOutput, Elevator.ZERO_MOTOR_POWER);
 
-    if (filterOutput > Elevator.ZERO_STATOR_LIMIT) {
+    if (elevatorFilterOutput > Elevator.ZERO_STATOR_LIMIT) {
       rightMotor.setSelectedSensorPosition(0);
       leftMotor.setSelectedSensorPosition(0);
 
-      rightMotor.set(ControlMode.PercentOutput, 0);
-
-      currentMode = Modes.POSITION_CONTROL;
+      rightMotor.set(TalonFXControlMode.PercentOutput, 0);
 
       rightMotor.configForwardSoftLimitEnable(true, 20);
       rightMotor.configReverseSoftLimitEnable(true, 20);
 
       targetExtension = Elevator.MIN_EXTENSION_INCHES;
+
+      elevatorZeroed = true;
+    }
+    if (elevatorZeroed) {
+      wristMotor.configForwardSoftLimitEnable(false, 20);
+      wristMotor.configReverseSoftLimitEnable(false);
+      wristMotor.set(TalonFXControlMode.PercentOutput, Elevator.ZERO_MOTOR_POWER);
+      if (wristFilterOutput > Elevator.ZERO_STATOR_LIMIT) {
+        wristMotor.setSelectedSensorPosition(0);
+
+        wristMotor.set(TalonFXControlMode.PercentOutput, 0);
+
+        wristMotor.configForwardSoftLimitEnable(true);
+        wristMotor.configReverseSoftLimitEnable(true);
+
+        wristZeroed = true;
+      }
+    }
+    if (wristZeroed && elevatorZeroed) {
+      currentMode = Modes.POSITION_CONTROL;
     }
   }
 
   @Override
   public void periodic() {
-    currentExtension = getExtensionInches();
+    currentExtension = getCurrentExtensionInches();
     currentWristAngle = getCurrentAngleDegrees();
-    filterOutput = filter.calculate(rightMotor.getStatorCurrent());
+    elevatorFilterOutput = elevatorFilter.calculate(rightMotor.getStatorCurrent());
+    wristFilterOutput = wristFilter.calculate(wristMotor.getStatorCurrent());
 
     switch (currentMode) {
       case ZERO:

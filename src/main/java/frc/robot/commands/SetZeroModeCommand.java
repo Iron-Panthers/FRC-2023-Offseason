@@ -7,34 +7,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.Modes;
-import java.util.Optional;
 
 public class SetZeroModeCommand extends CommandBase {
   private ElevatorSubsystem elevatorSubsystem;
-  private boolean includeWrist;
-  private boolean includeElevator;
 
-  public SetZeroModeCommand(
-      ElevatorSubsystem elevatorSubsystem,
-      Optional<Boolean> includeWrist,
-      Optional<Boolean> includeElevator) {
+  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem) {
     this.elevatorSubsystem = elevatorSubsystem;
-    if (includeWrist.isPresent()) this.includeWrist = includeWrist.get();
-    if (includeElevator.isPresent()) this.includeElevator = includeElevator.get();
 
     addRequirements(elevatorSubsystem);
   }
 
-  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem) {
-    this(elevatorSubsystem, Optional.of(true), Optional.of(true));
-  }
-
-  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem, boolean includeWrist) {
-    this(elevatorSubsystem, Optional.of(includeWrist), Optional.of(true));
-  }
-
   @Override
   public void initialize() {
+    elevatorSubsystem.setNotZeroed();
     elevatorSubsystem.setMode(Modes.ZERO);
   }
 

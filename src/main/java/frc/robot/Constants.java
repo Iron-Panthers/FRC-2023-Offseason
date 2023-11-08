@@ -194,9 +194,9 @@ public final class Constants {
   public static final class Elevator {
     public static final class Ports {
 
-      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(7, "elevator left motor");
-      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(6, "elevator right motor");
-      public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
+      public static final int WRIST_MOTOR_PORT = CAN.at(16, "wrist motor port");
       public static final int CANCODER = CAN.at(0, "cancoder");
     }
 
@@ -210,8 +210,8 @@ public final class Constants {
       public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION_INCHES, 0);
     }
 
-    public static final double MAX_EXTENSION_INCHES = 61;
-    public static final double MIN_EXTENSION_INCHES = 0;
+    public static final double MAX_EXTENSION_INCHES = 54;
+    public static final double MIN_EXTENSION_INCHES = 1;
 
     public static final double MIN_ANGLE_DEGREES = 0;
     public static final double MAX_ANGLE_DEGREES = 109.25;
@@ -230,7 +230,8 @@ public final class Constants {
     public static final double ANGULAR_OFFSET = 0;
 
     public static final double ZERO_MOTOR_POWER = -0.2;
-    public static final double ZERO_STATOR_LIMIT = 15;
+    public static final double ZERO_STATOR_LIMIT = 10;
+    public static final double STATOR_LIMIT = 25;
 
     public static final double GRAVITY_OFFSET_PERCENT = .2;
   }
