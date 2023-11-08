@@ -54,14 +54,14 @@ public class ElevatorPositionCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // return Util.epsilonEquals(
+    //         elevatorSubsystem.getCurrentAngleDegrees(),
+    //         elevatorSubsystem.getTargetAngle(),
+    //         Elevator.ANGLE_EPSILON)
     return Util.epsilonEquals(
-            elevatorSubsystem.getCurrentAngleDegrees(),
-            elevatorSubsystem.getTargetAngle(),
-            Elevator.ANGLE_EPSILON)
-        && Util.epsilonEquals(
-            elevatorSubsystem.getExtensionInches(),
-            elevatorSubsystem.getTargetExtension(),
-            Elevator.EXTENSION_EPSILON);
+        elevatorSubsystem.getExtensionInches(),
+        elevatorSubsystem.getTargetExtension(),
+        Elevator.EXTENSION_EPSILON);
     // && extensionController.atSetpoint()
     // && angleController.atSetpoint();
     // add a condition to end the command when the elevator

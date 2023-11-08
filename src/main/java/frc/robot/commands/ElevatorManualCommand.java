@@ -45,6 +45,11 @@ public class ElevatorManualCommand extends CommandBase {
             (elevatorSubsystem.getCurrentAngleDegrees() + angleRate.getAsDouble()),
             Elevator.MIN_ANGLE_DEGREES,
             Elevator.MAX_ANGLE_DEGREES));
+    // elevatorSubsystem.setTargetExtensionInches(
+    //     MathUtil.clamp(
+    //         (elevatorSubsystem.getExtensionInches() + extensionRate.getAsDouble()),
+    //         Elevator.MIN_EXTENSION_INCHES,
+    //         Elevator.MAX_EXTENSION_INCHES));
     elevatorSubsystem.setPercentControl(extensionRate.getAsDouble());
   }
 
