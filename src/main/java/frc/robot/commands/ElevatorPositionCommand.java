@@ -8,18 +8,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import frc.util.Util;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
-  private double targetHeight;
+  private double targetExtension;
   private double targetAngle;
 
   /** Creates a new ElevatorPositionCommand. */
   public ElevatorPositionCommand(
-      ElevatorSubsystem subsystem, double targetHeight, double targetAngle) {
+      ElevatorSubsystem subsystem, double targetExtension, double targetAngle) {
     this.elevatorSubsystem = subsystem;
-    this.targetHeight = targetHeight;
+    this.targetExtension = targetExtension;
     this.targetAngle = targetAngle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
@@ -28,7 +29,7 @@ public class ElevatorPositionCommand extends CommandBase {
   public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, ElevatorState elevatorState) {
     // height and angle
     this.elevatorSubsystem = elevatorSubsystem;
-    targetHeight = elevatorState.height();
+    targetExtension = elevatorState.extension();
     targetAngle = elevatorState.angle();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
@@ -37,8 +38,9 @@ public class ElevatorPositionCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setTargetHeight(targetHeight);
+    elevatorSubsystem.setTargetExtensionInches(targetExtension);
     elevatorSubsystem.setTargetAngle(targetAngle);
+    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,9 +59,9 @@ public class ElevatorPositionCommand extends CommandBase {
             elevatorSubsystem.getTargetAngle(),
             Elevator.ANGLE_EPSILON)
         && Util.epsilonEquals(
-            elevatorSubsystem.getHeight(),
-            elevatorSubsystem.getTargetHeight(),
-            Elevator.HEIGHT_EPSILON);
+            elevatorSubsystem.getCurrentExtensionInches(),
+            elevatorSubsystem.getTargetExtension(),
+            Elevator.EXTENSION_EPSILON);
     // && extensionController.atSetpoint()
     // && angleController.atSetpoint();
     // add a condition to end the command when the elevator

@@ -38,7 +38,6 @@ import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
-import frc.robot.commands.WristManualCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -137,11 +136,9 @@ public class RobotContainer {
 
     elevatorSubsystem.setDefaultCommand(
         new ElevatorManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getLeftY(), 0.2)));
-
-    elevatorSubsystem.setDefaultCommand(
-        new WristManualCommand(
-            elevatorSubsystem, () -> ControllerUtil.deadband(jacob.getRightY(), 0.2)));
+            elevatorSubsystem,
+            () -> ControllerUtil.deadband(jacob.getLeftY() * -0.42, 0.2),
+            () -> ControllerUtil.deadband(jacob.getRightY() * 0.5, 0.2)));
 
     SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
     SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
@@ -210,6 +207,8 @@ public class RobotContainer {
     anthony.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
     jacob.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
+
+    jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
     DoubleSupplier rotation =
         exponential(
@@ -289,11 +288,9 @@ public class RobotContainer {
         .off(jacob.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
 
-    jacobLayer
-        .off(jacob.x())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
-        .onTrue(
-            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
+    jacobLayer.off(jacob.x()).onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
+    // .onTrue(
+    //     new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
 
     // intake presets
     // jacobLayer
@@ -320,7 +317,7 @@ public class RobotContainer {
 
     anthony
         .povLeft()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO))
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
@@ -333,15 +330,15 @@ public class RobotContainer {
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
     jacob
-        .leftBumper()
+        .a()
         .onTrue(
             new GroundPickupCommand(
                 intakeSubsystem,
                 elevatorSubsystem,
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    jacob
-        .povUp()
+    jacobLayer
+        .off(jacob.povUp())
         .onTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
@@ -350,14 +347,13 @@ public class RobotContainer {
 
     // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
-    jacob
-        .back()
+    jacobLayer
+        .off(jacob.back())
         .whileTrue(
             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)
                 .alongWith(
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)))
-        // .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)))
         .onFalse(
             new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
                 .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
@@ -371,8 +367,8 @@ public class RobotContainer {
         .on(jacob.a())
         .onTrue(
             new InstantCommand(
-                () ->
-                    currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.LOW))));
+                () -> currentNodeSelection.apply(n -> n.withHeight(NodeSelectorUtility.Height.LOW)),
+                elevatorSubsystem));
 
     jacobLayer
         .on(jacob.b())
@@ -398,13 +394,20 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              anthony.povRight()));
+              jacob.leftBumper()));
+    //   anthony.povRight()));
 
-    anthony
-        .povRight()
+    jacob
+        .leftBumper()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
+
+    // anthony
+    //     .povRight()
+    //     .onTrue(
+    //         new HashMapCommand<>(
+    //             scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
 
     jacob.povRight().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(1))));
     jacob.povLeft().onTrue(new InstantCommand(() -> currentNodeSelection.apply(n -> n.shift(-1))));
@@ -440,7 +443,8 @@ public class RobotContainer {
 
     final List<ScoreStep> drivingCubeOuttake =
         List.of(
-            new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_HEIGHT)).canWaitHere(),
+            new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_EXTENSION_INCHES))
+                .canWaitHere(),
             new ScoreStep(Modes.OUTTAKE));
     final boolean[] intakeLow = {false};
     // FIXME go through each auto and make sure that we dont use a leftover event marker from Simba
@@ -449,7 +453,7 @@ public class RobotContainer {
             "stow elevator",
             new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED),
             "zero everything",
-            new SetZeroModeCommand(elevatorSubsystem, true),
+            new SetZeroModeCommand(elevatorSubsystem),
             "intake",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake
@@ -505,10 +509,9 @@ public class RobotContainer {
                         elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)));
 
     // autoSelector.setDefaultOption(
-    // FIXME causes code error, getMarkers() returns null
-    // "N1 1Cone + 2Cube Low Mobility Engage",
-    // new N1_1ConePlus2CubeHybridMobilityEngage(
-    //     4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    //     "N1 1Cone + 2Cube Low Mobility Engage",
+    //     new N1_1ConePlus2CubeHybridMobilityEngage(
+    //         4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     // autoSelector.setDefaultOption(
     //     "N1 1Cone + 2Cube Low Mobility NO ENGAGE",

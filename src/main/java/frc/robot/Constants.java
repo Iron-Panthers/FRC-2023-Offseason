@@ -157,8 +157,8 @@ public final class Constants {
       }
 
       public static final class Module2 { // historically front left
-        public static final int DRIVE_MOTOR = CAN.at(10, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(11, "module 2 steer motor");
+        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
         public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
@@ -196,45 +196,57 @@ public final class Constants {
 
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
-      public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
+      public static final int WRIST_MOTOR_PORT = CAN.at(16, "wrist motor port");
     }
 
     public static final class Setpoints {
-      public static final ElevatorState STOWED = new ElevatorState(20, 0);
+      public static final ElevatorState STOWED =
+          new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
-      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_HEIGHT, 0);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_HEIGHT, 0);
-      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_HEIGHT / 2, 20);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_HEIGHT, 40);
-      public static final ElevatorState ZERO = new ElevatorState(MIN_HEIGHT, 0);
+      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION_INCHES, 80);
+      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 20);
+      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION_INCHES, 60);
     }
 
-    public static final double MAX_HEIGHT = 20;
-    public static final double MIN_HEIGHT = 0;
+    public static final double MAX_EXTENSION_INCHES = 54;
+    public static final double MIN_EXTENSION_INCHES = 1;
 
-    public static final int ELEVATOR_TICKS = 2048;
-    public static final double ELEVATOR_GEAR_RATIO = 1 / 9.9206;
-    public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.432 * Math.PI;
+    public static final double MIN_ANGLE_DEGREES = 3;
+    public static final double MAX_ANGLE_DEGREES = 109.25;
+
+    public static final int FALCON_CPR = 2048;
+    public static final double ELEVATOR_GEAR_RATIO = 0.1008;
+    public static final double ELEVATOR_SPROCKET_DIAMETER_INCHES = 1.432;
+    public static final double CARRIAGE_RATIO = 2;
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
     public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
-    public static final double HEIGHT_EPSILON = 5;
+    public static final double EXTENSION_EPSILON = 5;
     public static final double ANGULAR_OFFSET = 0;
+
+    public static final double ZERO_MOTOR_POWER = -0.2;
+    public static final double ZERO_STATOR_LIMIT = 10;
+    public static final double STATOR_LIMIT = 25;
+
+    public static final double GRAVITY_OFFSET_PERCENT = .2;
   }
 
   public static final class Intake {
 
-    public static final double INTAKE_PERCENT = 0.25;
+    public static final double INTAKE_PERCENT = 0.7;
 
-    public static final double OUTTAKE_PERCENT = -0.25;
+    public static final double OUTTAKE_PERCENT = -0.7;
 
     public static final double HOLD_PERCENT = 0.1;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
+      public static final int CONE_TOF_PORT = 0;
+      public static final int CUBE_TOF_PORT = 0;
     }
   }
 

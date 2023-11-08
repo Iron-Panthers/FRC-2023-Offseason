@@ -5,37 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsystem;
-import java.util.Optional;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
 
 public class SetZeroModeCommand extends CommandBase {
   private ElevatorSubsystem elevatorSubsystem;
-  private boolean includeWrist;
-  private boolean includeElevator;
 
-  public SetZeroModeCommand(
-      ElevatorSubsystem elevatorSubsystem,
-      Optional<Boolean> includeWrist,
-      Optional<Boolean> includeElevator) {
+  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem) {
     this.elevatorSubsystem = elevatorSubsystem;
-    if (includeWrist.isPresent()) this.includeWrist = includeWrist.get();
-    if (includeElevator.isPresent()) this.includeElevator = includeElevator.get();
 
     addRequirements(elevatorSubsystem);
   }
 
-  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem) {
-    this(elevatorSubsystem, Optional.of(true), Optional.of(true));
-  }
-
-  public SetZeroModeCommand(ElevatorSubsystem elevatorSubsystem, boolean includeWrist) {
-    this(elevatorSubsystem, Optional.of(includeWrist), Optional.of(true));
-  }
-
   @Override
   public void initialize() {
-    new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO);
+    elevatorSubsystem.setNotZeroed();
+    elevatorSubsystem.setMode(Modes.ZERO);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +34,6 @@ public class SetZeroModeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.getMode() != Modes.ZERO;
   }
 }

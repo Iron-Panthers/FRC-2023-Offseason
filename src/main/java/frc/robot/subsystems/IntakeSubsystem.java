@@ -19,31 +19,38 @@ public class IntakeSubsystem extends SubsystemBase {
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
   private Modes currentIntakeMode;
   private LinearFilter filter;
+  private double filterOutput;
   private double statorCurrentLimit;
+  // private final TimeOfFlight coneToF, cubeToF;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
 
-    currentIntakeMode = Modes.OFF;
+    intakeMotor.configFactoryDefault();
+    intakeMotor.clearStickyFaults();
 
     intakeMotor.setNeutralMode(NeutralMode.Brake);
     intakeMotor.setInverted(true);
 
     filter = LinearFilter.movingAverage(30);
 
-    shuffleboard.addDouble("Intake Motor", () -> intakeMotor.getSelectedSensorPosition());
+    currentIntakeMode = Modes.OFF;
 
-    shuffleboard.addString("Current Mode", () -> currentIntakeMode.toString());
+    filterOutput = 0.0;
 
-    shuffleboard.addDouble("stator current", intakeMotor::getStatorCurrent);
+    statorCurrentLimit = 30;
 
-    shuffleboard.addDouble("motor power", intakeMotor::getMotorOutputPercent);
+    // coneToF = new TimeOfFlight(Constants.Intake.Ports.CONE_TOF_PORT);
+    // cubeToF = new TimeOfFlight(Constants.Intake.Ports.CUBE_TOF_PORT);
 
-    shuffleboard.addDouble("filter output", this::getFilterCalculatedValue);
-
-    // FIXME wrong current limit
-    statorCurrentLimit = 85;
+    shuffleboard.addDouble(
+        "Intake motor sensor position", () -> intakeMotor.getSelectedSensorPosition());
+    shuffleboard.addString("Current mode", () -> currentIntakeMode.toString());
+    shuffleboard.addDouble("filter output", () -> filterOutput);
+    shuffleboard.addDouble("motor output", intakeMotor::getMotorOutputPercent);
+    // shuffleboard.addDouble("coneToFInches", this::getConeToFInches);
+    // shuffleboard.addDouble("cubeToFInches", this::getCubeToFInches);
   }
 
   public enum Modes {
@@ -72,6 +79,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
+  // private double getCubeToFInches() {
+  //   return cubeToF.getRange() / 25.4;
+  // }
+
+  // private double getConeToFInches() {
+  //   return coneToF.getRange() / 25.4;
+  // }
+
   public Modes getMode() {
     return currentIntakeMode;
   }
@@ -86,7 +101,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getFilterCalculatedValue() >= statorCurrentLimit) {
+    filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
+    if (filterOutput >= statorCurrentLimit) {
       currentIntakeMode = Modes.HOLD;
     }
 
