@@ -246,6 +246,8 @@ public final class Constants {
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
+      public static final int CONE_TOF_PORT = 0;
+      public static final int CUBE_TOF_PORT = 0;
     }
   }
 
