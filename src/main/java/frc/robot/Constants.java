@@ -197,23 +197,22 @@ public final class Constants {
       public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
       public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
       public static final int WRIST_MOTOR_PORT = CAN.at(16, "wrist motor port");
-      public static final int CANCODER = CAN.at(0, "cancoder");
     }
 
     public static final class Setpoints {
-      public static final ElevatorState STOWED = new ElevatorState(0, 0);
+      public static final ElevatorState STOWED =
+          new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
       public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
-      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION_INCHES, 0);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 0);
-      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION_INCHES / 2, 20);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION_INCHES, 40);
-      public static final ElevatorState ZERO = new ElevatorState(MIN_EXTENSION_INCHES, 0);
+      public static final ElevatorState GROUND_INTAKE = new ElevatorState(MIN_EXTENSION_INCHES, 80);
+      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 20);
+      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION_INCHES, 60);
     }
 
     public static final double MAX_EXTENSION_INCHES = 54;
     public static final double MIN_EXTENSION_INCHES = 1;
 
-    public static final double MIN_ANGLE_DEGREES = 0;
+    public static final double MIN_ANGLE_DEGREES = 3;
     public static final double MAX_ANGLE_DEGREES = 109.25;
 
     public static final int FALCON_CPR = 2048;
@@ -238,9 +237,9 @@ public final class Constants {
 
   public static final class Intake {
 
-    public static final double INTAKE_PERCENT = 1;
+    public static final double INTAKE_PERCENT = 0.7;
 
-    public static final double OUTTAKE_PERCENT = -1;
+    public static final double OUTTAKE_PERCENT = -0.7;
 
     public static final double HOLD_PERCENT = 0.15;
 

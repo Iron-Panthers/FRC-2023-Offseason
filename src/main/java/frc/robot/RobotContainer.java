@@ -288,11 +288,9 @@ public class RobotContainer {
         .off(jacob.rightTrigger())
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
 
-    jacobLayer
-        .off(jacob.x())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
-        .onTrue(
-            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
+    jacobLayer.off(jacob.x()).onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
+    // .onTrue(
+    //     new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
 
     // intake presets
     // jacobLayer
@@ -319,7 +317,7 @@ public class RobotContainer {
 
     anthony
         .povLeft()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.ZERO))
+        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
@@ -331,13 +329,13 @@ public class RobotContainer {
                 elevatorSubsystem,
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
-    // jacob
-    //     .leftBumper()
-    //     .onTrue(
-    //         new GroundPickupCommand(
-    //             intakeSubsystem,
-    //             elevatorSubsystem,
-    //             () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
+    jacob
+        .a()
+        .onTrue(
+            new GroundPickupCommand(
+                intakeSubsystem,
+                elevatorSubsystem,
+                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE));
 
     jacobLayer
         .off(jacob.povUp())
