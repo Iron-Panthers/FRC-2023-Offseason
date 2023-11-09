@@ -40,7 +40,7 @@ public class MobilityAuto extends SequentialCommandGroup {
                 Optional.of(rgbSubsystem),
                 Optional.empty())
             .alongWith(new SetZeroModeCommand(elevatorSubsystem))
-            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.HOLD))
+            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.HOLD, Optional.empty()))
             .andThen(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem)));
   }
 }

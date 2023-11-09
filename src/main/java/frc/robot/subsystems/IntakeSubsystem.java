@@ -21,6 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private LinearFilter filter;
   private double filterOutput;
   private double statorCurrentLimit;
+  private boolean isCube;
   // private final TimeOfFlight coneToF, cubeToF;
 
   /** Creates a new IntakeSubsystem. */
@@ -41,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     statorCurrentLimit = 30;
 
+    isCube = true;
+
     // coneToF = new TimeOfFlight(Constants.Intake.Ports.CONE_TOF_PORT);
     // cubeToF = new TimeOfFlight(Constants.Intake.Ports.CUBE_TOF_PORT);
 
@@ -49,6 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addString("Current mode", () -> currentIntakeMode.toString());
     shuffleboard.addDouble("filter output", () -> filterOutput);
     shuffleboard.addDouble("motor output", intakeMotor::getMotorOutputPercent);
+    shuffleboard.addBoolean("is cone", () -> isCube);
     // shuffleboard.addDouble("coneToFInches", this::getConeToFInches);
     // shuffleboard.addDouble("cubeToFInches", this::getCubeToFInches);
   }
@@ -64,13 +68,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
     switch (mode) {
       case INTAKE:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_PERCENT);
+        if (isCube) {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_CUBE_PERCENT);
+        } else {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.INTAKE_CONE_PERCENT);
+        }
         break;
       case OUTTAKE:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_PERCENT);
+        if (isCube) {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_CUBE_PERCENT);
+        } else {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.OUTTAKE_CONE_PERCENT);
+        }
         break;
       case HOLD:
-        intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.HOLD_PERCENT);
+        if (isCube) {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.HOLD_CUBE_PERCENT);
+        } else {
+          intakeMotor.set(TalonFXControlMode.PercentOutput, Intake.HOLD_CONE_PERCENT);
+        }
         break;
       case OFF:
       default:
@@ -95,6 +111,10 @@ public class IntakeSubsystem extends SubsystemBase {
     currentIntakeMode = mode;
   }
 
+  public void setIsCube(boolean isCube) {
+    this.isCube = isCube;
+  }
+
   private double getFilterCalculatedValue() {
     return filter.calculate(intakeMotor.getStatorCurrent());
   }
@@ -103,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
     if (filterOutput >= statorCurrentLimit) {
-      currentIntakeMode = Modes.HOLD;
+      currentIntakeMode = Modes.OFF;
     }
 
     intakePeriodic(currentIntakeMode);

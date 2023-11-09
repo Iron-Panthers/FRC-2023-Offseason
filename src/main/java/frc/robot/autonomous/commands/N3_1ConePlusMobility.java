@@ -20,6 +20,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeType;
 import frc.util.pathing.LoadMirrorPath;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class N3_1ConePlusMobility extends SequentialCommandGroup {
@@ -36,7 +37,9 @@ public class N3_1ConePlusMobility extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)),
+            .deadlineWith(
+                new IntakeModeCommand(
+                    intakeSubsystem, IntakeSubsystem.Modes.INTAKE, Optional.of(() -> true))),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,

@@ -71,11 +71,12 @@ public class ScoreCommand extends SequentialCommandGroup {
     var intakeState = scoreStep.intakeState();
     if (elevatorState.isPresent() && intakeState.isPresent()) {
       return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get())
-          .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get()));
+          .deadlineWith(
+              new IntakeModeCommand(intakeSubsystem, intakeState.get(), Optional.empty()));
     } else if (elevatorState.isPresent()) {
       return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get());
     } else if (intakeState.isPresent()) {
-      return new IntakeModeCommand(intakeSubsystem, intakeState.get());
+      return new IntakeModeCommand(intakeSubsystem, intakeState.get(), Optional.empty());
     } else {
       throw new IllegalArgumentException("ScoreStep must have at least one state");
     }

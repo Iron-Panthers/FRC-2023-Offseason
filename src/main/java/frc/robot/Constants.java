@@ -237,11 +237,14 @@ public final class Constants {
 
   public static final class Intake {
 
-    public static final double INTAKE_PERCENT = 0.7;
+    public static final double INTAKE_CONE_PERCENT = 0.7;
+    public static final double INTAKE_CUBE_PERCENT = -0.7;
 
-    public static final double OUTTAKE_PERCENT = -0.7;
+    public static final double OUTTAKE_CONE_PERCENT = -0.7;
+    public static final double OUTTAKE_CUBE_PERCENT = 0.7;
 
-    public static final double HOLD_PERCENT = 0.1;
+    public static final double HOLD_CONE_PERCENT = 0.1;
+    public static final double HOLD_CUBE_PERCENT = -0.1;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
