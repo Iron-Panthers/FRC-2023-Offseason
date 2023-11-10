@@ -306,9 +306,9 @@ public final class Constants {
                 "frontCam",
                 new Transform3d(
                     new Translation3d(
-                        0.228110, // front/back
-                        0.253802, // left/right
-                        0.443955 // up/down
+                        0.23749, // front/back
+                        0.2403348, // left/right
+                        0.7973822 // up/down
                         ),
                     new Rotation3d(
                         0,
