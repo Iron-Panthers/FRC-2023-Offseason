@@ -7,21 +7,27 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 public class IntakeModeCommand extends CommandBase {
   private IntakeSubsystem intakeSubsystem;
   private Modes mode;
-  private Optional<BooleanSupplier> isCone;
+  private BooleanSupplier isCone;
 
   /** Creates a new IntakeCommand. */
-  public IntakeModeCommand(
-      IntakeSubsystem intakeSubsystem, Modes mode, Optional<BooleanSupplier> isCone) {
+  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, Modes mode, BooleanSupplier isCone) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intakeSubsystem = intakeSubsystem;
     this.mode = mode;
     this.isCone = isCone;
+    addRequirements(intakeSubsystem);
+  }
+
+  public IntakeModeCommand(IntakeSubsystem intakeSubsystem, Modes mode) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.intakeSubsystem = intakeSubsystem;
+    this.mode = mode;
+    this.isCone = null;
     addRequirements(intakeSubsystem);
   }
 
@@ -30,8 +36,8 @@ public class IntakeModeCommand extends CommandBase {
   @Override
   public void initialize() {
     intakeSubsystem.setMode(mode);
-    if (isCone.isPresent()) {
-      intakeSubsystem.setIsCube(isCone.get().getAsBoolean());
+    if (isCone != null) {
+      intakeSubsystem.setIsCube(isCone.getAsBoolean());
     }
   }
 

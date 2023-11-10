@@ -39,7 +39,7 @@ public class N6_1ConePlusEngage extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,

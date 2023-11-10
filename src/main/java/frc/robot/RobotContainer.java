@@ -294,16 +294,13 @@ public class RobotContainer {
     // outtake states
     jacobLayer
         .off(jacob.leftTrigger())
-        .onTrue(
-            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, Optional.of(jacob.rightStick())));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.rightStick()));
 
     jacobLayer
         .off(jacob.rightTrigger())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE, Optional.empty()));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE));
 
-    jacobLayer
-        .off(jacob.x())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF, Optional.empty()));
+    jacobLayer.off(jacob.x()).onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
     // .onTrue(
     //     new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED));
 
@@ -320,22 +317,20 @@ public class RobotContainer {
         .onTrue(
             new ElevatorPositionCommand(
                 elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
-        .whileTrue(
-            new IntakeModeCommand(
-                intakeSubsystem, Modes.INTAKE, Optional.of(anthony.rightStick())));
+        .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, anthony.rightStick()));
 
     // reset
     jacobLayer
         .off(jacob.y())
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF, Optional.empty()));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
 
     jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
     anthony
         .povLeft()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF, Optional.empty()))
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
     anthony
@@ -345,7 +340,7 @@ public class RobotContainer {
                 intakeSubsystem,
                 elevatorSubsystem,
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE,
-                Optional.of(jacob.rightStick())));
+                jacob.rightStick()));
 
     jacob
         .a()
@@ -354,12 +349,12 @@ public class RobotContainer {
                 intakeSubsystem,
                 elevatorSubsystem,
                 () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE,
-                Optional.of(jacob.rightStick())));
+                jacob.rightStick()));
 
     jacobLayer
         .off(jacob.povUp())
         .onTrue(
-            new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE, Optional.empty())
+            new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.GROUND_INTAKE)));
@@ -369,13 +364,13 @@ public class RobotContainer {
     jacobLayer
         .off(jacob.back())
         .whileTrue(
-            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, Optional.of(jacob.rightStick()))
+            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.rightStick())
                 .alongWith(
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)))
         .onFalse(
             new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
-                .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF, Optional.empty())));
+                .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
 
     // scoring
     // jacobLayer
@@ -520,8 +515,7 @@ public class RobotContainer {
                 .andThen(
                     new ElevatorPositionCommand(
                             elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
-                        .andThen(
-                            new IntakeModeCommand(intakeSubsystem, Modes.OFF, Optional.empty()))),
+                        .andThen(new IntakeModeCommand(intakeSubsystem, Modes.OFF))),
             "armbat preload",
             new ElevatorPositionCommand(elevatorSubsystem, 30, 0)
                 .andThen(
@@ -597,7 +591,7 @@ public class RobotContainer {
                 elevatorSubsystem) // FIXME pretty sure this shouldn't zero wrist, double check
             // later
             .raceWith(
-                new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, Optional.of(() -> false))
+                new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)
                     .andThen(
                         new ScoreCommand(
                             intakeSubsystem,

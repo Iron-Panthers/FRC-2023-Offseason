@@ -9,7 +9,6 @@ import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -22,7 +21,7 @@ public class GroundPickupCommand extends SequentialCommandGroup {
       IntakeSubsystem intakeSubsystem,
       ElevatorSubsystem elevatorSubsystem,
       Supplier<Modes> modeSupplier,
-      Optional<BooleanSupplier> isCube) {
+      BooleanSupplier isCube) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
