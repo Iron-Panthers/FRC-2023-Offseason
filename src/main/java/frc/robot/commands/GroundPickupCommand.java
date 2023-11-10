@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -23,16 +23,20 @@ public class GroundPickupCommand extends SequentialCommandGroup {
 
   private ElevatorSubsystem elevatorSubsystem;
 
+  private Supplier<ElevatorState> setpoint;
+
   public GroundPickupCommand(
       IntakeSubsystem intakeSubsystem,
       ElevatorSubsystem elevatorSubsystem,
+      Supplier<ElevatorState> setpoint,
       BooleanSupplier isCube) {
     // Add your commands in the addCommands() call, e.g.
     this.isCube = isCube;
     this.elevatorSubsystem = elevatorSubsystem;
+    this.setpoint = setpoint;
 
     addCommands(
-        determineIntakeType()
+        new ElevatorPositionCommand(elevatorSubsystem, setpoint.get())
             .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCube))
             .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
   }

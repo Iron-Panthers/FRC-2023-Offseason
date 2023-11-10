@@ -208,18 +208,14 @@ public final class Constants {
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
           new ElevatorState(MIN_EXTENSION_INCHES, 90);
-      public static final ElevatorState SCORE_HIGH_CONE =
-          new ElevatorState(MAX_EXTENSION_INCHES, 20);
-      public static final ElevatorState SCORE_HIGH_CUBE =
-          new ElevatorState(MAX_EXTENSION_INCHES, 20);
-      public static final ElevatorState SCORE_MID_CONE =
-          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
-      public static final ElevatorState SCORE_MID_CUBE =
-          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+      public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
+      public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
+      public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
+      public static final ElevatorState SCORE_MID_CUBE = new ElevatorState(30, 74.5);
       public static final ElevatorState SCORE_LOW_CONE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 60);
+          new ElevatorState(MIN_EXTENSION_INCHES, 55);
       public static final ElevatorState SCORE_LOW_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 60);
+          new ElevatorState(MIN_EXTENSION_INCHES, 48);
     }
 
     public static final double MAX_EXTENSION_INCHES = 54;
