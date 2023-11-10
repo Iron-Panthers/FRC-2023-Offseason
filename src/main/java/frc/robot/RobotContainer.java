@@ -316,8 +316,6 @@ public class RobotContainer {
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
 
-    jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
-
     anthony
         .povLeft()
         .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
@@ -459,7 +457,7 @@ public class RobotContainer {
                 intakeLow[0]
                     ? Elevator.Setpoints.GROUND_INTAKE_CONE
                     : Elevator.Setpoints.SHELF_INTAKE_CONE),
-            "intake cone",
+            "intake cube",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake
                 elevatorSubsystem,

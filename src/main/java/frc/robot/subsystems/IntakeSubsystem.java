@@ -40,7 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     filterOutput = 0.0;
 
-    statorCurrentLimit = 60;
+    statorCurrentLimit = 75;
 
     isCube = false;
 
