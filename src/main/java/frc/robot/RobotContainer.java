@@ -282,7 +282,7 @@ public class RobotContainer {
     // outtake states
     jacobLayer
         .off(jacob.leftTrigger())
-        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.rightStick()));
+        .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.leftBumper()));
 
     jacobLayer
         .off(jacob.rightTrigger())
@@ -307,7 +307,7 @@ public class RobotContainer {
                 elevatorSubsystem,
                 anthony.rightBumper().getAsBoolean()
                     ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
-                    : Constants.Elevator.Setpoints.GROUND_INTAKE_CONE))
+                    : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE))
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, anthony.rightBumper()));
 
     // reset
@@ -326,11 +326,11 @@ public class RobotContainer {
 
     anthony
         .povDown()
-        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.rightStick()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, anthony.rightBumper()));
 
     jacob
         .a()
-        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.rightStick()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.leftBumper()));
 
     jacobLayer
         .off(jacob.povUp())
@@ -345,11 +345,11 @@ public class RobotContainer {
     jacobLayer
         .off(jacob.back())
         .whileTrue(
-            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.rightStick())
+            new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.leftBumper())
                 .alongWith(
                     new ElevatorPositionCommand(
                         elevatorSubsystem,
-                        jacob.rightStick().getAsBoolean()
+                        jacob.leftBumper().getAsBoolean()
                             ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
                             : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE)))
         .onFalse(
@@ -392,11 +392,11 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jacob.leftBumper()));
+              jacob.b()));
     //   anthony.povRight()));
 
     jacob
-        .leftBumper()
+        .b()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
