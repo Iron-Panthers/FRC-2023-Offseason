@@ -11,7 +11,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -25,10 +24,8 @@ public class GroundPickupCommand extends SequentialCommandGroup {
   public GroundPickupCommand(
       IntakeSubsystem intakeSubsystem,
       ElevatorSubsystem elevatorSubsystem,
-      Supplier<Modes> modeSupplier,
       BooleanSupplier isCube) {
     // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
     this.isCube = isCube;
     this.elevatorSubsystem = elevatorSubsystem;
 

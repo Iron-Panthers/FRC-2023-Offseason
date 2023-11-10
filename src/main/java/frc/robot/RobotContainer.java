@@ -124,7 +124,7 @@ public class RobotContainer {
             drivebaseSubsystem,
             translationXSupplier,
             translationYSupplier,
-            anthony.rightBumper(),
+            // anthony.rightBumper(),
             anthony.leftBumper()));
 
     // // FIXME: This error is here to kind of guide you...
@@ -304,8 +304,11 @@ public class RobotContainer {
         .povUp()
         .onTrue(
             new ElevatorPositionCommand(
-                elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE))
-        .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, anthony.rightStick()));
+                elevatorSubsystem,
+                anthony.rightBumper().getAsBoolean()
+                    ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
+                    : Constants.Elevator.Setpoints.GROUND_INTAKE_CONE))
+        .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, anthony.rightBumper()));
 
     // reset
     jacobLayer
@@ -323,21 +326,11 @@ public class RobotContainer {
 
     anthony
         .povDown()
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                elevatorSubsystem,
-                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE,
-                jacob.rightStick()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.rightStick()));
 
     jacob
         .a()
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                elevatorSubsystem,
-                () -> jacob.getHID().getPOV() == 180 ? Modes.INTAKE : Modes.INTAKE,
-                jacob.rightStick()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.rightStick()));
 
     jacobLayer
         .off(jacob.povUp())
@@ -355,7 +348,10 @@ public class RobotContainer {
             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, jacob.rightStick())
                 .alongWith(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.SHELF_INTAKE)))
+                        elevatorSubsystem,
+                        jacob.rightStick().getAsBoolean()
+                            ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
+                            : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE)))
         .onFalse(
             new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
                 .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));

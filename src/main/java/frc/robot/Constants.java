@@ -208,9 +208,18 @@ public final class Constants {
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
           new ElevatorState(MIN_EXTENSION_INCHES, 85);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_EXTENSION_INCHES, 20);
-      public static final ElevatorState SCORE_MID = new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_EXTENSION_INCHES, 60);
+      public static final ElevatorState SCORE_HIGH_CONE =
+          new ElevatorState(MAX_EXTENSION_INCHES, 20);
+      public static final ElevatorState SCORE_HIGH_CUBE =
+          new ElevatorState(MAX_EXTENSION_INCHES, 20);
+      public static final ElevatorState SCORE_MID_CONE =
+          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+      public static final ElevatorState SCORE_MID_CUBE =
+          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+      public static final ElevatorState SCORE_LOW_CONE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 60);
+      public static final ElevatorState SCORE_LOW_CUBE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 60);
     }
 
     public static final double MAX_EXTENSION_INCHES = 54;
@@ -261,27 +270,27 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW_CONE).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW_CUBE).canWaitHere(),
               new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
 
   public static final class Vision {
