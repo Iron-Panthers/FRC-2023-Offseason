@@ -123,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
     if (filterOutput >= statorCurrentLimit) {
-      currentIntakeMode = Modes.OFF;
+      currentIntakeMode = Modes.HOLD;
     }
 
     intakePeriodic(currentIntakeMode);

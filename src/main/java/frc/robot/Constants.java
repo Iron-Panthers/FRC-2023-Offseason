@@ -271,27 +271,31 @@ public final class Constants {
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_LOW_CONE).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_LOW_CUBE).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, true)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}

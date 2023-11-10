@@ -390,11 +390,10 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jacob.b()));
-    //   anthony.povRight()));
+              anthony.povRight()));
 
-    jacob
-        .b()
+    anthony
+        .povRight()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
@@ -441,7 +440,7 @@ public class RobotContainer {
         List.of(
             new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_EXTENSION_INCHES))
                 .canWaitHere(),
-            new ScoreStep(Modes.OUTTAKE));
+            new ScoreStep(Modes.OUTTAKE, true));
     final boolean[] intakeLow = {false};
     // FIXME go through each auto and make sure that we dont use a leftover event marker from Simba
     final Map<String, Command> eventMap =
