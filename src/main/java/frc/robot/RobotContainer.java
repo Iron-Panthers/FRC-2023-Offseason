@@ -324,11 +324,27 @@ public class RobotContainer {
 
     anthony
         .povDown()
-        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, anthony.rightBumper()));
+        .onTrue(
+            new GroundPickupCommand(
+                intakeSubsystem,
+                elevatorSubsystem,
+                () ->
+                    anthony.rightBumper().getAsBoolean()
+                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
+                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
+                anthony.rightBumper()));
 
     jacob
         .a()
-        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.leftBumper()));
+        .onTrue(
+            new GroundPickupCommand(
+                intakeSubsystem,
+                elevatorSubsystem,
+                () ->
+                    jacob.leftBumper().getAsBoolean()
+                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
+                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
+                jacob.leftBumper()));
 
     jacobLayer
         .off(jacob.povUp())
