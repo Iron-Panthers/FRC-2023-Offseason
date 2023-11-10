@@ -48,6 +48,6 @@ public class N3_1ConePlusMobility extends SequentialCommandGroup {
                 (new WaitCommand(1))
                     .andThen(
                         new ElevatorPositionCommand(
-                            elevatorSubsystem, Elevator.Setpoints.STOWED))));
+                            elevatorSubsystem, () -> Elevator.Setpoints.STOWED))));
   }
 }

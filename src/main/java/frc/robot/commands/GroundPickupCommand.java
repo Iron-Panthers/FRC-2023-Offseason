@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -36,16 +35,19 @@ public class GroundPickupCommand extends SequentialCommandGroup {
     this.setpoint = setpoint;
 
     addCommands(
-        new ElevatorPositionCommand(elevatorSubsystem, setpoint.get())
+        new ElevatorPositionCommand(elevatorSubsystem, setpoint)
             .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCube))
-            .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
+            .andThen(
+                new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED)));
   }
 
-  private Command determineIntakeType() {
-    if (isCube.getAsBoolean()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE_CUBE);
-    } else {
-      return new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE_CONE);
-    }
-  }
+  // private Command determineIntakeType() {
+  //   if (isCube.getAsBoolean()) {
+  //     return new ElevatorPositionCommand(elevatorSubsystem,
+  // Elevator.Setpoints.GROUND_INTAKE_CUBE);
+  //   } else {
+  //     return new ElevatorPositionCommand(elevatorSubsystem,
+  // Elevator.Setpoints.GROUND_INTAKE_CONE);
+  //   }
+  // }
 }

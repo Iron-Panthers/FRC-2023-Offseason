@@ -73,10 +73,10 @@ public class ScoreCommand extends SequentialCommandGroup {
     var intakeState = scoreStep.intakeState();
     var isCube = scoreStep.isCube();
     if (elevatorState.isPresent() && intakeState.isPresent()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get())
+      return new ElevatorPositionCommand(elevatorSubsystem, () -> elevatorState.get())
           .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get(), () -> isCube));
     } else if (elevatorState.isPresent()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get());
+      return new ElevatorPositionCommand(elevatorSubsystem, () -> elevatorState.get());
     } else if (intakeState.isPresent()) {
       return new IntakeModeCommand(intakeSubsystem, intakeState.get(), () -> isCube);
     } else {
