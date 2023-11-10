@@ -202,12 +202,12 @@ public final class Constants {
     public static final class Setpoints {
       public static final ElevatorState STOWED =
           new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
-      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(20, 20);
-      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(20, 20);
+      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
+      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
       public static final ElevatorState GROUND_INTAKE_CONE =
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 90);
+          new ElevatorState(MIN_EXTENSION_INCHES, 81.4);
       public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
       public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
       public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
@@ -267,7 +267,7 @@ public final class Constants {
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
