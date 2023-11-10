@@ -36,14 +36,15 @@ public class IntakeModeCommand extends CommandBase {
   @Override
   public void initialize() {
     intakeSubsystem.setMode(mode);
-    if (isCone != null) {
-      intakeSubsystem.setIsCube(isCone.getAsBoolean());
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (isCone != null) {
+      intakeSubsystem.setIsCube(isCone.getAsBoolean());
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

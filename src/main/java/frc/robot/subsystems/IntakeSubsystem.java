@@ -40,9 +40,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     filterOutput = 0.0;
 
-    statorCurrentLimit = 30;
+    statorCurrentLimit = 60;
 
-    isCube = true;
+    isCube = false;
 
     // coneToF = new TimeOfFlight(Constants.Intake.Ports.CONE_TOF_PORT);
     // cubeToF = new TimeOfFlight(Constants.Intake.Ports.CUBE_TOF_PORT);

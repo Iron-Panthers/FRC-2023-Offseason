@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -24,16 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Elevator;
-import frc.robot.autonomous.commands.MobilityAuto;
-import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobility;
-import frc.robot.autonomous.commands.N1_1ConePlus2CubeHybridMobilityEngage;
-import frc.robot.autonomous.commands.N2_Engage;
-import frc.robot.autonomous.commands.N3_1ConePlusMobility;
-import frc.robot.autonomous.commands.N3_1ConePlusMobilityEngage;
-import frc.robot.autonomous.commands.N6_1ConePlusEngage;
-import frc.robot.autonomous.commands.N9_1ConePlus2CubeMobility;
-import frc.robot.autonomous.commands.N9_1ConePlusMobility;
-import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
@@ -67,7 +56,6 @@ import frc.util.NodeSelectorUtility.NodeSelection;
 import frc.util.NodeSelectorUtility.NodeType;
 import frc.util.SharedReference;
 import frc.util.Util;
-import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
 import java.util.HashMap;
 import java.util.List;
@@ -357,7 +345,7 @@ public class RobotContainer {
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.GROUND_INTAKE)));
+                        elevatorSubsystem, Constants.Elevator.Setpoints.GROUND_INTAKE_CONE)));
 
     // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
@@ -468,11 +456,20 @@ public class RobotContainer {
             new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED),
             "zero everything",
             new SetZeroModeCommand(elevatorSubsystem),
-            "intake",
+            "intake cone",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake
                 elevatorSubsystem,
-                intakeLow[0] ? Elevator.Setpoints.GROUND_INTAKE : Elevator.Setpoints.SHELF_INTAKE),
+                intakeLow[0]
+                    ? Elevator.Setpoints.GROUND_INTAKE_CONE
+                    : Elevator.Setpoints.SHELF_INTAKE_CONE),
+            "intake cone",
+            new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
+                // ground or shelf intake
+                elevatorSubsystem,
+                intakeLow[0]
+                    ? Elevator.Setpoints.GROUND_INTAKE_CUBE
+                    : Elevator.Setpoints.SHELF_INTAKE_CUBE),
             // squeeze intake isn't relevant to offseason bot - leaving here just in case
             /*"squeeze intake",
             new CommandBase() {
@@ -522,82 +519,83 @@ public class RobotContainer {
                     new ElevatorPositionCommand(
                         elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)));
 
-    autoSelector.setDefaultOption(
-        "N1 1Cone + 2Cube Low Mobility Engage",
-        new N1_1ConePlus2CubeHybridMobilityEngage(
-            4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.setDefaultOption(
+    //     "N1 1Cone + 2Cube Low Mobility Engage",
+    //     new N1_1ConePlus2CubeHybridMobilityEngage(
+    //         4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
-        "N1 1Cone + 2Cube Low Mobility NO ENGAGE",
-        new N1_1ConePlus2CubeHybridMobility(
-            4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.setDefaultOption(
+    //     "N1 1Cone + 2Cube Low Mobility NO ENGAGE",
+    //     new N1_1ConePlus2CubeHybridMobility(
+    //         4.95, 4, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
-        "N9 1Cone + 1Cube + Grab Cube Mobility",
-        new N9_1ConePlus2CubeMobility(
-            4.95, 3, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.setDefaultOption(
+    //     "N9 1Cone + 1Cube + Grab Cube Mobility",
+    //     new N9_1ConePlus2CubeMobility(
+    //         4.95, 3, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "Just Zero Elevator [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
+    // autoSelector.addOption(
+    //     "Just Zero Elevator [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
 
-    autoSelector.addOption(
-        "Near Substation Mobility [APRILTAG]",
-        new MobilityAuto(
-            manueverGenerator,
-            drivebaseSubsystem,
-            intakeSubsystem,
-            elevatorSubsystem,
-            rgbSubsystem,
-            new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
+    // autoSelector.addOption(
+    //     "Near Substation Mobility [APRILTAG]",
+    //     new MobilityAuto(
+    //         manueverGenerator,
+    //         drivebaseSubsystem,
+    //         intakeSubsystem,
+    //         elevatorSubsystem,
+    //         rgbSubsystem,
+    //         new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
 
-    autoSelector.addOption(
-        "Far Substation Mobility [APRILTAG]",
-        new MobilityAuto(
-            manueverGenerator,
-            drivebaseSubsystem,
-            intakeSubsystem,
-            elevatorSubsystem,
-            rgbSubsystem,
-            new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
+    // autoSelector.addOption(
+    //     "Far Substation Mobility [APRILTAG]",
+    //     new MobilityAuto(
+    //         manueverGenerator,
+    //         drivebaseSubsystem,
+    //         intakeSubsystem,
+    //         elevatorSubsystem,
+    //         rgbSubsystem,
+    //         new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
 
-    autoSelector.addOption("N2 Engage", new N2_Engage(5, 3.5, drivebaseSubsystem));
+    // autoSelector.addOption("N2 Engage", new N2_Engage(5, 3.5, drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "N3 1Cone + Mobility Engage",
-        new N3_1ConePlusMobilityEngage(
-            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.addOption(
+    //     "N3 1Cone + Mobility Engage",
+    //     new N3_1ConePlusMobilityEngage(
+    //         5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
-        "N3 1Cone + Mobility",
-        new N3_1ConePlusMobility(
-            4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.setDefaultOption(
+    //     "N3 1Cone + Mobility",
+    //     new N3_1ConePlusMobility(
+    //         4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
-        "N6 1Cone + Engage",
-        new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.setDefaultOption(
+    //     "N6 1Cone + Engage",
+    //     new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "N9 1Cone + Mobility Engage",
-        new N9_1ConePlusMobilityEngage(
-            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.addOption(
+    //     "N9 1Cone + Mobility Engage",
+    //     new N9_1ConePlusMobilityEngage(
+    //         5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "N9 1Cone + Mobility",
-        new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    // autoSelector.addOption(
+    //     "N9 1Cone + Mobility",
+    //     new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem,
+    // drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "Score High Cone [DOES NOT CALIBRATE]",
-        new SetZeroModeCommand(
-                elevatorSubsystem) // FIXME pretty sure this shouldn't zero wrist, double check
-            // later
-            .raceWith(
-                new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)
-                    .andThen(
-                        new ScoreCommand(
-                            intakeSubsystem,
-                            elevatorSubsystem,
-                            Constants.SCORE_STEP_MAP.get(
-                                NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH))))));
+    // autoSelector.addOption(
+    //     "Score High Cone [DOES NOT CALIBRATE]",
+    //     new SetZeroModeCommand(
+    //             elevatorSubsystem) // FIXME pretty sure this shouldn't zero wrist, double check
+    //         // later
+    //         .raceWith(
+    //             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)
+    //                 .andThen(
+    //                     new ScoreCommand(
+    //                         intakeSubsystem,
+    //                         elevatorSubsystem,
+    //                         Constants.SCORE_STEP_MAP.get(
+    //                             NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH))))));
 
     driverView.add("auto selector", autoSelector).withSize(4, 1).withPosition(7, 0);
 
