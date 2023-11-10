@@ -207,7 +207,7 @@ public final class Constants {
       public static final ElevatorState GROUND_INTAKE_CONE =
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 85);
+          new ElevatorState(MIN_EXTENSION_INCHES, 90);
       public static final ElevatorState SCORE_HIGH_CONE =
           new ElevatorState(MAX_EXTENSION_INCHES, 20);
       public static final ElevatorState SCORE_HIGH_CUBE =
