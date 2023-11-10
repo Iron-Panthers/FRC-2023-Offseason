@@ -390,10 +390,12 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              anthony.povRight()));
+              jacob.b()));
+            //   anthony.povRight()));
 
-    anthony
-        .povRight()
+    // anthony
+    //     .povRight()
+    jacob.b()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
