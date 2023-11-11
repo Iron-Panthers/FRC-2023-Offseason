@@ -23,6 +23,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Config;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Elevator;
+import frc.robot.autonomous.commands.MobilityAuto;
+import frc.robot.autonomous.commands.N2_Engage;
+import frc.robot.autonomous.commands.N3_1ConePlusMobility;
+import frc.robot.autonomous.commands.N3_1ConePlusMobilityEngage;
+import frc.robot.autonomous.commands.N6_1Cone;
+import frc.robot.autonomous.commands.N6_1ConePlusEngage;
+import frc.robot.autonomous.commands.N9_1ConePlusMobility;
+import frc.robot.autonomous.commands.N9_1ConePlusMobilityEngage;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.DriveToPlaceCommand;
@@ -574,9 +582,13 @@ public class RobotContainer {
     //     new N3_1ConePlusMobility(
     //         4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    // autoSelector.setDefaultOption(
-    //     "N6 1Cone + Engage",
-    //     new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    autoSelector.setDefaultOption(
+        "N6 1Cone",
+        new N6_1Cone(intakeSubsystem, elevatorSubsystem));
+        
+                autoSelector.setDefaultOption(
+        "N6 1Cone + Engage",
+        new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     // autoSelector.addOption(
     //     "N9 1Cone + Mobility Engage",

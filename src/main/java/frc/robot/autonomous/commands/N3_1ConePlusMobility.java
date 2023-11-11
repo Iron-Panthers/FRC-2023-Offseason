@@ -42,7 +42,7 @@ public class N3_1ConePlusMobility extends SequentialCommandGroup {
             intakeSubsystem,
             elevatorSubsystem,
             Constants.SCORE_STEP_MAP.get(NodeType.CONE.atHeight(Height.HIGH)),
-            1),
+            2.5),
         (new FollowTrajectoryCommand(path, true, drivebaseSubsystem))
             .alongWith(
                 (new WaitCommand(1))

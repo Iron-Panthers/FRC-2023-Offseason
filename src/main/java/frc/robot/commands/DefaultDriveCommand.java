@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -45,8 +46,8 @@ public class DefaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double x = translationXSupplier.getAsDouble();
-    double y = translationYSupplier.getAsDouble();
+    double x = MathUtil.clamp(translationXSupplier.getAsDouble(), -0.8, 0.8);
+    double y = MathUtil.clamp(translationYSupplier.getAsDouble(), -0.8, 0.8);
     Boolean forwardRelative = isRobotRelativeForwardSupplier.getAsBoolean();
     // Boolean backwardRelative = isRobotRelativeBackwardSupplier.getAsBoolean();
 

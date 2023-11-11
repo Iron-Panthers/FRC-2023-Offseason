@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 import frc.robot.commands.ElevatorPositionCommand;
+import frc.robot.commands.EngageCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.ScoreCommand;
@@ -17,38 +18,23 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.util.NodeSelectorUtility.Height;
 import frc.util.NodeSelectorUtility.NodeType;
-import frc.util.pathing.LoadMirrorPath;
-import java.util.function.Supplier;
 
-public class N9_1ConePlusMobility extends SequentialCommandGroup {
+public class N6_1Cone extends SequentialCommandGroup {
   /** Creates a new N2MobilityEngage. */
-  public N9_1ConePlusMobility(
-      double maxVelocityMetersPerSecond,
-      double maxAccelerationMetersPerSecondSq,
+  public N6_1Cone(
       IntakeSubsystem intakeSubsystem,
-      ElevatorSubsystem elevatorSubsystem,
-      DrivebaseSubsystem drivebaseSubsystem) {
-
-    Supplier<PathPlannerTrajectory> path =
-        LoadMirrorPath.loadPath(
-            "n9 1cone + mobility", maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq);
+      ElevatorSubsystem elevatorSubsystem) {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(
-                new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE, () -> false)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,
             Constants.SCORE_STEP_MAP.get(NodeType.CONE.atHeight(Height.HIGH)),
-            2.5),
-        (new FollowTrajectoryCommand(path, true, drivebaseSubsystem))
-            .alongWith(
-                (new WaitCommand(1))
-                    .andThen(
-                        new ElevatorPositionCommand(
-                            elevatorSubsystem, () -> Elevator.Setpoints.STOWED))));
+            1));
   }
 }
