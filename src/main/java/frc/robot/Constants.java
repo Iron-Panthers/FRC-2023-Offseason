@@ -152,7 +152,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(8.07400 + 180) // comp bot offset
+                ? -Math.toRadians(343.432) // comp bot offset
                 : -Math.toRadians(184.833984); // practice bot offset
       }
 
@@ -163,7 +163,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(274.562 + 180) // comp bot offset
+                ? -Math.toRadians(221.388) // comp bot offset
                 : -Math.toRadians(307.968750); // practice bot offset
       }
 
@@ -174,7 +174,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(225.082 + 180) // comp bot offset
+                ? -Math.toRadians(134.115) // comp bot offset
                 : -Math.toRadians(306.738281 + 180); // practice bot offset
       }
 
@@ -185,7 +185,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(335.124 + 180) // comp bot offset
+                ? -Math.toRadians(20.4750) // comp bot offset
                 : -Math.toRadians(60.908203); // practice bot offset
       }
     }
@@ -202,12 +202,12 @@ public final class Constants {
     public static final class Setpoints {
       public static final ElevatorState STOWED =
           new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
-      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(20, 20);
-      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(20, 20);
+      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
+      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
       public static final ElevatorState GROUND_INTAKE_CONE =
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 90);
+          new ElevatorState(MIN_EXTENSION_INCHES, 81.4);
       public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
       public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
       public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
@@ -267,8 +267,7 @@ public final class Constants {
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
-              new ScoreStep(
-                  Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE, false)),
+              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
