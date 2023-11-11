@@ -219,6 +219,8 @@ public class RobotContainer {
 
     anthony.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
+    anthony.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
     jacob.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));

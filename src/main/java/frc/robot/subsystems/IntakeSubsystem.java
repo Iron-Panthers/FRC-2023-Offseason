@@ -20,7 +20,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private Modes currentIntakeMode;
   private LinearFilter filter;
   private double filterOutput;
-  private double statorCurrentLimit;
   private boolean isCube;
   // private final TimeOfFlight coneToF, cubeToF;
 
@@ -39,8 +38,6 @@ public class IntakeSubsystem extends SubsystemBase {
     currentIntakeMode = Modes.OFF;
 
     filterOutput = 0.0;
-
-    statorCurrentLimit = 75;
 
     isCube = false;
 
@@ -122,7 +119,9 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
-    if (filterOutput >= statorCurrentLimit) {
+    if(isCube && filterOutput >= Intake.CUBE_STATOR_LIMIT) {
+      currentIntakeMode = Modes.HOLD;
+    } else if(filterOutput >= Intake.CUBE_STATOR_LIMIT) {
       currentIntakeMode = Modes.HOLD;
     }
 
