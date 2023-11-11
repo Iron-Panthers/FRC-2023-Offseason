@@ -329,27 +329,12 @@ public class RobotContainer {
 
     anthony
         .povDown()
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                elevatorSubsystem,
-                () ->
-                    anthony.getHID().getRightBumper()
-                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
-                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
-                anthony.rightBumper()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, anthony.rightBumper()));
 
     jacob
         .a()
-        .onTrue(
-            new GroundPickupCommand(
-                intakeSubsystem,
-                elevatorSubsystem,
-                () ->
-                    jacob.getHID().getLeftBumper()
-                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
-                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
-                jacob.leftBumper()));
+        .onTrue(new GroundPickupCommand(intakeSubsystem, elevatorSubsystem, jacob.leftBumper()));
+
     jacobLayer
         .off(jacob.povUp())
         .onTrue(
@@ -412,13 +397,13 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jacob.b()));
-    //   anthony.povRight()));
+              //   jacob.b()));
+              anthony.povRight()));
 
-    // anthony
-    //     .povRight()
-    jacob
-        .b()
+    anthony
+        .povRight()
+        // jacob
+        //     .b()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
