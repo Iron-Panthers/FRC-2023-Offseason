@@ -600,19 +600,19 @@ public class RobotContainer {
         "N9 1Cone + Mobility",
         new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.addOption(
-        "Score High Cone [DOES NOT CALIBRATE]",
-        new SetZeroModeCommand(
-                elevatorSubsystem) // FIXME pretty sure this shouldn't zero wrist, double check
-            // later
-            .raceWith(
-                new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)
-                    .andThen(
-                        new ScoreCommand(
-                            intakeSubsystem,
-                            elevatorSubsystem,
-                            Constants.SCORE_STEP_MAP.get(
-                                NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH))))));
+    // autoSelector.addOption(
+    //     "Score High Cone [DOES NOT CALIBRATE]",
+    //     new SetZeroModeCommand(
+    //             elevatorSubsystem) // FIXME pretty sure this shouldn't zero wrist, double check
+    //         // later
+    //         .raceWith(
+    //             new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)
+    //                 .andThen(
+    //                     new ScoreCommand(
+    //                         intakeSubsystem,
+    //                         elevatorSubsystem,
+    //                         Constants.SCORE_STEP_MAP.get(
+    //                             NodeSelectorUtility.NodeType.CONE.atHeight(Height.HIGH))))));
 
     driverView.add("auto selector", autoSelector).withSize(4, 1).withPosition(7, 0);
 
