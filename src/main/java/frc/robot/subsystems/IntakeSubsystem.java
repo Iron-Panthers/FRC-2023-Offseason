@@ -52,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addString("Current mode", () -> currentIntakeMode.toString());
     shuffleboard.addDouble("filter output", () -> filterOutput);
     shuffleboard.addDouble("motor output", intakeMotor::getMotorOutputPercent);
-    shuffleboard.addBoolean("is cone", () -> isCube);
+    shuffleboard.addBoolean("is cube intake", () -> isCube);
     // shuffleboard.addDouble("coneToFInches", this::getConeToFInches);
     // shuffleboard.addDouble("cubeToFInches", this::getCubeToFInches);
   }
@@ -123,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
     if (filterOutput >= statorCurrentLimit) {
-      currentIntakeMode = Modes.OFF;
+      currentIntakeMode = Modes.HOLD;
     }
 
     intakePeriodic(currentIntakeMode);

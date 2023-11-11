@@ -305,20 +305,25 @@ public class RobotContainer {
         .onTrue(
             new ElevatorPositionCommand(
                 elevatorSubsystem,
-                anthony.rightBumper().getAsBoolean()
-                    ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
-                    : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE))
+                () ->
+                    anthony.rightBumper().getAsBoolean()
+                        ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
+                        : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE))
         .whileTrue(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, anthony.rightBumper()));
 
     // reset
     jacobLayer
         .off(jacob.y())
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, () -> Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF));
 
     anthony
         .povLeft()
-        .onTrue(new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED))
+        .onTrue(
+            new ElevatorPositionCommand(
+                elevatorSubsystem, () -> Constants.Elevator.Setpoints.STOWED))
         .onTrue(new IntakeModeCommand(intakeSubsystem, Modes.OFF))
         .onTrue(new SetZeroModeCommand(elevatorSubsystem));
 
@@ -336,7 +341,7 @@ public class RobotContainer {
             new IntakeModeCommand(intakeSubsystem, Modes.OUTTAKE)
                 .alongWith(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.GROUND_INTAKE_CONE)));
+                        elevatorSubsystem, () -> Constants.Elevator.Setpoints.GROUND_INTAKE_CONE)));
 
     // jacob.start().onTrue(new ZeroIntakeModeCommand(intakeSubsystem));
 
@@ -347,11 +352,13 @@ public class RobotContainer {
                 .alongWith(
                     new ElevatorPositionCommand(
                         elevatorSubsystem,
-                        jacob.leftBumper().getAsBoolean()
-                            ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
-                            : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE)))
+                        () ->
+                            jacob.leftBumper().getAsBoolean()
+                                ? Constants.Elevator.Setpoints.SHELF_INTAKE_CUBE
+                                : Constants.Elevator.Setpoints.SHELF_INTAKE_CONE)))
         .onFalse(
-            new ElevatorPositionCommand(elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
+            new ElevatorPositionCommand(
+                    elevatorSubsystem, () -> Constants.Elevator.Setpoints.STOWED)
                 .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
 
     // scoring
@@ -390,11 +397,13 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jacob.b()));
-    //   anthony.povRight()));
+              //   jacob.b()));
+              anthony.povRight()));
 
-    jacob
-        .b()
+    anthony
+        .povRight()
+        // jacob
+        //     .b()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
@@ -441,29 +450,31 @@ public class RobotContainer {
         List.of(
             new ScoreStep(new ElevatorState(35.0, Constants.Elevator.MIN_EXTENSION_INCHES))
                 .canWaitHere(),
-            new ScoreStep(Modes.OUTTAKE));
+            new ScoreStep(Modes.OUTTAKE, true));
     final boolean[] intakeLow = {false};
     // FIXME go through each auto and make sure that we dont use a leftover event marker from Simba
     final Map<String, Command> eventMap =
         Map.of(
             "stow elevator",
-            new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED),
+            new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED),
             "zero everything",
             new SetZeroModeCommand(elevatorSubsystem),
             "intake cone",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake
                 elevatorSubsystem,
-                intakeLow[0]
-                    ? Elevator.Setpoints.GROUND_INTAKE_CONE
-                    : Elevator.Setpoints.SHELF_INTAKE_CONE),
+                () ->
+                    intakeLow[0]
+                        ? Elevator.Setpoints.GROUND_INTAKE_CONE
+                        : Elevator.Setpoints.SHELF_INTAKE_CONE),
             "intake cube",
             new ElevatorPositionCommand( // edited so that it works with elevator - chooses between
                 // ground or shelf intake
                 elevatorSubsystem,
-                intakeLow[0]
-                    ? Elevator.Setpoints.GROUND_INTAKE_CUBE
-                    : Elevator.Setpoints.SHELF_INTAKE_CUBE),
+                () ->
+                    intakeLow[0]
+                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
+                        : Elevator.Setpoints.SHELF_INTAKE_CUBE),
             // squeeze intake isn't relevant to offseason bot - leaving here just in case
             /*"squeeze intake",
             new CommandBase() {
@@ -505,13 +516,13 @@ public class RobotContainer {
                     intakeSubsystem, elevatorSubsystem, drivingCubeOuttake.subList(1, 2), 1)
                 .andThen(
                     new ElevatorPositionCommand(
-                            elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)
+                            elevatorSubsystem, () -> Constants.Elevator.Setpoints.STOWED)
                         .andThen(new IntakeModeCommand(intakeSubsystem, Modes.OFF))),
             "armbat preload",
-            new ElevatorPositionCommand(elevatorSubsystem, 30, 0)
+            new ElevatorPositionCommand(elevatorSubsystem, () -> new ElevatorState(22.5, 0))
                 .andThen(
                     new ElevatorPositionCommand(
-                        elevatorSubsystem, Constants.Elevator.Setpoints.STOWED)));
+                        elevatorSubsystem, () -> Constants.Elevator.Setpoints.STOWED)));
 
     // autoSelector.setDefaultOption(
     //     "N1 1Cone + 2Cube Low Mobility Engage",

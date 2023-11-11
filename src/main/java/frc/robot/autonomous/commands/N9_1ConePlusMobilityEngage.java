@@ -51,7 +51,8 @@ public class N9_1ConePlusMobilityEngage extends SequentialCommandGroup {
             .alongWith(
                 (new WaitCommand(1))
                     .andThen(
-                        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED))),
+                        new ElevatorPositionCommand(
+                            elevatorSubsystem, () -> Elevator.Setpoints.STOWED))),
         new EngageCommand(drivebaseSubsystem, EngageCommand.EngageDirection.GO_FORWARD));
   }
 }

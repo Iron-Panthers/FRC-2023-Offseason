@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -17,29 +16,16 @@ import java.util.function.BooleanSupplier;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundPickupCommand extends SequentialCommandGroup {
   /** Creates a new GroundPickupCommand. */
-  private BooleanSupplier isCube;
-
-  private ElevatorSubsystem elevatorSubsystem;
-
   public GroundPickupCommand(
       IntakeSubsystem intakeSubsystem,
       ElevatorSubsystem elevatorSubsystem,
       BooleanSupplier isCube) {
     // Add your commands in the addCommands() call, e.g.
-    this.isCube = isCube;
-    this.elevatorSubsystem = elevatorSubsystem;
 
     addCommands(
-        determineIntakeType()
+        new GroundIntakeElevatorCommand(elevatorSubsystem, isCube)
             .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCube))
-            .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
-  }
-
-  private Command determineIntakeType() {
-    if (isCube.getAsBoolean()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE_CUBE);
-    } else {
-      return new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE_CONE);
-    }
+            .andThen(
+                new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED)));
   }
 }

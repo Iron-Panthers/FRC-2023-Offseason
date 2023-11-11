@@ -202,24 +202,20 @@ public final class Constants {
     public static final class Setpoints {
       public static final ElevatorState STOWED =
           new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
-      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(20, 20);
-      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(20, 20);
+      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
+      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
       public static final ElevatorState GROUND_INTAKE_CONE =
           new ElevatorState(MIN_EXTENSION_INCHES, 75);
       public static final ElevatorState GROUND_INTAKE_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 85);
-      public static final ElevatorState SCORE_HIGH_CONE =
-          new ElevatorState(MAX_EXTENSION_INCHES, 20);
-      public static final ElevatorState SCORE_HIGH_CUBE =
-          new ElevatorState(MAX_EXTENSION_INCHES, 20);
-      public static final ElevatorState SCORE_MID_CONE =
-          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
-      public static final ElevatorState SCORE_MID_CUBE =
-          new ElevatorState(MAX_EXTENSION_INCHES / 2, 40);
+          new ElevatorState(MIN_EXTENSION_INCHES, 81.4);
+      public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
+      public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
+      public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
+      public static final ElevatorState SCORE_MID_CUBE = new ElevatorState(30, 74.5);
       public static final ElevatorState SCORE_LOW_CONE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 60);
+          new ElevatorState(MIN_EXTENSION_INCHES, 55);
       public static final ElevatorState SCORE_LOW_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 60);
+          new ElevatorState(MIN_EXTENSION_INCHES, 48);
     }
 
     public static final double MAX_EXTENSION_INCHES = 54;
@@ -271,27 +267,30 @@ public final class Constants {
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_LOW_CONE).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_LOW_CUBE).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, true)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}
@@ -302,9 +301,9 @@ public final class Constants {
                 "frontCam",
                 new Transform3d(
                     new Translation3d(
-                        0.228110, // front/back
-                        0.253802, // left/right
-                        0.443955 // up/down
+                        0.23749, // front/back
+                        0.2403348, // left/right
+                        0.7973822 // up/down
                         ),
                     new Rotation3d(
                         0,
@@ -314,9 +313,9 @@ public final class Constants {
                 "backCam",
                 new Transform3d(
                     new Translation3d(
-                        0.102078, // front/back
-                        -0.253802, // left/right
-                        1.222387 // up/down
+                        0, // front/back
+                        -0.212725, // left/right
+                        0.6470142 // up/down
                         ),
                     new Rotation3d(0, Math.toRadians(17), Math.PI))));
 

@@ -22,21 +22,23 @@ public class ScoreCommand extends SequentialCommandGroup {
   public static record ScoreStep(
       Optional<ElevatorState> elevatorState,
       Optional<IntakeSubsystem.Modes> intakeState,
+      boolean isCube,
       boolean isPausePoint) {
-    public ScoreStep(ElevatorState elevatorState, IntakeSubsystem.Modes intakeState) {
-      this(Optional.of(elevatorState), Optional.of(intakeState), false);
+    public ScoreStep(
+        ElevatorState elevatorState, IntakeSubsystem.Modes intakeState, boolean isCube) {
+      this(Optional.of(elevatorState), Optional.of(intakeState), isCube, false);
     }
 
     public ScoreStep(ElevatorState elevatorState) {
-      this(Optional.of(elevatorState), Optional.empty(), false);
+      this(Optional.of(elevatorState), Optional.empty(), false, false);
     }
 
-    public ScoreStep(IntakeSubsystem.Modes intakeState) {
-      this(Optional.empty(), Optional.of(intakeState), false);
+    public ScoreStep(IntakeSubsystem.Modes intakeState, boolean isCube) {
+      this(Optional.empty(), Optional.of(intakeState), isCube, false);
     }
 
     public ScoreStep canWaitHere() {
-      return new ScoreStep(elevatorState, intakeState, true);
+      return new ScoreStep(elevatorState, intakeState, false, true);
     }
   }
 
@@ -69,13 +71,14 @@ public class ScoreCommand extends SequentialCommandGroup {
   private Command createStep(ScoreStep scoreStep) {
     var elevatorState = scoreStep.elevatorState();
     var intakeState = scoreStep.intakeState();
+    var isCube = scoreStep.isCube();
     if (elevatorState.isPresent() && intakeState.isPresent()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get())
-          .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get()));
+      return new ElevatorPositionCommand(elevatorSubsystem, () -> elevatorState.get())
+          .deadlineWith(new IntakeModeCommand(intakeSubsystem, intakeState.get(), () -> isCube));
     } else if (elevatorState.isPresent()) {
-      return new ElevatorPositionCommand(elevatorSubsystem, elevatorState.get());
+      return new ElevatorPositionCommand(elevatorSubsystem, () -> elevatorState.get());
     } else if (intakeState.isPresent()) {
-      return new IntakeModeCommand(intakeSubsystem, intakeState.get());
+      return new IntakeModeCommand(intakeSubsystem, intakeState.get(), () -> isCube);
     } else {
       throw new IllegalArgumentException("ScoreStep must have at least one state");
     }

@@ -10,42 +10,54 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.ElevatorSubsystem.Modes;
 import frc.util.Util;
+import java.util.function.Supplier;
 
 public class ElevatorPositionCommand extends CommandBase {
   private final ElevatorSubsystem elevatorSubsystem;
   private double targetExtension;
   private double targetAngle;
+  private Supplier<ElevatorState> elevatorStateSupplier;
 
   /** Creates a new ElevatorPositionCommand. */
-  public ElevatorPositionCommand(
-      ElevatorSubsystem subsystem, double targetExtension, double targetAngle) {
-    this.elevatorSubsystem = subsystem;
-    this.targetExtension = targetExtension;
-    this.targetAngle = targetAngle;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevatorSubsystem);
-  }
+  // public ElevatorPositionCommand(
+  //     ElevatorSubsystem subsystem, double targetExtension, double targetAngle) {
+  //   this.elevatorSubsystem = subsystem;
+  //   this.targetExtension = targetExtension;
+  //   this.targetAngle = targetAngle;
+  //   // Use addRequirements() here to declare subsystem dependencies.
+  //   addRequirements(elevatorSubsystem);
+  // }
 
-  public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, ElevatorState elevatorState) {
+  // public ElevatorPositionCommand(ElevatorSubsystem elevatorSubsystem, ElevatorState
+  // elevatorState) {
+  //   // height and angle
+  //   this.elevatorSubsystem = elevatorSubsystem;
+  //   targetExtension = elevatorState.extension();
+  //   targetAngle = elevatorState.angle();
+  //   // Use addRequirements() here to declare subsystem dependencies.
+  //   addRequirements(elevatorSubsystem);
+  // }
+
+  public ElevatorPositionCommand(
+      ElevatorSubsystem elevatorSubsystem, Supplier<ElevatorState> elevatorStateSupplier) {
     // height and angle
     this.elevatorSubsystem = elevatorSubsystem;
-    targetExtension = elevatorState.extension();
-    targetAngle = elevatorState.angle();
+    this.elevatorStateSupplier = elevatorStateSupplier;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    elevatorSubsystem.setTargetExtensionInches(targetExtension);
-    elevatorSubsystem.setTargetAngle(targetAngle);
-    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    elevatorSubsystem.setTargetExtensionInches(elevatorStateSupplier.get().extension());
+    elevatorSubsystem.setTargetAngle(elevatorStateSupplier.get().angle());
+    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
