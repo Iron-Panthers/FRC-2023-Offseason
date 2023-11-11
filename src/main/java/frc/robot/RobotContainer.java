@@ -328,10 +328,6 @@ public class RobotContainer {
             new GroundPickupCommand(
                 intakeSubsystem,
                 elevatorSubsystem,
-                () ->
-                    anthony.rightBumper().getAsBoolean()
-                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
-                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
                 anthony.rightBumper()));
 
     jacob
@@ -340,10 +336,6 @@ public class RobotContainer {
             new GroundPickupCommand(
                 intakeSubsystem,
                 elevatorSubsystem,
-                () ->
-                    jacob.leftBumper().getAsBoolean()
-                        ? Elevator.Setpoints.GROUND_INTAKE_CUBE
-                        : Elevator.Setpoints.GROUND_INTAKE_CONE,
                 jacob.leftBumper()));
 
     jacobLayer
@@ -406,13 +398,13 @@ public class RobotContainer {
               intakeSubsystem,
               elevatorSubsystem,
               Constants.SCORE_STEP_MAP.get(scoreType),
-              jacob.b()));
-    //   anthony.povRight()));
+            //   jacob.b()));
+      anthony.povRight()));
 
-    // anthony
-    //     .povRight()
-    jacob
-        .b()
+    anthony
+        .povRight()
+    // jacob
+    //     .b()
         .onTrue(
             new HashMapCommand<>(
                 scoreCommandMap, () -> currentNodeSelection.get().getScoreTypeIdentifier()));
