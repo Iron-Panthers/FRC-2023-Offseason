@@ -267,7 +267,7 @@ public final class Constants {
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
-              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
               new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
