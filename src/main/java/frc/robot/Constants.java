@@ -205,7 +205,7 @@ public final class Constants {
       public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
       public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
       public static final ElevatorState GROUND_INTAKE_CONE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 75);
+          new ElevatorState(MIN_EXTENSION_INCHES, 72.5);
       public static final ElevatorState GROUND_INTAKE_CUBE =
           new ElevatorState(MIN_EXTENSION_INCHES, 85);
       public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
@@ -238,7 +238,7 @@ public final class Constants {
     public static final double ANGULAR_OFFSET = 0;
 
     public static final double ZERO_MOTOR_POWER = -0.12;
-    public static final double ZERO_STATOR_LIMIT = 5;
+    public static final double ZERO_STATOR_LIMIT = 7;
     public static final double STATOR_LIMIT = 25;
 
     public static final double GRAVITY_OFFSET_PERCENT = .2;
