@@ -9,11 +9,11 @@ import java.util.function.BooleanSupplier;
 public class GroundIntakeElevatorCommand extends CommandBase {
 
   private ElevatorSubsystem elevatorSubsystem;
-  private BooleanSupplier isCube;
+  private BooleanSupplier isCone;
 
-  public GroundIntakeElevatorCommand(ElevatorSubsystem elevatorSubsystem, BooleanSupplier isCube) {
+  public GroundIntakeElevatorCommand(ElevatorSubsystem elevatorSubsystem, BooleanSupplier isCone) {
     this.elevatorSubsystem = elevatorSubsystem;
-    this.isCube = isCube;
+    this.isCone = isCone;
 
     addRequirements(this.elevatorSubsystem);
   }
@@ -25,10 +25,10 @@ public class GroundIntakeElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if (!isCube.getAsBoolean()) {
-      elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CUBE);
-    } else {
+    if (isCone.getAsBoolean()) {
       elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CONE);
+    } else {
+      elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CUBE);
     }
     elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
   }

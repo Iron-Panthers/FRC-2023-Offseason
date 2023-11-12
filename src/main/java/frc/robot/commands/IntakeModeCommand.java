@@ -42,7 +42,7 @@ public class IntakeModeCommand extends CommandBase {
   @Override
   public void execute() {
     if (isCone != null) {
-      intakeSubsystem.setIsCube(!isCone.getAsBoolean());
+      intakeSubsystem.setIsCone(isCone.getAsBoolean());
     }
   }
 
