@@ -112,6 +112,10 @@ public class IntakeSubsystem extends SubsystemBase {
     this.isCone = isCone;
   }
 
+  public double getFilterOutput() {
+    return filterOutput;
+  }
+
   private double getFilterCalculatedValue() {
     return filter.calculate(intakeMotor.getStatorCurrent());
   }

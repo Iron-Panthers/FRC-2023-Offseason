@@ -292,7 +292,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       wristMotor.set(
           TalonFXControlMode.PercentOutput,
-          MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.5, 0.5));
+          MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -1, 1));
     }
   }
 

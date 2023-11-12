@@ -256,7 +256,8 @@ public final class Constants {
     public static final double HOLD_CUBE_PERCENT = -0.2;
 
     public static final double CONE_STATOR_LIMIT = 75;
-    public static final double CUBE_STATOR_LIMIT = 65;
+    public static final double CUBE_STATOR_LIMIT = 69;
+    public static final double GROUND_CUBE_STATOR_LIMIT = 60;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");

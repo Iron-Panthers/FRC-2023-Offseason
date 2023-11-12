@@ -23,7 +23,7 @@ public class GroundPickupCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
 
     addCommands(
-        new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCone)
+        new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCone, true)
             .deadlineWith(new GroundIntakeElevatorCommand(elevatorSubsystem, isCone))
             .andThen(
                 new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED)));
