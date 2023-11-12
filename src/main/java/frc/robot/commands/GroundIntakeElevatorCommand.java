@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.Modes;
-
 import java.util.function.BooleanSupplier;
 
 public class GroundIntakeElevatorCommand extends CommandBase {

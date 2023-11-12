@@ -205,9 +205,9 @@ public final class Constants {
       public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
       public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
       public static final ElevatorState GROUND_INTAKE_CONE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 75);
+          new ElevatorState(MIN_EXTENSION_INCHES, 72.5);
       public static final ElevatorState GROUND_INTAKE_CUBE =
-          new ElevatorState(MIN_EXTENSION_INCHES, 81.4);
+          new ElevatorState(MIN_EXTENSION_INCHES, 85);
       public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
       public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
       public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
@@ -237,8 +237,8 @@ public final class Constants {
     public static final double EXTENSION_EPSILON = 5;
     public static final double ANGULAR_OFFSET = 0;
 
-    public static final double ZERO_MOTOR_POWER = -0.2;
-    public static final double ZERO_STATOR_LIMIT = 10;
+    public static final double ZERO_MOTOR_POWER = -0.12;
+    public static final double ZERO_STATOR_LIMIT = 7;
     public static final double STATOR_LIMIT = 25;
 
     public static final double GRAVITY_OFFSET_PERCENT = .2;
@@ -254,6 +254,9 @@ public final class Constants {
 
     public static final double HOLD_CONE_PERCENT = 0.1;
     public static final double HOLD_CUBE_PERCENT = -0.1;
+
+    public static final double CONE_STATOR_LIMIT = 75;
+    public static final double CUBE_STATOR_LIMIT = 65;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
