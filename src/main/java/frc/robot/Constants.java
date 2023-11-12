@@ -253,7 +253,7 @@ public final class Constants {
     public static final double OUTTAKE_CUBE_PERCENT = 0.7;
 
     public static final double HOLD_CONE_PERCENT = 0.1;
-    public static final double HOLD_CUBE_PERCENT = -0.1;
+    public static final double HOLD_CUBE_PERCENT = -0.2;
 
     public static final double CONE_STATOR_LIMIT = 75;
     public static final double CUBE_STATOR_LIMIT = 65;

@@ -121,7 +121,7 @@ public class IntakeSubsystem extends SubsystemBase {
     filterOutput = filter.calculate(intakeMotor.getStatorCurrent());
     if (isCube && filterOutput >= Intake.CUBE_STATOR_LIMIT) {
       currentIntakeMode = Modes.HOLD;
-    } else if (filterOutput >= Intake.CUBE_STATOR_LIMIT) {
+    } else if (filterOutput >= Intake.CONE_STATOR_LIMIT) {
       currentIntakeMode = Modes.HOLD;
     }
 
