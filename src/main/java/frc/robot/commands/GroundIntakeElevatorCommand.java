@@ -3,6 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.Modes;
+
 import java.util.function.BooleanSupplier;
 
 public class GroundIntakeElevatorCommand extends CommandBase {
@@ -18,11 +20,17 @@ public class GroundIntakeElevatorCommand extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
+  }
+
+  @Override
   public void execute() {
     if (isCube.getAsBoolean()) {
       elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CUBE);
     } else {
       elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CONE);
     }
+    elevatorSubsystem.setMode(Modes.POSITION_CONTROL);
   }
 }
