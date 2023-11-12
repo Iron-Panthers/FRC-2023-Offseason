@@ -25,7 +25,7 @@ public class GroundIntakeElevatorCommand extends CommandBase {
 
   @Override
   public void execute() {
-    if (isCube.getAsBoolean()) {
+    if (!isCube.getAsBoolean()) {
       elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CUBE);
     } else {
       elevatorSubsystem.setTargetState(Constants.Elevator.Setpoints.GROUND_INTAKE_CONE);

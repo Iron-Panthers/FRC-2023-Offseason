@@ -46,8 +46,8 @@ public class DefaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double x = MathUtil.clamp(translationXSupplier.getAsDouble(), -0.9, 0.9);
-    double y = MathUtil.clamp(translationYSupplier.getAsDouble(), -0.9, 0.9);
+    double x = translationXSupplier.getAsDouble();
+    double y = translationYSupplier.getAsDouble();
     Boolean forwardRelative = isRobotRelativeForwardSupplier.getAsBoolean();
     // Boolean backwardRelative = isRobotRelativeBackwardSupplier.getAsBoolean();
 
