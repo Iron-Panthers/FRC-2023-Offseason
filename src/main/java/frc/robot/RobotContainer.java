@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -42,6 +43,7 @@ import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HashMapCommand;
 import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
+import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.commands.SetZeroModeCommand;
@@ -64,6 +66,7 @@ import frc.util.NodeSelectorUtility.NodeSelection;
 import frc.util.NodeSelectorUtility.NodeType;
 import frc.util.SharedReference;
 import frc.util.Util;
+import frc.util.pathing.AlliancePose2d;
 import frc.util.pathing.RubenManueverGenerator;
 import java.util.HashMap;
 import java.util.List;
@@ -214,6 +217,8 @@ public class RobotContainer {
 
     anthony.y().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
 
+    anthony.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+
     jacob.leftStick().onTrue(new InstantCommand(() -> {}, elevatorSubsystem));
 
     jacob.start().onTrue(new SetZeroModeCommand(elevatorSubsystem));
@@ -233,14 +238,14 @@ public class RobotContainer {
                 /** percent of fraction power */
                 (anthony.getHID().getAButton() ? .3 : .8);
 
-    // new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
-    //     .whileTrue(
-    //         new RotateVelocityDriveCommand(
-    //             drivebaseSubsystem,
-    //             translationXSupplier,
-    //             translationYSupplier,
-    //             rotationVelocity,
-    //             anthony.rightBumper()));
+    new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
+        .whileTrue(
+            new RotateVelocityDriveCommand(
+                drivebaseSubsystem,
+                translationXSupplier,
+                translationYSupplier,
+                rotationVelocity,
+                anthony.rightBumper()));
 
     new Trigger(
             () ->
@@ -547,40 +552,40 @@ public class RobotContainer {
     //     new N9_1ConePlus2CubeMobility(
     //         4.95, 3, eventMap, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    // autoSelector.addOption(
-    //     "Just Zero Elevator [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
+    autoSelector.addOption(
+        "Just Zero Elevator [DOES NOT CALIBRATE]", new SetZeroModeCommand(elevatorSubsystem));
 
-    // autoSelector.addOption(
-    //     "Near Substation Mobility [APRILTAG]",
-    //     new MobilityAuto(
-    //         manueverGenerator,
-    //         drivebaseSubsystem,
-    //         intakeSubsystem,
-    //         elevatorSubsystem,
-    //         rgbSubsystem,
-    //         new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
+    autoSelector.addOption(
+        "Near Substation Mobility [APRILTAG]",
+        new MobilityAuto(
+            manueverGenerator,
+            drivebaseSubsystem,
+            intakeSubsystem,
+            elevatorSubsystem,
+            rgbSubsystem,
+            new AlliancePose2d(4.88, 6.05, Rotation2d.fromDegrees(0))));
 
-    // autoSelector.addOption(
-    //     "Far Substation Mobility [APRILTAG]",
-    //     new MobilityAuto(
-    //         manueverGenerator,
-    //         drivebaseSubsystem,
-    //         intakeSubsystem,
-    //         elevatorSubsystem,
-    //         rgbSubsystem,
-    //         new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
+    autoSelector.addOption(
+        "Far Substation Mobility [APRILTAG]",
+        new MobilityAuto(
+            manueverGenerator,
+            drivebaseSubsystem,
+            intakeSubsystem,
+            elevatorSubsystem,
+            rgbSubsystem,
+            new AlliancePose2d(6, .6, Rotation2d.fromDegrees(0))));
 
-    // autoSelector.addOption("N2 Engage", new N2_Engage(5, 3.5, drivebaseSubsystem));
+    autoSelector.addOption("N2 Engage", new N2_Engage(5, 3.5, drivebaseSubsystem));
 
-    // autoSelector.addOption(
-    //     "N3 1Cone + Mobility Engage",
-    //     new N3_1ConePlusMobilityEngage(
-    //         5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    autoSelector.addOption(
+        "N3 1Cone + Mobility Engage",
+        new N3_1ConePlusMobilityEngage(
+            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    // autoSelector.setDefaultOption(
-    //     "N3 1Cone + Mobility",
-    //     new N3_1ConePlusMobility(
-    //         4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    autoSelector.setDefaultOption(
+        "N3 1Cone + Mobility",
+        new N3_1ConePlusMobility(
+            4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     autoSelector.setDefaultOption(
         "N6 1Cone",
@@ -590,15 +595,14 @@ public class RobotContainer {
         "N6 1Cone + Engage",
         new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    // autoSelector.addOption(
-    //     "N9 1Cone + Mobility Engage",
-    //     new N9_1ConePlusMobilityEngage(
-    //         5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
+    autoSelector.addOption(
+        "N9 1Cone + Mobility Engage",
+        new N9_1ConePlusMobilityEngage(
+            5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    // autoSelector.addOption(
-    //     "N9 1Cone + Mobility",
-    //     new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem,
-    // drivebaseSubsystem));
+    autoSelector.addOption(
+        "N9 1Cone + Mobility",
+        new N9_1ConePlusMobility(4.95, 3, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
     // autoSelector.addOption(
     //     "Score High Cone [DOES NOT CALIBRATE]",

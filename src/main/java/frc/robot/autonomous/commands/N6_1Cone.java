@@ -35,6 +35,8 @@ public class N6_1Cone extends SequentialCommandGroup {
             intakeSubsystem,
             elevatorSubsystem,
             Constants.SCORE_STEP_MAP.get(NodeType.CONE.atHeight(Height.HIGH)),
-            1));
+            2),
+        new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED)
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.OFF)));
   }
 }
