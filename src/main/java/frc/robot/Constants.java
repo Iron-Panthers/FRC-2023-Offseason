@@ -221,7 +221,7 @@ public final class Constants {
     public static final double MAX_EXTENSION_INCHES = 54;
     public static final double MIN_EXTENSION_INCHES = 1;
 
-    public static final double MIN_ANGLE_DEGREES = 3;
+    public static final double MIN_ANGLE_DEGREES = 5;
     public static final double MAX_ANGLE_DEGREES = 109.25;
 
     public static final int FALCON_CPR = 2048;
