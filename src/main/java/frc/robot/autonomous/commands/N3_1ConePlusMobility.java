@@ -37,7 +37,7 @@ public class N3_1ConePlusMobility extends SequentialCommandGroup {
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
             .deadlineWith(
-                new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE, () -> false)),
+                new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE, () -> true)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,

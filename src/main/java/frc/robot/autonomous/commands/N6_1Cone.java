@@ -30,7 +30,7 @@ public class N6_1Cone extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> false)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> true)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,

@@ -266,7 +266,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (wristFilterOutput > Elevator.STATOR_LIMIT) {
       wristMotor.set(TalonFXControlMode.PercentOutput, 0);
     } else {
-      wristMotor.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(wristPercentControl, -1, 1));
+      wristMotor.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(wristPercentControl, -0.75, 0.75));
     }
   }
 
@@ -292,7 +292,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       wristMotor.set(
           TalonFXControlMode.PercentOutput,
-          MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -1, 1));
+          MathUtil.clamp(wristController.calculate(currentWristAngle, targetAngle), -0.75, 0.75));
     }
   }
 
