@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.playingwithfusion.TimeOfFlight;
+
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -21,11 +23,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private LinearFilter filter;
   private double filterOutput;
   private boolean isCone;
-  // private final TimeOfFlight coneToF, cubeToF;
+  private final TimeOfFlight coneTOF, cubeTOF;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
+
+    coneTOF = new TimeOfFlight(Constants.Intake.Ports.CONE_TOF_PORT);
+    cubeTOF = new TimeOfFlight(Constants.Intake.Ports.CUBE_TOF_PORT);
 
     intakeMotor.configFactoryDefault();
     intakeMotor.clearStickyFaults();
@@ -40,9 +45,6 @@ public class IntakeSubsystem extends SubsystemBase {
     filterOutput = 0.0;
 
     isCone = false;
-
-    // coneToF = new TimeOfFlight(Constants.Intake.Ports.CONE_TOF_PORT);
-    // cubeToF = new TimeOfFlight(Constants.Intake.Ports.CUBE_TOF_PORT);
 
     shuffleboard.addDouble(
         "Intake motor sensor position", () -> intakeMotor.getSelectedSensorPosition());
@@ -118,6 +120,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private double getFilterCalculatedValue() {
     return filter.calculate(intakeMotor.getStatorCurrent());
+  }
+
+  public double getCubeTOFDistance() {
+    return cubeTOF.getRange() / 25.4;
+  }
+
+  public double getConeTOFDistance() {
+    return coneTOF.getRange() / 25.4;
+  }
+
+  public boolean isCubeIntaked() {
+    return getCubeTOFDistance() <= Constants.Intake.CUBE_TOF_DISTANCE;
+  }
+
+  public boolean isConeIntaked() {
+    return getConeTOFDistance() <= Constants.Intake.CONE_TOF_DISTANCE;
   }
 
   @Override
