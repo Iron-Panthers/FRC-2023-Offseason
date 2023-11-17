@@ -41,7 +41,7 @@ public class N3_1ConePlusMobilityEngage extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE)),
+            .deadlineWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, () -> true)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,
@@ -51,7 +51,8 @@ public class N3_1ConePlusMobilityEngage extends SequentialCommandGroup {
             .alongWith(
                 (new WaitCommand(1))
                     .andThen(
-                        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED))),
+                        new ElevatorPositionCommand(
+                            elevatorSubsystem, () -> Elevator.Setpoints.STOWED))),
         new EngageCommand(drivebaseSubsystem, EngageCommand.EngageDirection.GO_FORWARD));
   }
 }

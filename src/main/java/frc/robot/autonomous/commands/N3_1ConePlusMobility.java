@@ -36,17 +36,18 @@ public class N3_1ConePlusMobility extends SequentialCommandGroup {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)
-            .deadlineWith(new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE)),
+            .deadlineWith(
+                new IntakeModeCommand(intakeSubsystem, IntakeSubsystem.Modes.INTAKE, () -> true)),
         new ScoreCommand(
             intakeSubsystem,
             elevatorSubsystem,
             Constants.SCORE_STEP_MAP.get(NodeType.CONE.atHeight(Height.HIGH)),
-            1),
+            2.5),
         (new FollowTrajectoryCommand(path, true, drivebaseSubsystem))
             .alongWith(
                 (new WaitCommand(1))
                     .andThen(
                         new ElevatorPositionCommand(
-                            elevatorSubsystem, Elevator.Setpoints.STOWED))));
+                            elevatorSubsystem, () -> Elevator.Setpoints.STOWED))));
   }
 }

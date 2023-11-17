@@ -9,7 +9,7 @@ import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -17,14 +17,15 @@ import java.util.function.Supplier;
 public class GroundPickupCommand extends SequentialCommandGroup {
   /** Creates a new GroundPickupCommand. */
   public GroundPickupCommand(
-      ElevatorSubsystem elevatorSubsystem,
       IntakeSubsystem intakeSubsystem,
-      Supplier<Modes> modeSupplier) {
+      ElevatorSubsystem elevatorSubsystem,
+      BooleanSupplier isCone) {
     // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     addCommands(
-        new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.GROUND_INTAKE)
-            .alongWith(new IntakeModeCommand(intakeSubsystem, Modes.INTAKE))
-            .andThen(new ElevatorPositionCommand(elevatorSubsystem, Elevator.Setpoints.STOWED)));
+        new IntakeModeCommand(intakeSubsystem, Modes.INTAKE, isCone, true)
+            .deadlineWith(new GroundIntakeElevatorCommand(elevatorSubsystem, isCone))
+            .andThen(
+                new ElevatorPositionCommand(elevatorSubsystem, () -> Elevator.Setpoints.STOWED)));
   }
 }

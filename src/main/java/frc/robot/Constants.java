@@ -17,6 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants.Drive.Dims;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.ScoreCommand.ScoreStep;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -151,7 +152,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(8.07400 + 180) // comp bot offset
+                ? -Math.toRadians(162.59765625 + 180) // comp bot offset
                 : -Math.toRadians(184.833984); // practice bot offset
       }
 
@@ -162,7 +163,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(274.562 + 180) // comp bot offset
+                ? -Math.toRadians(219.7265625) // comp bot offset
                 : -Math.toRadians(307.968750); // practice bot offset
       }
 
@@ -173,7 +174,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(225.082 + 180) // comp bot offset
+                ? -Math.toRadians(135.966796875) // comp bot offset
                 : -Math.toRadians(306.738281 + 180); // practice bot offset
       }
 
@@ -184,7 +185,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -Math.toRadians(335.124 + 180) // comp bot offset
+                ? -Math.toRadians(200.0390625 + 180) // comp bot offset
                 : -Math.toRadians(60.908203); // practice bot offset
       }
     }
@@ -193,45 +194,75 @@ public final class Constants {
   public static final class Elevator {
     public static final class Ports {
 
-      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(0, "elevator left motor");
-      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(0, "elevator right motor");
-      public static final int WRIST_MOTOR_PORT = CAN.at(0, "wrist motor port");
+      public static final int ELEVATOR_LEFT_MOTOR_PORT = CAN.at(14, "elevator left motor");
+      public static final int ELEVATOR_RIGHT_MOTOR_PORT = CAN.at(15, "elevator right motor");
+      public static final int WRIST_MOTOR_PORT = CAN.at(16, "wrist motor port");
     }
 
     public static final class Setpoints {
-      public static final ElevatorState STOWED = new ElevatorState(20, 0);
-      public static final ElevatorState SHELF_INTAKE = new ElevatorState(20, 20);
-      public static final ElevatorState GROUND_INTAKE = new ElevatorState(0, 0);
-      public static final ElevatorState SCORE_HIGH = new ElevatorState(MAX_HEIGHT, 0);
-      public static final ElevatorState SCORE_MID = new ElevatorState(15, 20);
-      public static final ElevatorState SCORE_LOW = new ElevatorState(MIN_HEIGHT, 40);
+      public static final ElevatorState STOWED =
+          new ElevatorState(MIN_EXTENSION_INCHES, MIN_ANGLE_DEGREES);
+      public static final ElevatorState SHELF_INTAKE_CONE = new ElevatorState(47.3, 68.5);
+      public static final ElevatorState SHELF_INTAKE_CUBE = new ElevatorState(43.2, 68.5);
+      public static final ElevatorState GROUND_INTAKE_CONE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 72.5);
+      public static final ElevatorState GROUND_INTAKE_CUBE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 83);
+      public static final ElevatorState SCORE_HIGH_CONE = new ElevatorState(43, 52.5);
+      public static final ElevatorState SCORE_HIGH_CUBE = new ElevatorState(53.8, 74.5);
+      public static final ElevatorState SCORE_MID_CONE = new ElevatorState(22.5, 35.5);
+      public static final ElevatorState SCORE_MID_CUBE = new ElevatorState(30, 74.5);
+      public static final ElevatorState SCORE_LOW_CONE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 55);
+      public static final ElevatorState SCORE_LOW_CUBE =
+          new ElevatorState(MIN_EXTENSION_INCHES, 48);
     }
 
-    public static final double MAX_HEIGHT = 20;
-    public static final double MIN_HEIGHT = 0;
+    public static final double MAX_EXTENSION_INCHES = 54;
+    public static final double MIN_EXTENSION_INCHES = 1;
 
-    public static final int ELEVATOR_TICKS = 2048;
-    public static final double ELEVATOR_GEAR_RATIO = 1.0;
-    public static final double ELEVATOR_GEAR_CIRCUMFERENCE = 1.5 * Math.PI;
+    public static final double MIN_ANGLE_DEGREES = 5;
+    public static final double MAX_ANGLE_DEGREES = 109.25;
+
+    public static final int FALCON_CPR = 2048;
+    public static final double ELEVATOR_GEAR_RATIO = 0.1008;
+    public static final double ELEVATOR_SPROCKET_DIAMETER_INCHES = 1.432;
+    public static final double CARRIAGE_RATIO = 2;
 
     public static final int WRIST_TICKS = 2048;
     public static final double WRIST_DEGREES = 360;
-    public static final double WRIST_GEAR_RATIO = 0.061;
+    public static final double WRIST_GEAR_RATIO = 1 / 38.6719;
 
     public static final double ANGLE_EPSILON = 0.5;
-    public static final double HEIGHT_EPSILON = 5;
+    public static final double EXTENSION_EPSILON = 5;
+    public static final double ANGULAR_OFFSET = 0;
+
+    public static final double ZERO_MOTOR_POWER = -0.12;
+    public static final double ZERO_STATOR_LIMIT = 7;
+    public static final double STATOR_LIMIT = 25;
+
+    public static final double GRAVITY_OFFSET_PERCENT = .2;
   }
 
   public static final class Intake {
 
-    public static final double INTAKE_PERCENT = 1;
+    public static final double INTAKE_CONE_PERCENT = 0.7;
+    public static final double INTAKE_CUBE_PERCENT = -0.7;
 
-    public static final double OUTTAKE_PERCENT = -1;
+    public static final double OUTTAKE_CONE_PERCENT = -0.7;
+    public static final double OUTTAKE_CUBE_PERCENT = 0.7;
 
-    public static final double HOLD_PERCENT = 0.15;
+    public static final double HOLD_CONE_PERCENT = 0.1;
+    public static final double HOLD_CUBE_PERCENT = -0.2;
+
+    public static final double CONE_STATOR_LIMIT = 75;
+    public static final double CUBE_STATOR_LIMIT = 69;
+    public static final double GROUND_CUBE_STATOR_LIMIT = 60;
 
     public static final class Ports {
       public static final int INTAKE_MOTOR_PORT = CAN.at(18, "intake motor");
+      public static final int CONE_TOF_PORT = 0;
+      public static final int CUBE_TOF_PORT = 0;
     }
   }
 
@@ -239,28 +270,31 @@ public final class Constants {
       Map.of(
           NodeType.CONE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CONE).canWaitHere(),
+              new ScoreStep(new ElevatorState(22.5, 0), IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CONE).canWaitHere(),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CONE, IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CONE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW_CONE).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, false)),
           NodeType.CUBE.atHeight(Height.HIGH),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_HIGH, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_HIGH_CUBE).canWaitHere(),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_HIGH_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.MID),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_MID).canWaitHere(),
-              new ScoreStep(Elevator.Setpoints.SCORE_MID, IntakeSubsystem.Modes.OUTTAKE)),
+              new ScoreStep(Elevator.Setpoints.SCORE_MID_CUBE).canWaitHere(),
+              new ScoreStep(
+                  Elevator.Setpoints.SCORE_MID_CUBE, IntakeSubsystem.Modes.OUTTAKE, true)),
           NodeType.CUBE.atHeight(Height.LOW),
           List.of(
-              new ScoreStep(Elevator.Setpoints.SCORE_LOW).canWaitHere(),
-              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE)));
+              new ScoreStep(Elevator.Setpoints.SCORE_LOW_CUBE).canWaitHere(),
+              new ScoreStep(IntakeSubsystem.Modes.OUTTAKE, true)));
 
   public static final class Vision {
     public static record VisionSource(String name, Transform3d robotToCamera) {}
@@ -271,9 +305,9 @@ public final class Constants {
                 "frontCam",
                 new Transform3d(
                     new Translation3d(
-                        0.228110, // front/back
-                        0.253802, // left/right
-                        0.443955 // up/down
+                        0.23749, // front/back
+                        0.2403348, // left/right
+                        0.7973822 // up/down
                         ),
                     new Rotation3d(
                         0,
@@ -283,9 +317,9 @@ public final class Constants {
                 "backCam",
                 new Transform3d(
                     new Translation3d(
-                        0.102078, // front/back
-                        -0.253802, // left/right
-                        1.222387 // up/down
+                        0, // front/back
+                        -0.212725, // left/right
+                        0.6470142 // up/down
                         ),
                     new Rotation3d(0, Math.toRadians(17), Math.PI))));
 

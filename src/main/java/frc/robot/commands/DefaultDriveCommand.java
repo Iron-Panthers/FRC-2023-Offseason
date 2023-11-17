@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -23,21 +24,21 @@ public class DefaultDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
 
   private final BooleanSupplier isRobotRelativeForwardSupplier;
-  private final BooleanSupplier isRobotRelativeBackwardSupplier;
+  // private final BooleanSupplier isRobotRelativeBackwardSupplier;
 
   /** Creates a new DefaultDriveCommand. */
   public DefaultDriveCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
-      BooleanSupplier isRobotRelativeForwardSupplier,
-      BooleanSupplier isRobotRelativeBackwardSupplier) {
+      BooleanSupplier isRobotRelativeForwardSupplier) {
+    // BooleanSupplier isRobotRelativeBackwardSupplier) {
 
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.isRobotRelativeForwardSupplier = isRobotRelativeForwardSupplier;
-    this.isRobotRelativeBackwardSupplier = isRobotRelativeBackwardSupplier;
+    // this.isRobotRelativeBackwardSupplier = isRobotRelativeBackwardSupplier;
 
     addRequirements(drivebaseSubsystem);
   }
@@ -48,12 +49,12 @@ public class DefaultDriveCommand extends CommandBase {
     double x = translationXSupplier.getAsDouble();
     double y = translationYSupplier.getAsDouble();
     Boolean forwardRelative = isRobotRelativeForwardSupplier.getAsBoolean();
-    Boolean backwardRelative = isRobotRelativeBackwardSupplier.getAsBoolean();
+    // Boolean backwardRelative = isRobotRelativeBackwardSupplier.getAsBoolean();
 
     drivebaseSubsystem.drive(
         DrivebaseSubsystem.produceChassisSpeeds(
             forwardRelative,
-            backwardRelative,
+            // backwardRelative,
             x,
             y,
             0,
