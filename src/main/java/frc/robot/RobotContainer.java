@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -50,6 +49,7 @@ import frc.robot.commands.SetZeroModeCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
+import frc.robot.subsystems.DrivebaseSubsystemIO;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -73,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -83,9 +84,15 @@ import java.util.function.DoubleSupplier;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
+  private final LoggedDashboardChooser<Command> autoSelector =
+      new LoggedDashboardChooser<>("Auto Routine");
+
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-  private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem(visionSubsystem);
+  private final DrivebaseSubsystemIO drivebaseIO = new DrivebaseSubsystemIO();
+
+  private final DrivebaseSubsystem drivebaseSubsystem =
+      new DrivebaseSubsystem(visionSubsystem, drivebaseIO);
 
   private final RGBSubsystem rgbSubsystem = new RGBSubsystem();
 
@@ -111,8 +118,6 @@ public class RobotContainer {
   private final CommandXboxController anthony = new CommandXboxController(0);
 
   /** the sendable chooser to select which auto to run. */
-  private final SendableChooser<Command> autoSelector = new SendableChooser<>();
-
   private GenericEntry autoDelay;
 
   private final ShuffleboardTab driverView = Shuffleboard.getTab("DriverView");
@@ -582,16 +587,14 @@ public class RobotContainer {
         new N3_1ConePlusMobilityEngage(
             5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
+    autoSelector.addDefaultOption(
         "N3 1Cone + Mobility",
         new N3_1ConePlusMobility(
             4.95, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
-    autoSelector.setDefaultOption(
-        "N6 1Cone",
-        new N6_1Cone(intakeSubsystem, elevatorSubsystem));
-        
-                autoSelector.setDefaultOption(
+    autoSelector.addDefaultOption("N6 1Cone", new N6_1Cone(intakeSubsystem, elevatorSubsystem));
+
+    autoSelector.addDefaultOption(
         "N6 1Cone + Engage",
         new N6_1ConePlusEngage(5, 3.5, intakeSubsystem, elevatorSubsystem, drivebaseSubsystem));
 
@@ -637,9 +640,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     double delay = autoDelay.getDouble(0);
-    return delay == 0
-        ? autoSelector.getSelected()
-        : new WaitCommand(delay).andThen(autoSelector.getSelected());
+    return delay == 0 ? autoSelector.get() : new WaitCommand(delay).andThen(autoSelector.get());
   }
 
   /**

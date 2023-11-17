@@ -12,18 +12,14 @@ public interface ElevatorIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(FlywheelIOInputs inputs) {
-  }
+  public default void updateInputs(FlywheelIOInputs inputs) {}
 
   /** Run closed loop at the specified velocity. */
-  public default void setVelocity(double velocityRadPerSec, double ffVolts) {
-  }
+  public default void setVelocity(double velocityRadPerSec, double ffVolts) {}
 
   /** Stop in open loop. */
-  public default void stop() {
-  }
+  public default void stop() {}
 
   /** Set velocity PID constants. */
-  public default void configurePID(double kP, double kI, double kD) {
-  }
+  public default void configurePID(double kP, double kI, double kD) {}
 }

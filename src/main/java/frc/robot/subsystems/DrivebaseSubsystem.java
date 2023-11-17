@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.Drive.*;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -63,8 +61,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
   // Not mission critical as it "technically" drives fine as of now; but I suspect this is a site
   // for future improvements
 
-  private final DriveIO io;
-  private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
+  private final DrivebaseSubsystemIO io;
+  private final DrivebaseSubsystemIOInputsAutoLogged inputs =
+      new DrivebaseSubsystemIOInputsAutoLogged();
 
   public AdvancedSwerveTrajectoryFollower getFollower() {
     return follower;
@@ -155,7 +154,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   /** Creates a new DrivebaseSubsystem. */
-  public DrivebaseSubsystem(VisionSubsystem visionSubsystem, DriveIO io) {
+  public DrivebaseSubsystem(VisionSubsystem visionSubsystem, DrivebaseSubsystemIO io) {
     this.visionSubsystem = visionSubsystem;
     this.io = io;
 
