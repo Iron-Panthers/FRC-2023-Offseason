@@ -89,10 +89,8 @@ public class RobotContainer {
 
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-  private final DrivebaseSubsystemIO drivebaseIO = new DrivebaseSubsystemIO();
-
   private final DrivebaseSubsystem drivebaseSubsystem =
-      new DrivebaseSubsystem(visionSubsystem, drivebaseIO);
+      new DrivebaseSubsystem(visionSubsystem, new DrivebaseSubsystemIO() {});
 
   private final RGBSubsystem rgbSubsystem = new RGBSubsystem();
 

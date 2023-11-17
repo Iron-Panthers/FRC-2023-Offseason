@@ -42,8 +42,10 @@ import frc.robot.subsystems.VisionSubsystem.VisionMeasurement;
 import frc.util.AdvancedSwerveTrajectoryFollower;
 import frc.util.Util;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class DrivebaseSubsystem extends SubsystemBase {
+
   private final AdvancedSwerveTrajectoryFollower follower =
       new AdvancedSwerveTrajectoryFollower(
           new PIDController(1.3853, 0, 0),
@@ -558,6 +560,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     /* Update odometry */
     odometryPeriodic();
+
+    io.updateInputs(inputs);
+    Logger.getInstance().processInputs("Drivebase Subsystem", inputs);
   }
 
   public static ChassisSpeeds produceChassisSpeeds(
