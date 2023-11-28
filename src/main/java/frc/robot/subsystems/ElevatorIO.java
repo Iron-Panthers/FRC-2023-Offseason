@@ -4,15 +4,29 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
   @AutoLog
-  public static class FlywheelIOInputs {
-    public double positionRad = 0.0;
-    public double velocityRadPerSec = 0.0;
-    public double appliedVolts = 0.0;
-    public double[] currentAmps = new double[] {};
+  public static class ElevatorIOInputs {
+
+    public double currentExtension = 0.0;
+    public double targetExtension = 0.0;
+    public double currentWristAngle = 0.0;
+    public double targetAngle = 0.0;
+    public double elevatorPercentControl = 0.0;
+    public double wristPercentControl = 0.0;
+    private double elevatorFilterOutput = 0.0;
+    private double wristFilterOutput = 0.0;
+
+    public boolean elevatorZeroed = false;
+    public boolean wristZeroed = false;
+
+    public enum Modes {
+      PERCENT_CONTROL,
+      POSITION_CONTROL,
+      ZERO
+    }
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(FlywheelIOInputs inputs) {}
+  public default void updateInputs(ElevatorIOInputs inputs) {}
 
   /** Run closed loop at the specified velocity. */
   public default void setVelocity(double velocityRadPerSec, double ffVolts) {}

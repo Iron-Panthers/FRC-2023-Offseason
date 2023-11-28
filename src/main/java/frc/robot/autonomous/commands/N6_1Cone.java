@@ -4,18 +4,13 @@
 
 package frc.robot.autonomous.commands;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Elevator;
 import frc.robot.commands.ElevatorPositionCommand;
-import frc.robot.commands.EngageCommand;
-import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeModeCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.SetZeroModeCommand;
-import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
@@ -24,9 +19,7 @@ import frc.util.NodeSelectorUtility.NodeType;
 
 public class N6_1Cone extends SequentialCommandGroup {
   /** Creates a new N2MobilityEngage. */
-  public N6_1Cone(
-      IntakeSubsystem intakeSubsystem,
-      ElevatorSubsystem elevatorSubsystem) {
+  public N6_1Cone(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
 
     addCommands(
         new SetZeroModeCommand(elevatorSubsystem)

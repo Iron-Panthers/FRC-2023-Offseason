@@ -46,6 +46,6 @@ public interface DrivebaseSubsystemIO {
   public default void updateInputs(DrivebaseSubsystemIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
-  public default void setVoltage(
-      double frontLeftVolts, double backLeftVolts, double frontRightVolts, double backRightVolts) {}
+  public default void setMotorPower(
+      double frontLeft, double backLeft, double frontRight, double backRight) {}
 }
