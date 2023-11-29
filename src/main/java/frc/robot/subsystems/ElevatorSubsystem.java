@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.DigitalInput;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -63,6 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // stator limits
   private LinearFilter elevatorFilter;
   private LinearFilter wristFilter;
+  private DigitalInput digitalinput;
 
   public static record ElevatorState(double extension, double angle) {}
 
@@ -73,6 +75,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_LEFT_MOTOR_PORT);
     rightMotor = new TalonFX(Constants.Elevator.Ports.ELEVATOR_RIGHT_MOTOR_PORT);
     wristMotor = new TalonFX(Constants.Elevator.Ports.WRIST_MOTOR_PORT);
+    TalonFX digitalinput = new TalonFX(2);
 
     leftMotor.follow(rightMotor);
 
@@ -254,7 +257,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private void percentDrivePeriodic() {
-    if (elevatorFilterOutput > Elevator.STATOR_LIMIT) {
+    if (elevatorFilterOutput > Elevator.STATOR_LIMIT || digitalinput.get()) {
       rightMotor.set(TalonFXControlMode.PercentOutput, 0);
     } else {
       rightMotor.set(
@@ -269,6 +272,16 @@ public class ElevatorSubsystem extends SubsystemBase {
       wristMotor.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(wristPercentControl, -1, 1));
     }
   }
+  /*
+
+  public void autonomousPeriodic() {
+      // Runs the motor forwards at half speed, unless the limit is pressed
+      if(!limit.get()) {
+          spark.set(.5);
+      } else {
+          spark.set(0);
+      }
+  } */
 
   private void positionDrivePeriodic() {
     // if (filterOutput < statorCurrentLimit) {
