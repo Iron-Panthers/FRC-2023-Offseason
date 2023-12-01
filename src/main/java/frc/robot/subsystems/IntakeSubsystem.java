@@ -29,6 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     shuffleboard.addBoolean("is cube intake", () -> motorIO.getIsCone());
   }
 
+  // These modes should probably be in the IntakeIOTalonFX class
   public enum Modes {
     INTAKE,
     OUTTAKE,
@@ -93,5 +94,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     intakePeriodic(mode);
+
+    io.updateInputs(inputs);
   }
 }

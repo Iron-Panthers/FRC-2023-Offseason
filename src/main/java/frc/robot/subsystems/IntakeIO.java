@@ -6,7 +6,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
-    public Modes currentIntakeMode = Modes.OFF;
+    public String currentIntakeMode = Modes.OFF.toString();
     public double filterOutput = 0.0;
     public boolean isCone = false;
     public double motorOutput = 0.0;

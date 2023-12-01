@@ -21,10 +21,6 @@ import frc.robot.Constants.Elevator;
 
 /** Add your docs here. */
 public class ElevatorSubsystem extends SubsystemBase {
-
-  private final ElevatorIO io;
-  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-
   public enum Modes {
     PERCENT_CONTROL,
     POSITION_CONTROL,
@@ -69,9 +65,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public static record ElevatorState(double extension, double angle) {}
 
-  public ElevatorSubsystem(ElevatorIO io) {
-
-    this.io = io;
+  public ElevatorSubsystem() {
 
     currentMode = Modes.ZERO;
 
@@ -92,15 +86,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotor.setSelectedSensorPosition(0);
     wristMotor.setSelectedSensorPosition(0);
 
-    currentExtension = inputs.currentExtension;
-    targetExtension = inputs.targetExtension;
-    currentWristAngle = inputs.currentWristAngle;
-    targetAngle = inputs.targetAngle;
-    elevatorPercentControl = inputs.elevatorPercentControl;
-    wristPercentControl = inputs.wristPercentControl;
+    currentExtension = 0.0;
+    targetExtension = 0.0;
+    currentWristAngle = 0.0;
+    targetAngle = 0.0;
+    elevatorPercentControl = 0.0;
+    wristPercentControl = 0.0;
 
-    elevatorZeroed = inputs.elevatorZeroed;
-    wristZeroed = inputs.wristZeroed;
+    elevatorZeroed = false;
+    wristZeroed = false;
 
     rightMotor.configFactoryDefault();
     leftMotor.configFactoryDefault();

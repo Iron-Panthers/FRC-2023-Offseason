@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface DrivebaseSubsystemIO {
@@ -38,8 +37,6 @@ public interface DrivebaseSubsystemIO {
     public double backRightVelocityRadPerSec = 0.0;
     public double backRightAppliedVolts = 0.0;
     public double[] backRightCurrentAmps = new double[] {};
-
-    public Rotation2d gyroYaw = new Rotation2d();
   }
 
   /** Updates the set of loggable inputs. */

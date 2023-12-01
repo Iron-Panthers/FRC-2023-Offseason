@@ -52,6 +52,7 @@ import frc.robot.subsystems.DrivebaseSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystemIO;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.IntakeIO;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Modes;
 import frc.robot.subsystems.NetworkWatchdogSubsystem;
@@ -103,7 +104,7 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(new IntakeIO() {});
 
   private final SharedReference<NodeSelection> currentNodeSelection =
       new SharedReference<>(new NodeSelection(NodeSelectorUtility.defaultNodeStack, Height.HIGH));
