@@ -13,7 +13,7 @@ import frc.robot.subsystems.IntakeIO.IntakeIOInputs;
 public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputs inputs = new IntakeIOInputs();
-  private final IntakeIOTalonFX motorIO = new IntakeIOTalonFX();
+  private final IntakeIOTalonFX motorIO = new IntakeIOTalonFX(this);
   private Modes mode;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
 

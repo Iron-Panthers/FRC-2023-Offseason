@@ -12,17 +12,21 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.IntakeIO.IntakeIOInputs;
 
 public class IntakeIOTalonFX extends SubsystemBase {
   private TalonFX intakeMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
+  private IntakeSubsystem intakeSubsystem;
   private LinearFilter filter;
   private double filterOutput;
   private boolean isCone;
   // private final TimeOfFlight coneToF, cubeToF;
 
   /** Creates a new IntakeIOTalonFX. */
-  public IntakeIOTalonFX() {
+  public IntakeIOTalonFX(IntakeSubsystem intakeSubsystem) {
+    this.intakeSubsystem = intakeSubsystem;
+
     intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
 
     intakeMotor.configFactoryDefault();
@@ -59,5 +63,10 @@ public class IntakeIOTalonFX extends SubsystemBase {
     return filterOutput;
   }
 
-  public void updateInputs(IntakeIO inputs) {}
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.currentIntakeMode = intakeSubsystem.getMode().toString();
+    inputs.filterOutput = getFilterOutput();
+    inputs.isCone = getIsCone();
+    inputs.motorOutput = getMotorPower();
+  }
 }
