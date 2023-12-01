@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake;
 import frc.robot.subsystems.IntakeIO.IntakeIOInputs;
-import frc.robot.subsystems.IntakeIOTalonFX.Modes;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputs inputs = new IntakeIOInputs();
   private final IntakeIOTalonFX motorIO = new IntakeIOTalonFX();
+  private Modes mode;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
 
   // private final TimeOfFlight coneToF, cubeToF;
@@ -23,18 +23,25 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem(IntakeIO io) {
     this.io = io;
 
-    shuffleboard.addString("Current mode", () -> motorIO.getMode().toString());
+    shuffleboard.addString("Current mode", () -> mode.toString());
     shuffleboard.addDouble("filter output", () -> motorIO.getFilterOutput());
     shuffleboard.addDouble("motor output", () -> motorIO.getMotorPower());
     shuffleboard.addBoolean("is cube intake", () -> motorIO.getIsCone());
   }
 
-  public Modes getMode() {
-    return motorIO.getMode();
+  public enum Modes {
+    INTAKE,
+    OUTTAKE,
+    HOLD,
+    OFF;
   }
 
-  public void setMode(frc.robot.subsystems.IntakeIOTalonFX.Modes hold) {
-    motorIO.setMode(hold);
+  public Modes getMode() {
+    return mode;
+  }
+
+  public void setMode(Modes mode) {
+    this.mode = mode;
   }
 
   public void setIsCone(boolean isCone) {
@@ -45,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return motorIO.getFilterOutput();
   }
 
-  public void intakePeriodic(frc.robot.subsystems.IntakeIOTalonFX.Modes modes) {
+  public void intakePeriodic(Modes modes) {
 
     switch (modes) {
       case INTAKE:
@@ -80,11 +87,11 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     double filterOutput = motorIO.getFilterOutput();
     if (motorIO.getIsCone() && filterOutput >= Intake.CONE_STATOR_LIMIT) {
-      motorIO.setMode(Modes.HOLD);
+      mode = Modes.HOLD;
     } else if (filterOutput >= Intake.CUBE_STATOR_LIMIT) {
-      motorIO.setMode(Modes.HOLD);
+      mode = Modes.HOLD;
     }
 
-    intakePeriodic(motorIO.getMode());
+    intakePeriodic(mode);
   }
 }

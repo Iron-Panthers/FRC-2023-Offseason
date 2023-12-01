@@ -6,8 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Intake;
-import frc.robot.subsystems.IntakeIOTalonFX.Modes;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.Modes;
 import java.util.function.BooleanSupplier;
 
 public class IntakeModeCommand extends CommandBase {

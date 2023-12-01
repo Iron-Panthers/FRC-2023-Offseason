@@ -16,7 +16,6 @@ import frc.robot.Constants;
 public class IntakeIOTalonFX extends SubsystemBase {
   private TalonFX intakeMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
-  private Modes currentIntakeMode;
   private LinearFilter filter;
   private double filterOutput;
   private boolean isCone;
@@ -34,34 +33,18 @@ public class IntakeIOTalonFX extends SubsystemBase {
 
     filter = LinearFilter.movingAverage(30);
 
-    currentIntakeMode = Modes.OFF;
-
     filterOutput = 0.0;
 
     isCone = false;
-  }
-
-  public enum Modes {
-    INTAKE,
-    OUTTAKE,
-    HOLD,
-    OFF;
   }
 
   public void setMotorPower(double power) {
     intakeMotor.set(TalonFXControlMode.PercentOutput, power);
   }
 
+  // @AutoLogOutput
   public double getMotorPower() {
     return intakeMotor.getMotorOutputPercent();
-  }
-
-  public Modes getMode() {
-    return currentIntakeMode;
-  }
-
-  public void setMode(Modes hold) {
-    currentIntakeMode = hold;
   }
 
   public void setIsCone(boolean isCone) {
@@ -75,4 +58,6 @@ public class IntakeIOTalonFX extends SubsystemBase {
   public double getFilterOutput() {
     return filterOutput;
   }
+
+  public void updateInputs(IntakeIO inputs) {}
 }
