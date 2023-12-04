@@ -40,7 +40,7 @@ public class Robot extends LoggedRobot {
 
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-    if (isReal()) {
+    if (super.isReal()) {
       Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
       Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
