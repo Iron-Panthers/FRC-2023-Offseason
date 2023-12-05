@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface DrivebaseSubsystemIO {
   @AutoLog
+  // This does not work
   public static class DrivebaseSubsystemIOInputs {
     public double frontLeftPositionRad = 0.0;
     public double frontLeftVelocityRadPerSec = 0.0;

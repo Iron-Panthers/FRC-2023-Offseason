@@ -40,6 +40,24 @@ public class Robot extends LoggedRobot {
 
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
+    switch (Constants.Config.currentAdvMode) {
+      case REAL:
+        // Running on a real robot, log to a USB stick
+        Logger.getInstance().addDataReceiver(new WPILOGWriter("/U"));
+        Logger.getInstance().addDataReceiver(new NT4Publisher());
+        break;
+      case SIM:
+        Logger.getInstance().addDataReceiver(new NT4Publisher());
+        break;
+      case REPLAY:
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.getInstance().setReplaySource(new WPILOGReader(logPath));
+        Logger.getInstance()
+            .addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        break;
+    }
     if (super.isReal()) {
       Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
       Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -154,4 +172,12 @@ public class Robot extends LoggedRobot {
   public void testPeriodic() {
     // This method intentionally left empty
   }
+
+  /** This function is called once when the robot is first started up. */
+  @Override
+  public void simulationInit() {}
+
+  /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {}
 }

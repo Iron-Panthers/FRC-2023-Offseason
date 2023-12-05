@@ -66,6 +66,14 @@ public final class Constants {
         Filesystem.getDeployDirectory().toPath().resolve("poseEstimationsAtDistances.csv");
     public static final double REAL_X = 0.0;
     public static final double REAL_Y = 0.0;
+
+    public static final advantageKitModes currentAdvMode = advantageKitModes.REAL;
+
+    public static enum advantageKitModes {
+      REAL,
+      SIM,
+      REPLAY
+    };
   }
 
   public static final class Drive {
