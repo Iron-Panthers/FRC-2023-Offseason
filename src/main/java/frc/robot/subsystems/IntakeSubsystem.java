@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Intake;
 import frc.robot.subsystems.IntakeIO.IntakeIOInputs;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputs inputs = new IntakeIOInputs();
-  private final IntakeIOTalonFX motorIO = new IntakeIOTalonFX(this);
   private Modes mode;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
 
@@ -24,9 +24,9 @@ public class IntakeSubsystem extends SubsystemBase {
     this.io = io;
 
     shuffleboard.addString("Current mode", () -> mode.toString());
-    shuffleboard.addDouble("filter output", () -> motorIO.getFilterOutput());
-    shuffleboard.addDouble("motor output", () -> motorIO.getMotorPower());
-    shuffleboard.addBoolean("is cube intake", () -> motorIO.getIsCone());
+    shuffleboard.addDouble("filter output", () -> inputs.filterOutput);
+    shuffleboard.addDouble("motor output", () -> inputs.motorOutput);
+    shuffleboard.addBoolean("is cube intake", () -> inputs.isCone);
   }
 
   // These modes should probably be in the IntakeIOTalonFX class
@@ -46,32 +46,32 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void setIsCone(boolean isCone) {
-    motorIO.setIsCone(isCone);
+    inputs.isCone = isCone;
   }
 
   public double getFilterOutput() {
-    return motorIO.getFilterOutput();
+    return inputs.filterOutput;
   }
 
   public void intakePeriodic(Modes modes) {
 
     switch (modes) {
       case INTAKE:
-        if (motorIO.getIsCone()) {
+        if (inputs.isCone) {
           io.setMotorPower(Intake.INTAKE_CONE_PERCENT);
         } else {
           io.setMotorPower(Intake.INTAKE_CUBE_PERCENT);
         }
         break;
       case OUTTAKE:
-        if (motorIO.getIsCone()) {
+        if (inputs.isCone) {
           io.setMotorPower(Intake.OUTTAKE_CONE_PERCENT);
         } else {
           io.setMotorPower(Intake.OUTTAKE_CUBE_PERCENT);
         }
         break;
       case HOLD:
-        if (motorIO.getIsCone()) {
+        if (inputs.isCone) {
           io.setMotorPower(Intake.HOLD_CONE_PERCENT);
         } else {
           io.setMotorPower(Intake.HOLD_CUBE_PERCENT);
@@ -86,15 +86,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double filterOutput = motorIO.getFilterOutput();
-    if (motorIO.getIsCone() && filterOutput >= Intake.CONE_STATOR_LIMIT) {
+    if (inputs.isCone && inputs.filterOutput >= Intake.CONE_STATOR_LIMIT) {
       mode = Modes.HOLD;
-    } else if (filterOutput >= Intake.CUBE_STATOR_LIMIT) {
+    } else if (inputs.filterOutput >= Intake.CUBE_STATOR_LIMIT) {
       mode = Modes.HOLD;
     }
 
     intakePeriodic(mode);
 
     io.updateInputs(inputs);
+
+    Logger.getInstance().processInputs("Intake", inputs);
   }
 }

@@ -17,15 +17,13 @@ import frc.robot.subsystems.IntakeIO.IntakeIOInputs;
 public class IntakeIOTalonFX extends SubsystemBase {
   private TalonFX intakeMotor;
   private ShuffleboardTab shuffleboard = Shuffleboard.getTab("Intake Subsystem");
-  private IntakeSubsystem intakeSubsystem;
   private LinearFilter filter;
   private double filterOutput;
   private boolean isCone;
   // private final TimeOfFlight coneToF, cubeToF;
 
   /** Creates a new IntakeIOTalonFX. */
-  public IntakeIOTalonFX(IntakeSubsystem intakeSubsystem) {
-    this.intakeSubsystem = intakeSubsystem;
+  public IntakeIOTalonFX() {
 
     intakeMotor = new TalonFX(Constants.Intake.Ports.INTAKE_MOTOR_PORT);
 
@@ -64,7 +62,7 @@ public class IntakeIOTalonFX extends SubsystemBase {
   }
 
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.currentIntakeMode = intakeSubsystem.getMode().toString();
+    inputs.currentIntakeMode = inputs.currentIntakeMode.toString();
     inputs.filterOutput = getFilterOutput();
     inputs.isCone = getIsCone();
     inputs.motorOutput = getMotorPower();
