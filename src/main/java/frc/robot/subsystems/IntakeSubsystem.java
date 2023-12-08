@@ -86,6 +86,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    inputs.currentIntakeMode = mode.toString();
+
     if (inputs.isCone && inputs.filterOutput >= Intake.CONE_STATOR_LIMIT) {
       mode = Modes.HOLD;
     } else if (inputs.filterOutput >= Intake.CUBE_STATOR_LIMIT) {

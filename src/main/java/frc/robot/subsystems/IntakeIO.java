@@ -34,6 +34,8 @@ public interface IntakeIO {
   /** Run closed loop at the specified velocity. */
   public default void setMotorPower(double power) {}
 
+  public default void setIsCone(boolean isCone) {}
+
   /** Stop in open loop. */
   public default void stop() {}
 }

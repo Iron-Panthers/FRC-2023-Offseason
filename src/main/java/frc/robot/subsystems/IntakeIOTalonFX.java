@@ -53,18 +53,12 @@ public class IntakeIOTalonFX extends SubsystemBase {
     this.isCone = isCone;
   }
 
-  public boolean getIsCone() {
-    return isCone;
-  }
-
-  public double getFilterOutput() {
-    return filterOutput;
-  }
-
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.currentIntakeMode = inputs.currentIntakeMode.toString();
-    inputs.filterOutput = getFilterOutput();
-    inputs.isCone = getIsCone();
+    inputs.currentIntakeMode =
+        inputs.currentIntakeMode
+            .toString(); // The modes are updated in the subsystem instead of here
+    inputs.filterOutput = filter.calculate(inputs.filterOutput);
+    inputs.isCone = inputs.isCone; // This is also updated in the subsystem
     inputs.motorOutput = getMotorPower();
   }
 }
